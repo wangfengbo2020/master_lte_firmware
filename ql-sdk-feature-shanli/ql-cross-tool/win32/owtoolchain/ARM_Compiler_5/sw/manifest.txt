@@ -1,0 +1,6 @@
+Component: ARM Compiler 5.05 (build 41)
+Tool: armar [4d0eb9]
+Tool: armasm [4d0eb9]
+Tool: armcc [4d0eb9]
+Tool: armlink [4d0eb9]
+Tool: fromelf [4d0eb9]

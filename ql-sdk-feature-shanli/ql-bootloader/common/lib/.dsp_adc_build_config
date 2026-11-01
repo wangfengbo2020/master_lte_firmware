@@ -1,0 +1,8 @@
+#=============================================================================
+#1. SUPPORT APPEND DSP_ADC.bin 
+#   CONFIG_APPEND_DSP_ADC=y --- append dsp_adc.bin after updater.bin and logo.bin;
+#   CONFIG_APPEND_DSP_ADC=n --- not append dsp_adc.bin after updater.bin and logo.bin;
+#=============================================================================
+
+CONFIG_APPEND_DSP_ADC=y
+#CONFIG_APPEND_DSP_ADC=n

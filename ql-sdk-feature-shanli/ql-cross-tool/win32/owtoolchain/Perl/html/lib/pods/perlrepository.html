@@ -1,0 +1,689 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../displayToc.js"></script>
+<script language="JavaScript" src="../../tocParas.js"></script>
+<script language="JavaScript" src="../../tocTab.js"></script>
+<link rel="stylesheet" type="text/css" href="../../scineplex.css">
+<title>perlrepository - Using the Perl source repository</title>
+<link rel="stylesheet" href="../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<script>writelinks('__top__',2);</script>
+<h1><a>perlrepository - Using the Perl source repository</a></h1>
+<p><a name="__index__"></a></p>
+
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#getting_access_to_the_repository">GETTING ACCESS TO THE REPOSITORY</a></li>
+	<ul>
+
+		<li><a href="#read_access_via_the_web">READ ACCESS VIA THE WEB</a></li>
+		<li><a href="#read_access_via_git">READ ACCESS VIA GIT</a></li>
+		<li><a href="#write_access_to_the_repository">WRITE ACCESS TO THE REPOSITORY</a></li>
+	</ul>
+
+	<li><a href="#overview_of_the_repository">OVERVIEW OF THE REPOSITORY</a></li>
+	<ul>
+
+		<li><a href="#finding_out_your_status">FINDING OUT YOUR STATUS</a></li>
+	</ul>
+
+	<li><a href="#submitting_a_patch">SUBMITTING A PATCH</a></li>
+	<ul>
+
+		<li><a href="#a_note_on_derived_files">A note on derived files</a></li>
+		<li><a href="#a_note_on_binary_files">A note on binary files</a></li>
+		<li><a href="#getting_your_patch_accepted">Getting your patch accepted</a></li>
+	</ul>
+
+	<li><a href="#accepting_a_patch">ACCEPTING A PATCH</a></li>
+	<li><a href="#cleaning_a_working_directory">CLEANING A WORKING DIRECTORY</a></li>
+	<li><a href="#bisecting">BISECTING</a></li>
+	<li><a href="#submitting_a_patch_via_github">SUBMITTING A PATCH VIA GITHUB</a></li>
+	<li><a href="#merging_from_a_branch_via_github">MERGING FROM A BRANCH VIA GITHUB</a></li>
+	<li><a href="#committing_to_maintenance_versions">COMMITTING TO MAINTENANCE VERSIONS</a></li>
+	<li><a href="#see_also">SEE ALSO</a></li>
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+</p>
+<hr />
+<h1><a name="name">NAME</a></h1>
+<p>perlrepository - Using the Perl source repository</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<p>All of Perl's source code is kept centrally in a Git repository at
+<em>perl5.git.perl.org</em>. The repository contains many Perl revisions from
+Perl 1 onwards and all the revisions from Perforce, the version control
+system we were using previously. This repository is accessible in
+different ways.</p>
+<p>The full repository takes up about 80MB of disk space. A check out of
+the blead branch (that is, the main development branch, which contains
+bleadperl, the development version of perl 5) takes up about 160MB of
+disk space (including the repository). A build of bleadperl takes up
+about 200MB (including the repository and the check out).</p>
+<p>
+</p>
+<hr />
+<h1><a name="getting_access_to_the_repository">GETTING ACCESS TO THE REPOSITORY</a></h1>
+<p>
+</p>
+<h2><a name="read_access_via_the_web">READ ACCESS VIA THE WEB</a></h2>
+<p>You may access the repository over the web. This allows you to browse
+the tree, see recent commits, subscribe to RSS feeds for the changes,
+search for particular commits and more. You may access it at:</p>
+<pre>
+  <a href="http://perl5.git.perl.org/perl.git">http://perl5.git.perl.org/perl.git</a></pre>
+<p>A mirror of the repository is found at:</p>
+<pre>
+  <a href="http://github.com/github/perl">http://github.com/github/perl</a></pre>
+<p>
+</p>
+<h2><a name="read_access_via_git">READ ACCESS VIA GIT</a></h2>
+<p>You will need a copy of Git for your computer. You can fetch a copy of
+the repository using the Git protocol (which uses port 9418):</p>
+<pre>
+  git clone git://perl5.git.perl.org/perl.git perl-git</pre>
+<p>This clones the repository and makes a local copy in the <em class="file">perl-git</em>
+directory.</p>
+<p>If your local network does not allow you to use port 9418, then you can
+fetch a copy of the repository over HTTP (this is slower):</p>
+<pre>
+  git clone <a href="http://perl5.git.perl.org/perl.git">http://perl5.git.perl.org/perl.git</a> perl-http</pre>
+<p>This clones the repository and makes a local copy in the <em class="file">perl-http</em>
+directory.</p>
+<p>
+</p>
+<h2><a name="write_access_to_the_repository">WRITE ACCESS TO THE REPOSITORY</a></h2>
+<p>If you are a committer, then you can fetch a copy of the repository
+that you can push back on with:</p>
+<pre>
+  git clone ssh://perl5.git.perl.org/gitroot/perl.git perl-ssh</pre>
+<p>This clones the repository and makes a local copy in the <em class="file">perl-ssh</em>
+directory.</p>
+<p>If you cloned using the git protocol, which is faster than ssh, then
+you will need to modify your config in order to enable pushing. Edit
+<em class="file">.git/config</em> where you will see something like:</p>
+<pre>
+  [remote &quot;origin&quot;]
+  url = git://perl5.git.perl.org/perl.git</pre>
+<p>change that to something like this:</p>
+<pre>
+  [remote &quot;origin&quot;]
+  url = ssh://perl5.git.perl.org/gitroot/perl.git</pre>
+<p>NOTE: there are symlinks set up so that the /gitroot is optional and
+since SSH is the default protocol you can actually shorten the &quot;url&quot; to
+<code>perl5.git.perl.org:/perl.git</code>.</p>
+<p>You can also set up your user name and e-mail address. For example</p>
+<pre>
+  % git config user.name &quot;Leon Brocard&quot;
+  % git config user.email acme@astray.com</pre>
+<p>It is also possible to keep <code>origin</code> as a git remote, and add a new
+remote for ssh access:</p>
+<pre>
+  % git remote add camel perl5.git.perl.org:/perl.git</pre>
+<p>This allows you to update your local repository by pulling from
+<code>origin</code>, which is faster and doesn't require you to authenticate, and
+to push your changes back with the <code>camel</code> remote:</p>
+<pre>
+  % git fetch camel
+  % git push camel</pre>
+<p>The <code>fetch</code> command just updates the <code>camel</code> refs, as the objects
+themselves should have been fetched when pulling from <code>origin</code>.</p>
+<p>The committers have access to 2 servers that serve perl5.git.perl.org.
+One is camel.booking.com, which is the 'master' repository. The
+perl5.git.perl.org IP address also lives on this machine. The second
+one is dromedary.booking.com, which can be used for general testing and
+development. Dromedary syncs the git tree from camel every few minutes,
+you should not push there. Both machines also have a full CPAN mirror.
+To share files with the general public, dromedary serves your
+~/public_html/ as <a href="http://users.perl5.git.perl.org/~yourlogin/">http://users.perl5.git.perl.org/~yourlogin/</a></p>
+<p>
+</p>
+<hr />
+<h1><a name="overview_of_the_repository">OVERVIEW OF THE REPOSITORY</a></h1>
+<p>Once you have changed into the repository directory, you can inspect
+it.</p>
+<p>After a clone the repository will contain a single local branch, which
+will be the current branch as well, as indicated by the asterisk.</p>
+<pre>
+  % git branch
+  * blead</pre>
+<p>Using the -a switch to <code>branch</code> will also show the remote tracking
+branches in the repository:</p>
+<pre>
+  % git branch -a
+  * blead
+    origin/HEAD
+    origin/blead
+  ...</pre>
+<p>The branches that begin with &quot;origin&quot; correspond to the &quot;git remote&quot;
+that you cloned from (which is named &quot;origin&quot;). Each branch on the
+remote will be exactly tracked by theses branches. You should NEVER do
+work on these remote tracking branches. You only ever do work in a
+local branch. Local branches can be configured to automerge (on pull)
+from a designated remote tracking branch. This is the case with the
+default branch <code>blead</code> which will be configured to merge from the
+remote tracking branch <code>origin/blead</code>.</p>
+<p>You can see recent commits:</p>
+<pre>
+  % git log</pre>
+<p>And pull new changes from the repository, and update your local
+repository (must be clean first)</p>
+<pre>
+  % git pull</pre>
+<p>Assuming we are on the branch <code>blead</code> immediately after a pull, this
+command would be more or less equivalent to:</p>
+<pre>
+  % git fetch
+  % git merge origin/blead</pre>
+<p>In fact if you want to update your local repository without touching
+your working directory you do:</p>
+<pre>
+  % git fetch</pre>
+<p>And if you want to update your remote-tracking branches for all defined
+remotes simultaneously you can do</p>
+<pre>
+  % git remote update</pre>
+<p>Neither of these last two commands will update your working directory,
+however both will update the remote-tracking branches in your
+repository.</p>
+<p>To switch to another branch:</p>
+<pre>
+  % git checkout origin/maint-5.8-dor</pre>
+<p>To make a local branch of a remote branch:</p>
+<pre>
+  % git checkout -b maint-5.10 origin/maint-5.10</pre>
+<p>To switch back to blead:</p>
+<pre>
+  % git checkout blead</pre>
+<p>
+</p>
+<h2><a name="finding_out_your_status">FINDING OUT YOUR STATUS</a></h2>
+<p>The most common git command you will use will probably be</p>
+<pre>
+  % git status</pre>
+<p>This command will produce as output a description of the current state
+of the repository, including modified files and unignored untracked
+files, and in addition it will show things like what files have been
+staged for the next commit, and usually some useful information about
+how to change things. For instance the following:</p>
+<pre>
+  $ git status
+  # On branch blead
+  # Your branch is ahead of 'origin/blead' by 1 commit.
+  #
+  # Changes to be committed:
+  #   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+  #
+  #       modified:   pod/<a href="../../lib/pods/perlrepository.html">perlrepository</a>.pod
+  #
+  # Changed but not updated:
+  #   (use &quot;git add &lt;file&gt;...&quot; to update what will be committed)
+  #
+  #       modified:   pod/<a href="../../lib/pods/perlrepository.html">perlrepository</a>.pod
+  #
+  # Untracked files:
+  #   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+  #
+  #       deliberate.untracked</pre>
+<p>This shows that there were changes to this document staged for commit,
+and that there were further changes in the working directory not yet
+staged. It also shows that there was an untracked file in the working
+directory, and as you can see shows how to change all of this. It also
+shows that there is one commit on the working branch <code>blead</code> which has
+not been pushed to the <code>origin</code> remote yet. <strong>NOTE</strong>: that this output
+is also what you see as a template if you do not provide a message to
+<code>git commit</code>.</p>
+<p>Assuming we commit all the mentioned changes above:</p>
+<pre>
+  % git commit -a -m'explain git status and stuff about remotes'
+  Created commit daf8e63: explain git status and stuff about remotes
+   1 files changed, 83 insertions(+), 3 deletions(-)</pre>
+<p>We can re-run git status and see something like this:</p>
+<pre>
+  % git status
+  # On branch blead
+  # Your branch is ahead of 'origin/blead' by 2 commits.
+  #
+  # Untracked files:
+  #   (use &quot;git add &lt;file&gt;...&quot; to include in what will be committed)
+  #
+  #       deliberate.untracked
+  nothing added to commit but untracked files present (use &quot;git add&quot; to track)</pre>
+<p>When in doubt, before you do anything else, check your status and read
+it carefully, many questions are answered directly by the git status
+output.</p>
+<p>
+</p>
+<hr />
+<h1><a name="submitting_a_patch">SUBMITTING A PATCH</a></h1>
+<p>If you have a patch in mind for Perl, you should first get a copy of
+the repository:</p>
+<pre>
+  % git clone git://perl5.git.perl.org/perl.git perl-git</pre>
+<p>Then change into the directory:</p>
+<pre>
+  % cd perl-git</pre>
+<p>Alternatively, if you already have a Perl repository, you should ensure
+that you're on the <em>blead</em> branch, and your repository is up to date:</p>
+<pre>
+  % git checkout blead
+  % git pull</pre>
+<p>It's preferable to patch against the latest blead version, since this
+is where new development occurs for all changes other than critical bug
+fixes.  Critical bug fix patches should be made against the relevant
+maint branches, or should be submitted with a note indicating all the
+branches where the fix should be applied.</p>
+<p>Now that we have everything up to date, we need to create a temporary
+new branch for these changes and switch into it:</p>
+<pre>
+  % git checkout -b orange</pre>
+<p>which is the short form of</p>
+<pre>
+  % git branch orange
+  % git checkout orange</pre>
+<p>Then make your changes. For example, if Leon Brocard changes his name
+to Orange Brocard, we should change his name in the AUTHORS file:</p>
+<pre>
+  <span class="operator">% </span><span class="variable">perl</span> <span class="operator">-</span><span class="variable">pi</span> <span class="keyword">-e</span> <span class="string">'s{Leon Brocard}{Orange Brocard}'</span> <span class="variable">AUTHORS</span>
+</pre>
+<p>You can see what files are changed:</p>
+<pre>
+  % git status
+  # On branch orange
+  # Changes to be committed:
+  #   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)
+  #
+  #     modified:   AUTHORS
+  #</pre>
+<p>And you can see the changes:</p>
+<pre>
+  % git diff
+  diff --git a/AUTHORS b/AUTHORS
+  index 293dd70..722c93e 100644
+  --- a/AUTHORS
+  +++ b/AUTHORS
+  @@ -541,7 +541,7 @@    Lars Hecking                   &lt;lhecking@nmrc.ucc.ie&gt;
+   Laszlo Molnar                  &lt;laszlo.molnar@eth.ericsson.se&gt;
+   Leif Huhn                      &lt;leif@hale.dkstat.com&gt;
+   Len Johnson                    &lt;lenjay@ibm.net&gt;
+  -Leon Brocard                   &lt;acme@astray.com&gt;
+  +Orange Brocard                 &lt;acme@astray.com&gt;
+   Les Peters                     &lt;lpeters@aol.net&gt;
+   Lesley Binks                   &lt;lesley.binks@gmail.com&gt;
+   Lincoln D. Stein               &lt;lstein@cshl.org&gt;</pre>
+<p>Now commit your change locally:</p>
+<pre>
+  % git commit -a -m 'Rename Leon Brocard to Orange Brocard'
+  Created commit 6196c1d: Rename Leon Brocard to Orange Brocard
+   1 files changed, 1 insertions(+), 1 deletions(-)</pre>
+<p>You can examine your last commit with:</p>
+<pre>
+  % git show HEAD</pre>
+<p>and if you are not happy with either the description or the patch
+itself you can fix it up by editing the files once more and then issue:</p>
+<pre>
+  % git commit -a --amend</pre>
+<p>Now you should create a patch file for all your local changes:</p>
+<pre>
+  % git format-patch origin
+  0001-Rename-Leon-Brocard-to-Orange-Brocard.patch</pre>
+<p>You should now send an email to <a href="mailto:perl5-porters@perl.org">perl5-porters@perl.org</a> with a
+description of your changes, and include this patch file as an
+attachment.</p>
+<p>If you want to delete your temporary branch, you may do so with:</p>
+<pre>
+  % git checkout blead
+  % git branch -d orange
+  error: The branch 'orange' is not an ancestor of your current HEAD.
+  If you are sure you want to delete it, run 'git branch -D orange'.
+  % git branch -D orange
+  Deleted branch orange.</pre>
+<p>
+</p>
+<h2><a name="a_note_on_derived_files">A note on derived files</a></h2>
+<p>Be aware that many files in the distribution are derivative--avoid
+patching them, because git won't see the changes to them, and the build
+process will overwrite them. Patch the originals instead.  Most
+utilities (like perldoc) are in this category, i.e. patch
+utils/perldoc.PL rather than utils/perldoc. Similarly, don't create
+patches for files under $src_root/ext from their copies found in
+$install_root/lib.  If you are unsure about the proper location of a
+file that may have gotten copied while building the source
+distribution, consult the <code>MANIFEST</code>.</p>
+<p>
+</p>
+<h2><a name="a_note_on_binary_files">A note on binary files</a></h2>
+<p>Since the <code>patch(1)</code> utility cannot deal with binary files, it's
+important that you either avoid the use of binary files in your patch,
+generate the files dynamically, or that you encode any binary files
+using the <em class="file">uupacktool.pl</em> utility.</p>
+<p>Assuming you needed to include a gzip-encoded file for a module's test
+suite, you might do this as follows using the <em class="file">uupacktool.pl</em> utility:</p>
+<pre>
+    $ perl uupacktool.pl -v -p -D lib/Some/Module/t/src/t.gz
+    Writing lib/Some/Module/t/src/t.gz into lib/Some/Module/t/src/t.gz.packed</pre>
+<p>This will replace the <code>t.gz</code> file with an encoded counterpart. During
+<code>make test</code>, before any tests are run, perl's Makefile will restore
+all the <code>.packed</code> files mentioned in the MANIFEST to their original
+name. This means that the test suite does not need to be aware of this
+packing scheme and will not need to be altered.</p>
+<p>
+</p>
+<h2><a name="getting_your_patch_accepted">Getting your patch accepted</a></h2>
+<p>The first thing you should include with your patch is a description of
+the problem that the patch corrects.  If it is a code patch (rather
+than a documentation patch) you should also include a small test case
+that illustrates the bug (a patch to an existing test file is
+preferred).</p>
+<p>If you are submitting a code patch there are several other things that
+you need to do.</p>
+<dl>
+<dt><strong><a name="comments_comments_comments" class="item">Comments, Comments, Comments</a></strong></dt>
+
+<dd>
+<p>Be sure to adequately comment your code.  While commenting every line
+is unnecessary, anything that takes advantage of side effects of
+operators, that creates changes that will be felt outside of the
+function being patched, or that others may find confusing should be
+documented.  If you are going to err, it is better to err on the side
+of adding too many comments than too few.</p>
+</dd>
+<dt><strong><a name="style2" class="item">Style</a></strong></dt>
+
+<dd>
+<p>In general, please follow the particular style of the code you are
+patching.</p>
+<p>In particular, follow these general guidelines for patching Perl
+sources:</p>
+<pre>
+    <span class="number">8</span><span class="operator">-</span><span class="variable">wide</span> <span class="variable">tabs</span> <span class="operator">(</span><span class="keyword">no</span> <span class="variable">exceptions</span><span class="operator">!)</span>
+    <span class="number">4</span><span class="operator">-</span><span class="variable">wide</span> <span class="variable">indents</span> <span class="keyword">for</span> <span class="variable">code</span><span class="operator">,</span> <span class="number">2</span><span class="operator">-</span><span class="variable">wide</span> <span class="variable">indents</span> <span class="keyword">for</span> <span class="variable">nested</span> <span class="variable">CPP</span> <span class="comment">#defines</span>
+    <span class="variable">try</span> <span class="variable">hard</span> <span class="keyword">not</span> <span class="variable">to</span> <span class="variable">exceed</span> <span class="number">79</span><span class="operator">-</span><span class="variable">columns</span>
+    <span class="variable">ANSI</span> <span class="variable">C</span> <span class="variable">prototypes</span>
+    <span class="variable">uncuddled</span> <span class="variable">elses</span> <span class="keyword">and</span> <span class="string">"K&amp;R"</span> <span class="variable">style</span> <span class="keyword">for</span> <span class="variable">indenting</span> <span class="variable">control</span> <span class="variable">constructs</span>
+    <span class="keyword">no</span> <span class="variable">C</span><span class="operator">++</span> <span class="variable">style</span> <span class="operator">(</span><span class="regex">//</span><span class="operator">)</span> <span class="variable">comments</span>
+    <span class="variable">mark</span> <span class="variable">places</span> <span class="variable">that</span> <span class="variable">need</span> <span class="variable">to</span> <span class="variable">be</span> <span class="variable">revisited</span> <span class="variable">with</span> <span class="variable">XXX</span> <span class="operator">(</span><span class="keyword">and</span> <span class="variable">revisit</span> <span class="variable">often</span><span class="operator">!)</span>
+    <span class="variable">opening</span> <span class="variable">brace</span> <span class="variable">lines</span> <span class="variable">up</span> <span class="variable">with</span> <span class="string">"if"</span> <span class="keyword">when</span> <span class="variable">conditional</span> <span class="variable">spans</span> <span class="variable">multiple</span>
+        <span class="variable">lines</span><span class="operator">;</span> <span class="variable">should</span> <span class="variable">be</span> <span class="variable">at</span> <span class="variable">end</span><span class="operator">-</span><span class="variable">of</span><span class="operator">-</span><span class="variable">line</span> <span class="variable">otherwise</span>
+    <span class="variable">in</span> <span class="variable">function</span> <span class="variable">definitions</span><span class="operator">,</span> <span class="variable">name</span> <span class="variable">starts</span> <span class="variable">in</span> <span class="variable">column</span> <span class="number">0</span> <span class="operator">(</span><span class="keyword">return</span> <span class="variable">value</span> <span class="variable">is</span> <span class="variable">on</span>
+        <span class="variable">previous</span> <span class="variable">line</span><span class="operator">)</span>
+    <span class="variable">single</span> <span class="variable">space</span> <span class="variable">after</span> <span class="variable">keywords</span> <span class="variable">that</span> <span class="variable">are</span> <span class="variable">followed</span> <span class="variable">by</span> <span class="variable">parens</span><span class="operator">,</span> <span class="keyword">no</span> <span class="variable">space</span>
+        <span class="variable">between</span> <span class="variable">function</span> <span class="variable">name</span> <span class="keyword">and</span> <span class="variable">following</span> <span class="variable">paren</span>
+    <span class="variable">avoid</span> <span class="variable">assignments</span> <span class="variable">in</span> <span class="variable">conditionals</span><span class="operator">,</span> <span class="variable">but</span> <span class="keyword">if</span> <span class="variable">they're</span> <span class="variable">unavoidable</span><span class="operator">,</span> <span class="keyword">use</span>
+        <span class="variable">extra</span> <span class="variable">paren</span><span class="operator">,</span> <span class="variable">e</span><span class="operator">.</span><span class="variable">g</span><span class="operator">.</span> <span class="string">"if (a &amp;&amp; (b = c)) ..."</span>
+    <span class="string">"return foo;"</span> <span class="variable">rather</span> <span class="variable">than</span> <span class="string">"return(foo);"</span>
+    <span class="string">"if (!foo) ..."</span> <span class="variable">rather</span> <span class="variable">than</span> <span class="string">"if (foo == FALSE) ..."</span> <span class="variable">etc</span><span class="operator">.</span>
+</pre>
+</dd>
+<dt><strong><a name="testsuite" class="item">Testsuite</a></strong></dt>
+
+<dd>
+<p>When submitting a patch you should make every effort to also include an
+addition to perl's regression tests to properly exercise your patch. 
+Your testsuite additions should generally follow these guidelines
+(courtesy of Gurusamy Sarathy &lt;<a href="mailto:gsar@activestate.com">gsar@activestate.com</a>&gt;):</p>
+<pre>
+    <span class="variable">Know</span> <span class="variable">what</span> <span class="variable">you're</span> <span class="variable">testing</span><span class="operator">.</span>  <span class="variable">Read</span> <span class="variable">the</span> <span class="variable">docs</span><span class="operator">,</span> <span class="keyword">and</span> <span class="variable">the</span> <span class="variable">source</span><span class="operator">.</span>
+    <span class="variable">Tend</span> <span class="variable">to</span> <span class="variable">fail</span><span class="operator">,</span> <span class="keyword">not</span> <span class="variable">succeed</span><span class="operator">.</span>
+    <span class="variable">Interpret</span> <span class="variable">results</span> <span class="variable">strictly</span><span class="operator">.</span>
+    <span class="variable">Use</span> <span class="variable">unrelated</span> <span class="variable">features</span> <span class="operator">(</span><span class="variable">this</span> <span class="variable">will</span> <span class="variable">flush</span> <span class="variable">out</span> <span class="variable">bizarre</span> <span class="variable">interactions</span><span class="operator">).</span>
+    <span class="variable">Use</span> <span class="variable">non</span><span class="operator">-</span><span class="variable">standard</span> <span class="variable">idioms</span> <span class="operator">(</span><span class="variable">otherwise</span> <span class="variable">you</span> <span class="variable">are</span> <span class="keyword">not</span> <span class="variable">testing</span> <span class="variable">TIMTOWTDI</span><span class="operator">).</span>
+    <span class="variable">Avoid</span> <span class="variable">using</span> <span class="variable">hardcoded</span> <span class="variable">test</span> <span class="variable">numbers</span> <span class="variable">whenever</span> <span class="variable">possible</span> <span class="operator">(</span><span class="variable">the</span>
+      <span class="variable">EXPECTED</span><span class="operator">/</span><span class="variable">GOT</span> <span class="variable">found</span> <span class="variable">in</span> <span class="variable">t</span><span class="operator">/</span><span class="variable">op</span><span class="operator">/</span><span class="keyword">tie</span><span class="operator">.</span><span class="variable">t</span> <span class="variable">is</span> <span class="variable">much</span> <span class="variable">more</span> <span class="variable">maintainable</span><span class="operator">,</span>
+      <span class="keyword">and</span> <span class="variable">gives</span> <span class="variable">better</span> <span class="variable">failure</span> <span class="variable">reports</span><span class="operator">).</span>
+    <span class="variable">Give</span> <span class="variable">meaningful</span> <span class="variable">error</span> <span class="variable">messages</span> <span class="keyword">when</span> <span class="variable">a</span> <span class="variable">test</span> <span class="variable">fails</span><span class="operator">.</span>
+    <span class="variable">Avoid</span> <span class="variable">using</span> <span class="string">qx//</span> <span class="keyword">and</span> <span class="keyword">system</span><span class="operator">()</span> <span class="keyword">unless</span> <span class="variable">you</span> <span class="variable">are</span> <span class="variable">testing</span> <span class="keyword">for</span> <span class="variable">them</span><span class="operator">.</span>  <span class="variable">If</span> <span class="variable">you</span>
+      <span class="keyword">do</span> <span class="keyword">use</span> <span class="variable">them</span><span class="operator">,</span> <span class="variable">make</span> <span class="variable">sure</span> <span class="variable">that</span> <span class="variable">you</span> <span class="variable">cover</span> <span class="variable">_all_</span> <span class="variable">perl</span> <span class="variable">platforms</span><span class="operator">.</span>
+    <span class="variable">Unlink</span> <span class="variable">any</span> <span class="variable">temporary</span> <span class="variable">files</span> <span class="variable">you</span> <span class="variable">create</span><span class="operator">.</span>
+    <span class="variable">Promote</span> <span class="variable">unforeseen</span> <span class="variable">warnings</span> <span class="variable">to</span> <span class="variable">errors</span> <span class="variable">with</span> <span class="variable">$SIG</span><span class="operator">{</span><span class="string">__WARN__</span><span class="operator">}</span><span class="operator">.</span>
+    <span class="variable">Be</span> <span class="variable">sure</span> <span class="variable">to</span> <span class="keyword">use</span> <span class="variable">the</span> <span class="variable">libraries</span> <span class="keyword">and</span> <span class="variable">modules</span> <span class="variable">shipped</span> <span class="variable">with</span> <span class="variable">the</span> <span class="variable">version</span>
+      <span class="variable">being</span> <span class="variable">tested</span><span class="operator">,</span> <span class="keyword">not</span> <span class="variable">those</span> <span class="variable">that</span> <span class="variable">were</span> <span class="variable">already</span> <span class="variable">installed</span><span class="operator">.</span>
+    <span class="variable">Add</span> <span class="variable">comments</span> <span class="variable">to</span> <span class="variable">the</span> <span class="variable">code</span> <span class="variable">explaining</span> <span class="variable">what</span> <span class="variable">you</span> <span class="variable">are</span> <span class="variable">testing</span> <span class="keyword">for</span><span class="operator">.</span>
+    <span class="variable">Make</span> <span class="variable">updating</span> <span class="variable">the</span> <span class="string">'1..42'</span> <span class="variable">string</span> <span class="variable">unnecessary</span><span class="operator">.</span>  <span class="variable">Or</span> <span class="variable">make</span> <span class="variable">sure</span> <span class="variable">that</span>
+      <span class="variable">you</span> <span class="variable">update</span> <span class="variable">it</span><span class="operator">.</span>
+    <span class="variable">Test</span> <span class="variable">_all_</span> <span class="variable">behaviors</span> <span class="variable">of</span> <span class="variable">a</span> <span class="keyword">given</span> <span class="variable">operator</span><span class="operator">,</span> <span class="variable">library</span><span class="operator">,</span> <span class="keyword">or</span> <span class="variable">function</span><span class="operator">:</span>
+      <span class="operator">-</span> <span class="variable">All</span> <span class="variable">optional</span> <span class="variable">arguments</span>
+      <span class="operator">-</span> <span class="variable">Return</span> <span class="keyword">values</span> <span class="variable">in</span> <span class="variable">various</span> <span class="variable">contexts</span> <span class="operator">(</span><span class="variable">boolean</span><span class="operator">,</span> <span class="keyword">scalar</span><span class="operator">,</span> <span class="variable">list</span><span class="operator">,</span> <span class="variable">lvalue</span><span class="operator">)</span>
+      <span class="operator">-</span> <span class="variable">Use</span> <span class="variable">both</span> <span class="variable">global</span> <span class="keyword">and</span> <span class="variable">lexical</span> <span class="variable">variables</span>
+      <span class="operator">-</span> <span class="variable">Don't</span> <span class="variable">forget</span> <span class="variable">the</span> <span class="variable">exceptional</span><span class="operator">,</span> <span class="variable">pathological</span> <span class="variable">cases</span><span class="operator">.</span>
+</pre>
+</dd>
+</dl>
+<p>
+</p>
+<hr />
+<h1><a name="accepting_a_patch">ACCEPTING A PATCH</a></h1>
+<p>If you have received a patch file generated using the above section,
+you should try out the patch.</p>
+<p>First we need to create a temporary new branch for these changes and
+switch into it:</p>
+<pre>
+  % git checkout -b experimental</pre>
+<p>Patches that were formatted by <code>git format-patch</code> are applied with
+<code>git am</code>:</p>
+<pre>
+  % git am 0001-Rename-Leon-Brocard-to-Orange-Brocard.patch
+  Applying Rename Leon Brocard to Orange Brocard</pre>
+<p>If just a raw diff is provided, it is also possible use this two-step
+process:</p>
+<pre>
+  % git apply bugfix.diff
+  % git commit -a -m &quot;Some fixing&quot; --author=&quot;That Guy &lt;that.guy@internets.com&gt;&quot;</pre>
+<p>Now we can inspect the change:</p>
+<pre>
+  % git show HEAD
+  commit b1b3dab48344cff6de4087efca3dbd63548ab5e2
+  Author: Leon Brocard &lt;acme@astray.com&gt;
+  Date:   Fri Dec 19 17:02:59 2008 +0000</pre>
+<pre>
+    Rename Leon Brocard to Orange Brocard</pre>
+<pre>
+  diff --git a/AUTHORS b/AUTHORS
+  index 293dd70..722c93e 100644
+  --- a/AUTHORS
+  +++ b/AUTHORS
+  @@ -541,7 +541,7 @@ Lars Hecking                        &lt;lhecking@nmrc.ucc.ie&gt;
+   Laszlo Molnar                  &lt;laszlo.molnar@eth.ericsson.se&gt;
+   Leif Huhn                      &lt;leif@hale.dkstat.com&gt;
+   Len Johnson                    &lt;lenjay@ibm.net&gt;
+  -Leon Brocard                   &lt;acme@astray.com&gt;
+  +Orange Brocard                 &lt;acme@astray.com&gt;
+   Les Peters                     &lt;lpeters@aol.net&gt;
+   Lesley Binks                   &lt;lesley.binks@gmail.com&gt;
+   Lincoln D. Stein               &lt;lstein@cshl.org&gt;</pre>
+<p>If you are a committer to Perl and you think the patch is good, you can
+then merge it into blead then push it out to the main repository:</p>
+<pre>
+  % git checkout blead
+  % git merge experimental
+  % git push</pre>
+<p>If you want to delete your temporary branch, you may do so with:</p>
+<pre>
+  % git checkout blead
+  % git branch -d experimental
+  error: The branch 'experimental' is not an ancestor of your current HEAD.
+  If you are sure you want to delete it, run 'git branch -D experimental'.
+  % git branch -D experimental
+  Deleted branch experimental.</pre>
+<p>
+</p>
+<hr />
+<h1><a name="cleaning_a_working_directory">CLEANING A WORKING DIRECTORY</a></h1>
+<p>The command <code>git clean</code> can with varying arguments be used as a
+replacement for <code>make clean</code>.</p>
+<p>To reset your working directory to a pristine condition you can do:</p>
+<pre>
+  git clean -dxf</pre>
+<p>However, be aware this will delete ALL untracked content. You can use</p>
+<pre>
+  git clean -Xf</pre>
+<p>to remove all ignored untracked files, such as build and test
+byproduct, but leave any  manually created files alone.</p>
+<p>If you only want to cancel some uncommitted edits, you can use <code>git
+checkout</code> and give it a list of files to be reverted, or <code>git checkout
+-f</code> to revert them all.</p>
+<p>If you want to cancel one or several commits, you can use <code>git reset</code>.</p>
+<p>
+</p>
+<hr />
+<h1><a name="bisecting">BISECTING</a></h1>
+<p><code>git</code> provides a built-in way to determine, with a binary search in
+the history, which commit should be blamed for introducing a given bug.</p>
+<p>Suppose that we have a script <em class="file">~/testcase.pl</em> that exits with <code>0</code>
+when some behaviour is correct, and with <code>1</code> when it's faulty. We need
+an helper script that automates building <code>perl</code> and running the
+testcase:</p>
+<pre>
+  % cat ~/run
+  #!/bin/sh
+  git clean -dxf
+  # If you can use ccache, add -Dcc=ccache\ gcc -Dld=gcc to the Configure line
+  sh Configure -des -Dusedevel -Doptimize=&quot;-g&quot;
+  test -f config.sh || exit 125
+  # Correct makefile for newer GNU gcc
+  perl -ni -we 'print unless /&lt;(?:built-in|command)/' makefile x2p/makefile
+  # if you just need miniperl, replace test_prep with miniperl
+  make -j4 test_prep
+  -x ./perl || exit 125
+  ./perl -Ilib ~/testcase.pl
+  ret=$?
+  git clean -dxf
+  exit $ret</pre>
+<p>This script may return <code>125</code> to indicate that the corresponding commit
+should be skipped. Otherwise, it returns the status of
+<em class="file">~/testcase.pl</em>.</p>
+<p>We first enter in bisect mode with:</p>
+<pre>
+  % git bisect start</pre>
+<p>For example, if the bug is present on <code>HEAD</code> but wasn't in 5.10.0,
+<code>git</code> will learn about this when you enter:</p>
+<pre>
+  % git bisect bad
+  % git bisect good perl-5.10.0
+  Bisecting: 853 revisions left to test after this</pre>
+<p>This results in checking out the median commit between <code>HEAD</code> and
+<code>perl-5.10.0</code>. We can then run the bisecting process with:</p>
+<pre>
+  % git bisect run ~/run</pre>
+<p>When the first bad commit is isolated, <code>git bisect</code> will tell you so:</p>
+<pre>
+  ca4cfd28534303b82a216cfe83a1c80cbc3b9dc5 is first bad commit
+  commit ca4cfd28534303b82a216cfe83a1c80cbc3b9dc5
+  Author: Dave Mitchell &lt;davem@fdisolutions.com&gt;
+  Date:   Sat Feb 9 14:56:23 2008 +0000</pre>
+<pre>
+      [perl #49472] Attributes + Unknown Error
+      ...</pre>
+<pre>
+  bisect run success</pre>
+<p>You can peek into the bisecting process with <code>git bisect log</code> and
+<code>git bisect visualize</code>. <code>git bisect reset</code> will get you out of bisect
+mode.</p>
+<p>Please note that the first <code>good</code> state must be an ancestor of the
+first <code>bad</code> state. If you want to search for the commit that <em>solved</em>
+some bug, you have to negate your test case (i.e. exit with <code>1</code> if OK
+and <code>0</code> if not) and still mark the lower bound as <code>good</code> and the
+upper as <code>bad</code>. The &quot;first bad commit&quot; has then to be understood as
+the &quot;first commit where the bug is solved&quot;.</p>
+<p><code>git help bisect</code> has much more information on how you can tweak your
+binary searches.</p>
+<p>
+</p>
+<hr />
+<h1><a name="submitting_a_patch_via_github">SUBMITTING A PATCH VIA GITHUB</a></h1>
+<p>GitHub is a website that makes it easy to fork and publish projects
+with Git. First you should set up a GitHub account and log in.</p>
+<p>Perl's git repository is mirrored on GitHub at this page:</p>
+<pre>
+  <a href="http://github.com/github/perl/tree/blead">http://github.com/github/perl/tree/blead</a></pre>
+<p>Visit the page and click the &quot;fork&quot; button. This clones the Perl git
+repository for you and provides you with &quot;Your Clone URL&quot; from which
+you should clone:</p>
+<pre>
+  % git clone git@github.com:USERNAME/perl.git perl-github</pre>
+<p>We shall make the same patch as above, creating a new branch:</p>
+<pre>
+  <span class="operator">% </span><span class="variable">cd</span> <span class="variable">perl</span><span class="operator">-</span><span class="variable">github</span>
+  <span class="operator">% </span><span class="variable">git</span> <span class="variable">remote</span> <span class="variable">add</span> <span class="variable">upstream</span> <span class="variable">git</span><span class="operator">:</span><span class="regex">//github</span><span class="operator">.</span><span class="variable">com</span><span class="operator">/</span><span class="variable">github</span><span class="operator">/</span><span class="variable">perl</span><span class="operator">.</span><span class="variable">git</span>
+  <span class="operator">% </span><span class="variable">git</span> <span class="variable">pull</span> <span class="variable">upstream</span> <span class="variable">blead</span>
+  <span class="operator">% </span><span class="variable">git</span> <span class="variable">checkout</span> <span class="keyword">-b</span> <span class="variable">orange</span>
+  <span class="operator">% </span><span class="variable">perl</span> <span class="operator">-</span><span class="variable">pi</span> <span class="keyword">-e</span> <span class="string">'s{Leon Brocard}{Orange Brocard}'</span> <span class="variable">AUTHORS</span>
+  <span class="operator">% </span><span class="variable">git</span> <span class="variable">commit</span> <span class="operator">-</span><span class="variable">a</span> <span class="operator">-</span><span class="regex">m 'Rename Leon Brocard to Orange Brocard'</span>
+  <span class="operator">% </span><span class="variable">git</span> <span class="keyword">push</span> <span class="variable">origin</span> <span class="variable">orange</span>
+</pre>
+<p>The orange branch has been pushed to GitHub, so you should now send an
+email to <a href="mailto:perl5-porters@perl.org">perl5-porters@perl.org</a> with a description of your changes and
+the following information:</p>
+<pre>
+  <a href="http://github.com/USERNAME/perl/tree/orange">http://github.com/USERNAME/perl/tree/orange</a>
+  git@github.com:USERNAME/perl.git branch orange</pre>
+<p>
+</p>
+<hr />
+<h1><a name="merging_from_a_branch_via_github">MERGING FROM A BRANCH VIA GITHUB</a></h1>
+<p>If someone has provided a branch via GitHub and you are a committer,
+you should use the following in your perl-ssh directory:</p>
+<pre>
+  % git remote add dandv git://github.com/dandv/perl.git
+  % git fetch</pre>
+<p>Now you can see the differences between the branch and blead:</p>
+<pre>
+  % git diff dandv/blead</pre>
+<p>And you can see the commits:</p>
+<pre>
+  % git log dandv/blead</pre>
+<p>If you approve of a specific commit, you can cherry pick it:</p>
+<pre>
+  % git cherry-pick 3adac458cb1c1d41af47fc66e67b49c8dec2323f</pre>
+<p>Or you could just merge the whole branch if you like it all:</p>
+<pre>
+  % git merge dandv/blead</pre>
+<p>And then push back to the repository:</p>
+<pre>
+  % git push</pre>
+<p>
+</p>
+<hr />
+<h1><a name="committing_to_maintenance_versions">COMMITTING TO MAINTENANCE VERSIONS</a></h1>
+<p>Maintenance versions should only be altered to add critical bug fixes.</p>
+<p>To commit to a maintenance version of perl, you need to create a local
+tracking branch:</p>
+<pre>
+  % git checkout --track -b maint-5.005 origin/maint-5.005</pre>
+<p>This creates a local branch named <code>maint-5.005</code>, which tracks the
+remote branch <code>origin/maint-5.005</code>. Then you can pull, commit, merge
+and push as before.</p>
+<p>You can also cherry-pick commits from blead and another branch, by
+using the <code>git cherry-pick</code> command. It is recommended to use the
+<strong>-x</strong> option to <code>git cherry-pick</code> in order to record the SHA1 of the
+original commit in the new commit message.</p>
+<p>
+</p>
+<hr />
+<h1><a name="see_also">SEE ALSO</a></h1>
+<p>The git documentation, accessible via <code>git help command</code>.</p>
+
+</body>
+
+</html>

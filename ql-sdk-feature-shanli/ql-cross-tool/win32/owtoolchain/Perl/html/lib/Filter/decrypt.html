@@ -1,0 +1,132 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../displayToc.js"></script>
+<script language="JavaScript" src="../../tocParas.js"></script>
+<script language="JavaScript" src="../../tocTab.js"></script>
+<link rel="stylesheet" type="text/css" href="../../scineplex.css">
+<title>Filter::decrypt - template for a decrypt source filter</title>
+<link rel="stylesheet" href="../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<script>writelinks('__top__',2);</script>
+<h1><a>Filter::decrypt - template for a decrypt source filter</a></h1>
+<p><a name="__index__"></a></p>
+
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#warning">WARNING</a></li>
+	<li><a href="#author">AUTHOR</a></li>
+	<li><a href="#date">DATE</a></li>
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>Filter::decrypt - template for a decrypt source filter</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<pre>
+    <span class="keyword">use</span> <span class="variable">Filter::decrypt</span> <span class="operator">;</span>
+</pre>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>This is a sample decrypting source filter.</p>
+<p>Although this is a fully functional source filter and it does implement
+a <em>very</em> simple decrypt algorithm, it is <em>not</em> intended to be used as
+it is supplied. Consider it to be a template which you can combine with
+a proper decryption algorithm to develop your own decryption filter.</p>
+<p>
+</p>
+<hr />
+<h1><a name="warning">WARNING</a></h1>
+<p>It is important to note that a decryption filter can <em>never</em> provide
+complete security against attack. At some point the parser within Perl
+needs to be able to scan the original decrypted source. That means that
+at some stage fragments of the source will exist in a memory buffer.</p>
+<p>Also, with the introduction of the Perl Compiler backend modules, and
+the B::Deparse module in particular, using a Source Filter to hide source
+code is becoming an increasingly futile exercise.</p>
+<p>The best you can hope to achieve by decrypting your Perl source using a
+source filter is to make it unavailable to the casual user.</p>
+<p>Given that proviso, there are a number of things you can do to make
+life more difficult for the prospective cracker.</p>
+<ol>
+<li>
+<p>Strip the Perl binary to remove all symbols.</p>
+</li>
+<li>
+<p>Build the decrypt extension using static linking. If the extension is
+provided as a dynamic module, there is nothing to stop someone from
+linking it at run time with a modified Perl binary.</p>
+</li>
+<li>
+<p>Do not build Perl with <code>-DDEBUGGING</code>. If you do then your source can
+be retrieved with the <code>-Dp</code> command line option.</p>
+<p>The sample filter contains logic to detect the <code>DEBUGGING</code> option.</p>
+</li>
+<li>
+<p>Do not build Perl with C debugging support enabled.</p>
+</li>
+<li>
+<p>Do not implement the decryption filter as a sub-process (like the cpp
+source filter). It is possible to peek into the pipe that connects to
+the sub-process.</p>
+</li>
+<li>
+<p>Check that the Perl Compiler isn't being used.</p>
+<p>There is code in the BOOT: section of decrypt.xs that shows how to detect
+the presence of the Compiler. Make sure you include it in your module.</p>
+<p>Assuming you haven't taken any steps to spot when the compiler is in
+use and you have an encrypted Perl script called &quot;myscript.pl&quot;, you can
+get access the source code inside it using the perl Compiler backend,
+like this</p>
+<pre>
+    perl -MO=Deparse myscript.pl</pre>
+<p>Note that even if you have included the BOOT: test, it is still
+possible to use the Deparse module to get the source code for individual
+subroutines.</p>
+</li>
+<li>
+<p>Do not use the decrypt filter as-is. The algorithm used in this filter
+has been purposefully left simple.</p>
+</li>
+</ol>
+<p>If you feel that the source filtering mechanism is not secure enough
+you could try using the unexec/undump method. See the Perl FAQ for
+further details.</p>
+<p>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p>Paul Marquess</p>
+<p>
+</p>
+<hr />
+<h1><a name="date">DATE</a></h1>
+<p>19th December 1995</p>
+
+</body>
+
+</html>

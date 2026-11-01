@@ -1,0 +1,55 @@
+# ================================================================
+# QL-SDK .gitignore
+# ================================================================
+
+# ------ App 层编译产物 ------
+ql-application/threadx/build/
+ql-application/threadx/target/
+ql-application/threadx/interface/*/build/
+ql-application/threadx/interface/log/src/build/
+
+# ------ Kernel 层编译产物 (仅 Windows 编译时生成) ------
+ql-kernel/threadx/build/
+ql-kernel/threadx/alipay/build/
+ql-kernel/threadx/api_map/build/
+ql-kernel/threadx/audio/build/
+ql-kernel/threadx/camera/build/
+ql-kernel/threadx/hal/*/build/
+ql-kernel/threadx/init/build/
+ql-kernel/threadx/lcd/build/
+ql-kernel/threadx/pmic/build/
+ql-kernel/threadx/quec/build/
+ql-kernel/threadx/quec_mbedtls/build/
+
+# ------ 固件输出目录 ------
+target/
+
+# ------ 交叉编译工具链 (首次 make 时从 .tar.bz2 自动解压) ------
+ql-cross-tool/Linux/gcc-arm-none-eabi-9-2019-q4-major/
+# Windows 工具链也很大，但因为是 .zip 未解压状态可以保留
+# 如果不需要 Windows 编译支持，可取消下面的注释来忽略:
+# ql-cross-tool/win32/owtoolchain/
+
+# ------ 通用编译中间文件 ------
+*.o
+*.d
+*.elf
+*.map
+*.bin
+!ql-kernel/threadx/common/lib/*.o
+!ql-config/quec-project/aboot/images/*.bin
+!ql-config/quec-project/aboot/images/*.elf
+!ql-config/quec-project/aboot/images/*.map
+!ql-config/soc_platform/**/*.bin
+!ql-config/config/**/*.bin
+!ql-bootloader/**/*.bin
+!ql-cross-tool/**
+
+# ------ OS / 编辑器 ------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/

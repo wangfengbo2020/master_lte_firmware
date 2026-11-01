@@ -1,0 +1,34 @@
+LOAD 0x7E026000										;0x7E026000 - 0x7E0E0000, size: 760K
+{
+    INIT 0x7E026000 0x02000							;8K
+    {
+		version_logo.o (IMGLOGO,+First)					; store logo.bin version. Note: place in header of logo.bin to avoid deprecating by load to psram.
+        OBM_StartUp.o (ImageHeader)         			; Startup code
+    }
+
+    CODE  +0  0x10000  								;0x7E042000 - 0x7E0B0000   size:  7*64k - 8k = 440k
+    {
+        * (+RO)                             		; Application code, including C library
+    }
+
+    ITCM 0 0x10000										; Second Exec region is ITCM; size:64K
+    {
+		LzmaDec.o (+RO)									; LzmaDec code on ITCM
+		main.o (+RO)									; main.o place in ITCM
+		FreqChange.o (PSRAM_FC)
+    }
+	
+	DDR_NONCACHE 0xB0028000 0x00004000					;@DTCM[32K, 48K], Note: @DTCM[0, 32K] store patble info; DTCM is non-cache region
+	{
+		spi_nor.o (SPI_NONCACHE_SECTION)
+	}
+	
+    DATA  0x7E038000	0xA8000            			;0x7E076000 - 0x7E0E0000 	size:  424K
+    {
+        * (+RW,+ZI)                         		; All RW and ZI Data
+    }
+	
+	IMG_END 0x7E0E0000 EMPTY 0x04{}
+}
+
+

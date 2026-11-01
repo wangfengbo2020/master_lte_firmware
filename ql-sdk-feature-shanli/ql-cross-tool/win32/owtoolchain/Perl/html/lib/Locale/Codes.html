@@ -1,0 +1,567 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../displayToc.js"></script>
+<script language="JavaScript" src="../../tocParas.js"></script>
+<script language="JavaScript" src="../../tocTab.js"></script>
+<link rel="stylesheet" type="text/css" href="../../scineplex.css">
+<title>Locale::Codes - a distribution of modules to handle locale codes</title>
+<link rel="stylesheet" href="../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<script>writelinks('__top__',2);</script>
+<h1><a>Locale::Codes - a distribution of modules to handle locale codes</a></h1>
+<p><a name="__index__"></a></p>
+
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#new_code_sets">NEW CODE SETS</a></li>
+	<li><a href="#common_aliases">COMMON ALIASES</a></li>
+	<li><a href="#routines">ROUTINES</a></li>
+	<li><a href="#semi_private_routines">SEMI-PRIVATE ROUTINES</a></li>
+	<li><a href="#known_bugs_and_limitations">KNOWN BUGS AND LIMITATIONS</a></li>
+	<li><a href="#see_also">SEE ALSO</a></li>
+	<li><a href="#author">AUTHOR</a></li>
+	<li><a href="#copyright">COPYRIGHT</a></li>
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+</p>
+<hr />
+<h1><a name="name">NAME</a></h1>
+<p>Locale::Codes - a distribution of modules to handle locale codes</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p><strong>Locale::Codes</strong> is a distribution containing a set of modules.  The
+modules each deal with different types of codes which identify parts
+of the locale including languages, countries, currency, etc.</p>
+<p>Currently, the following modules are included:</p>
+<dl>
+<dt><strong><a name="locale_country" class="item"><strong>Locale::Country</strong></a></strong></dt>
+
+<dd>
+<p>This includes support for country codes (such as those listed in ISO-3166)
+to specify the country.</p>
+</dd>
+<dt><strong><a name="locale_language" class="item"><strong>Locale::Language</strong></a></strong></dt>
+
+<dd>
+<p>This includes support for language codes (such as those listed in ISO-639)
+to specify the language.</p>
+</dd>
+<dt><strong><a name="locale_currency" class="item"><strong>Locale::Currency</strong></a></strong></dt>
+
+<dd>
+<p>This includes support for currency codes (such as those listed in ISO-4217)
+to specify the currency.</p>
+</dd>
+<dt><strong><a name="locale_script" class="item"><strong>Locale::Script</strong></a></strong></dt>
+
+<dd>
+<p>This includes support for script codes (such as those listed in ISO-15924)
+to specify the script.</p>
+</dd>
+</dl>
+<p>Each module can support an arbitrary number of code sets, and it it
+not required that the relationship between these code sets be
+one-to-one.  For example, the Locale::Country module supports code
+sets from ISO-3166 and the FIPS 10 standard, and they do not break the
+world down into exactly the same sets of countries. This does not
+cause any problem (though converting codes from ISO-3166 to FIPS or
+back will not work except for countries that are one-to-one).</p>
+<p>All data in all of these modules comes directly from the original
+standards (or as close to direct as possible), so it should be
+up-to-date at the time of release.</p>
+<p>I plan on releasing a new version a couple of times a year to
+incorporate any changes made in the standards. However, I don't always
+know about changes that occur, so if any of the standards change, and
+you want a new release sooner, just email me and I'll get one out.</p>
+<p>
+</p>
+<hr />
+<h1><a name="new_code_sets">NEW CODE SETS</a></h1>
+<p>I'm always open to suggestions for new code sets.</p>
+<p>In order for me to add a code set, I want the following criteria
+to be met:</p>
+<dl>
+<dt><strong><a name="general_use_code_set" class="item"><strong>General-use code set</strong></a></strong></dt>
+
+<dd>
+<p>If a code set is not general use, I'm not likely to spend the time
+to add and support it.</p>
+</dd>
+<dt><strong><a name="an_official_source_of_data" class="item"><strong>An official source of data</strong></a></strong></dt>
+
+<dd>
+<p>I require an official (or at least, a NEARLY official) source where I
+can get the data on a regular basis.</p>
+<p>Ideally, I'd only get data from an official source, but sometimes that
+is not possible. For example the ISO standards are not typically
+available for free, so I may have to get some of that data from
+alternate sources that I'm confident are getting their data from the
+official source.</p>
+<p>As an example, I get some country data from the CIA World
+Factbook. Given the nature of the source, I'm sure they're updating
+data from the official sources and I consider it &quot;nearly&quot; official.</p>
+<p>There are many 3rd party sites which maintain lists (many of which are
+actually in a more convenient form than the official sites).
+Unfortunately, I will reject most of them since I have no feel for how
+&quot;official&quot; they are.</p>
+</dd>
+<dt><strong><a name="a_free_source_of_the_data" class="item"><strong>A free source of the data</strong></a></strong></dt>
+
+<dd>
+<p>Obviously, the data must be free-of-charge. I'm not interested in
+paying for the data (and I'm not interested in the overhead of having
+someone else pay for the data for me).</p>
+</dd>
+<dt><strong><a name="a_reliable_source_of_data" class="item"><strong>A reliable source of data</strong></a></strong></dt>
+
+<dd>
+<p>The source of data must come from a source that I can reasonably expect
+to exist for the foreseeable future since I will be extremely reluctant
+to drop support for a data set once it's included.</p>
+<p>I am also reluctant to accept data sent to me by an individual.
+Although I appreciate the offer, it is simply not practical to consider
+an individual contribution as a reliable source of data. The source
+should be an official agency of some sort.</p>
+</dd>
+</dl>
+<p>These requirements are open to discussion. If you have a code set
+you'd like to see added, but which may not meet all of the above
+requirements, feel free to email me and we'll discuss it.  Depending
+on circumstances, I may be willing to waive some of these criteria.</p>
+<p>
+</p>
+<hr />
+<h1><a name="common_aliases">COMMON ALIASES</a></h1>
+<p>As of version 2.00, the modules supported common variants of names.</p>
+<p>For example, Locale::Country supports variant names for countries, and
+a few of the most common ones are included in the data. The country
+code for &quot;United States&quot; is &quot;us&quot;, so:</p>
+<pre>
+   <span class="variable">country2code</span><span class="operator">(</span><span class="string">'United States'</span><span class="operator">);</span>
+      <span class="operator">=&gt;</span> <span class="string">"us"</span>
+</pre>
+<p>Now the following will also return 'us':</p>
+<pre>
+   <span class="variable">country2code</span><span class="operator">(</span><span class="string">'United States of America'</span><span class="operator">);</span>
+   <span class="variable">country2code</span><span class="operator">(</span><span class="string">'USA'</span><span class="operator">);</span>
+</pre>
+<p>Any number of common aliases may be included in the data, in addition
+to the names that come directly from the standards.  If you have a
+common alias for a country, language, or any other of the types of
+codes, let me know and I'll add it, with some restrictions.</p>
+<p>For example, the country name &quot;North Korea&quot; never appeared in any of
+the official sources (instead, it was &quot;Korea, North&quot; or &quot;Korea,
+Democratic People's Republic of&quot;. I would honor a request to add an
+alias &quot;North Korea&quot; since that's a very common way to specify the
+country (please don't request this... I've already added it).</p>
+<p>On the other hand, a request to add Zaire as an alias for &quot;Congo, The
+Democratic Republic of&quot; may not be honored. The country's official
+name is not Zaire, so adding it as an alias violates the standard.
+Zaire was kept as an alias in versions prior to 3.00, but it has been
+removed. Other aliases (if any) which no longer appear in any standard
+have also been removed.</p>
+<p>
+</p>
+<hr />
+<h1><a name="routines">ROUTINES</a></h1>
+<p>As of 3.10, the interface for all of the modules listed above are
+identical (as a matter of fact, they are all just wrappers around a
+central module which does all the real work).</p>
+<p>In order to maintain the documentation for the modules consistently,
+the functions are all documented here, rather than in the documentation
+for the separate modules.</p>
+<p>The name of the function depends on the module. For example, every module
+contains a function &quot;code2XXX&quot; where XXX refers to the type of data
+(country, language, currency, or script). So, the Locale::Country module
+contains the function code2country, the Locale::Language module contains
+the function code2language, etc.</p>
+<p>In all of the functions below, CODE refers to a code for one element in
+the code set. For example, in the two-letter country codes from ISO 3166-1,
+the code 'fi' is used to refer to the country Finland. CODE is always
+case insensitive (though when a code is returned, it will always be in
+the case as used in the standard), so 'fi', 'FI', and 'Fi' would all
+be equivalent.</p>
+<p>CODESET refers to a constant specified in the documentation for each
+module to label the various code sets. For example, in the
+Locale::Language module, CODESET could be LOCALE_CODE_ALPHA_2 or
+LOCALE_CODE_ALPHA_3 (among others). Most functions have a default one,
+so they do not need to be specified. So the following calls are valid:</p>
+<pre>
+   <span class="variable">code2country</span><span class="operator">(</span><span class="string">"fi"</span><span class="operator">);</span>
+   <span class="variable">code2country</span><span class="operator">(</span><span class="string">"fi"</span><span class="operator">,</span><span class="variable">LOCALE_CODE_ALPHA_2</span><span class="operator">);</span>
+   <span class="variable">code2country</span><span class="operator">(</span><span class="string">"fin"</span><span class="operator">,</span><span class="variable">LOCALE_CODE_ALPHA_3</span><span class="operator">);</span>
+</pre>
+<p>Since LOCALE_CODE_ALPHA_2 is the default code set, the first two are
+identical.</p>
+<dl>
+<dt><strong><a name="code2country" class="item"><strong>code2country ( CODE [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="code2language" class="item"><strong>code2language( CODE [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="code2currency" class="item"><strong>code2currency( CODE [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="code2script" class="item"><strong>code2script  ( CODE [,CODESET] )</strong></a></strong></dt>
+
+<dd>
+<p>These functions take a code and returns a string which contains
+the name of the element identified.  If the code is not a valid
+code in the CODESET specified then <a href="../../lib/pods/perlfunc.html#undef"><code>undef</code></a> will be returned.</p>
+<p>The name of the element is the name as specified in the standard,
+and as a result, different variations of an element name may
+be returned for different values of CODESET.</p>
+<p>For example, the <strong>alpha-2</strong> country code set defines the two-letter
+code &quot;bo&quot; to be &quot;Bolivia, Plurinational State of&quot;, whereas the
+<strong>alpha-3</strong> code set defines the code 'bol' to be the country &quot;Bolivia
+(Plurinational State of)&quot;. So:</p>
+<pre>
+   <span class="variable">code2country</span><span class="operator">(</span><span class="string">'bo'</span><span class="operator">,</span><span class="variable">LOCALE_CODE_ALPHA_2</span><span class="operator">);</span>
+      <span class="operator">=&gt;</span> <span class="string">'Bolivia, Plurinational State of'</span>
+</pre>
+<pre>
+   <span class="variable">code2country</span><span class="operator">(</span><span class="string">'bol'</span><span class="operator">,</span><span class="variable">LOCALE_CODE_ALPHA_3</span><span class="operator">);</span>
+      <span class="operator">=&gt;</span> <span class="string">'Bolivia (Plurinational State of)'</span>
+</pre>
+</dd>
+<dt><strong><a name="country2code" class="item"><strong>country2code ( NAME [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="language2code" class="item"><strong>language2code( NAME [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="currency2code" class="item"><strong>currency2code( NAME [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="script2code" class="item"><strong>script2code  ( NAME [,CODESET] )</strong></a></strong></dt>
+
+<dd>
+<p>These functions takes the name of an element (or any of it's aliases)
+and returns the code that corresponds to it, if it exists. If NAME
+could not be identified as the name of one of the elements, then
+<a href="../../lib/pods/perlfunc.html#undef"><code>undef</code></a> will be returned.</p>
+<p>The name is not case sensitive. Also, any known variation of a name
+may be passed in.</p>
+<p>For example, even though the country name returned using
+LOCALE_CODE_ALPHA_2 and LOCALE_CODE_ALPHA_3 country codes for Bolivia is different,
+either country name may be passed in since for each code set, in addition to
+the alias 'Bolivia'. So:</p>
+<pre>
+   <span class="variable">country2code</span><span class="operator">(</span><span class="string">'Bolivia, Plurinational State of'</span><span class="operator">,</span>
+                <span class="variable">LOCALE_CODE_ALPHA_2</span><span class="operator">);</span>
+      <span class="operator">=&gt;</span> <span class="variable">bo</span>
+</pre>
+<pre>
+   <span class="variable">country2code</span><span class="operator">(</span><span class="string">'Bolivia (Plurinational State of)'</span><span class="operator">,</span>
+                <span class="variable">LOCALE_CODE_ALPHA_2</span><span class="operator">);</span>
+      <span class="operator">=&gt;</span> <span class="variable">bo</span>
+</pre>
+<pre>
+   <span class="variable">country2code</span><span class="operator">(</span><span class="string">'Bolivia'</span><span class="operator">,</span><span class="variable">LOCALE_CODE_ALPHA_2</span><span class="operator">);</span>
+      <span class="operator">=&gt;</span> <span class="variable">bo</span>
+</pre>
+</dd>
+<dt><strong><a name="country_code2code" class="item"><strong>country_code2code ( CODE ,CODESET ,CODESET2 )</strong></a></strong></dt>
+
+<dt><strong><a name="language_code2code" class="item"><strong>language_code2code( CODE ,CODESET ,CODESET2 )</strong></a></strong></dt>
+
+<dt><strong><a name="currency_code2code" class="item"><strong>currency_code2code( CODE ,CODESET ,CODESET2 )</strong></a></strong></dt>
+
+<dt><strong><a name="script_code2code" class="item"><strong>script_code2code  ( CODE ,CODESET ,CODESET2 )</strong></a></strong></dt>
+
+<dd>
+<p>These functions takes a a code from one code set, and returns the
+corresponding code from another code set. CODE must exists in the code
+set specified by CODESET and must have a corresponding code in the
+code set specified by CODESET2 or <a href="../../lib/pods/perlfunc.html#undef"><code>undef</code></a> will be returned.</p>
+<p>Both CODESETs must be explicitly entered.</p>
+<pre>
+   <span class="variable">country_code2code</span><span class="operator">(</span><span class="string">'fin'</span><span class="operator">,</span> <span class="variable">LOCALE_CODE_ALPHA_3</span><span class="operator">,</span>
+                     <span class="variable">LOCALE_CODE_ALPHA_2</span><span class="operator">);</span>
+      <span class="operator">=&gt;</span> <span class="string">'fi'</span>
+</pre>
+</dd>
+<dt><strong><a name="all_country_codes" class="item"><strong>all_country_codes ( [CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="all_language_codes" class="item"><strong>all_language_codes( [CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="all_currency_codes" class="item"><strong>all_currency_codes( [CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="all_script_codes" class="item"><strong>all_script_codes  ( [CODESET] )</strong></a></strong></dt>
+
+<dd>
+<p>These returns a list of all code in the code set. The codes will be
+sorted.</p>
+</dd>
+<dt><strong><a name="all_country_names" class="item"><strong>all_country_names ( [CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="all_language_names" class="item"><strong>all_language_names( [CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="all_currency_names" class="item"><strong>all_currency_names( [CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="all_script_names" class="item"><strong>all_script_names  ( [CODESET] )</strong></a></strong></dt>
+
+<dd>
+<p>These return a list of all elements names for which there is a
+corresponding code in the specified code set.</p>
+<p>The names returned are exactly as they are specified in the standard,
+and are sorted.</p>
+<p>Since not all elements are listed in all code sets, the list of
+elements may differ depending on the code set specified.</p>
+</dd>
+</dl>
+<p>
+</p>
+<hr />
+<h1><a name="semi_private_routines">SEMI-PRIVATE ROUTINES</a></h1>
+<p>Additional semi-private routines which may be used to modify the
+internal data are also available.  Given their status, they aren't
+exported, and so need to be called by prefixing the function name with
+the package name.</p>
+<dl>
+<dt><strong><a name="rename_country" class="item"><strong>Locale::Country::rename_country  ( CODE ,NEW_NAME [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="rename_language" class="item"><strong>Locale::Language::rename_language( CODE ,NEW_NAME [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="rename_currency" class="item"><strong>Locale::Currency::rename_currency( CODE ,NEW_NAME [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="rename_script" class="item"><strong>Locale::Script::rename_script    ( CODE ,NEW_NAME [,CODESET] )</strong></a></strong></dt>
+
+<dd>
+<p>These routines are used to change the official name of an element. At
+that point, the name returned by the code2XXX routine would be
+NEW_NAME instead of the name specified in the standard.</p>
+<p>The original name will remain as an alias.</p>
+<p>For example, the official country name for code 'gb' is 'United
+Kingdom'.  If you want to change that, you might call:</p>
+<pre>
+   <span class="variable">Locale::Country::rename_country</span><span class="operator">(</span><span class="string">'gb'</span><span class="operator">,</span> <span class="string">'Great Britain'</span><span class="operator">);</span>
+</pre>
+<p>This means that calling code2country('gb') will now return 'Great
+Britain' instead of 'United Kingdom'.</p>
+<p>If any error occurs, a warning is issued and 0 is returned. An error
+occurs if CODE doesn't exist in the specified code set, or if
+NEW_NAME is already in use but for a different element.</p>
+<p>If the routine succeeds, 1 is returned.</p>
+</dd>
+<dt><strong><a name="add_country" class="item"><strong>Locale::Country::add_country  ( CODE ,NAME [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="add_language" class="item"><strong>Locale::Language::add_language( CODE ,NAME [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="add_currency" class="item"><strong>Locale::Currency::add_currency( CODE ,NAME [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="add_script" class="item"><strong>Locale::Script::add_script    ( CODE ,NAME [,CODESET] )</strong></a></strong></dt>
+
+<dd>
+<p>These routines are used to add a new code and name to the data.</p>
+<p>Both CODE and NAME must be unused in the data set or an error
+occurs (though NAME may be used in a different data set).</p>
+<p>For example, to create the fictitious country named &quot;Duchy of
+Grand Fenwick&quot; with codes &quot;gf&quot; and &quot;fen&quot;, use the following:</p>
+<pre>
+   <span class="variable">Locale::Country::add_country</span><span class="operator">(</span><span class="string">"fe"</span><span class="operator">,</span><span class="string">"Duchy of Grand Fenwick"</span><span class="operator">,</span>
+                                <span class="variable">LOCALE_CODE_ALPHA_2</span><span class="operator">);</span>
+</pre>
+<pre>
+   <span class="variable">Locale::Country::add_country</span><span class="operator">(</span><span class="string">"fen"</span><span class="operator">,</span><span class="string">"Duchy of Grand Fenwick"</span><span class="operator">,</span>
+                                <span class="variable">LOCALE_CODE_ALPHA_3</span><span class="operator">);</span>
+</pre>
+<p>The return value is 1 on success, 0 on an error.</p>
+</dd>
+<dt><strong><a name="delete_country" class="item"><strong>Locale::Country::delete_country  ( CODE [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="delete_language" class="item"><strong>Locale::Language::delete_language( CODE [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="delete_currency" class="item"><strong>Locale::Currency::delete_currency( CODE [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="delete_script" class="item"><strong>Locale::Script::delete_script    ( CODE [,CODESET] )</strong></a></strong></dt>
+
+<dd>
+<p>These routines are used to delete a code from the data.</p>
+<p>CODE must refer to an existing code in the code set.</p>
+<p>The return value is 1 on success, 0 on an error.</p>
+</dd>
+<dt><strong><a name="add_country_alias" class="item"><strong>Locale::Country::add_country_alias  ( NAME ,NEW_NAME )</strong></a></strong></dt>
+
+<dt><strong><a name="add_language_alias" class="item"><strong>Locale::Language::add_language_alias( NAME ,NEW_NAME )</strong></a></strong></dt>
+
+<dt><strong><a name="add_currency_alias" class="item"><strong>Locale::Currency::add_currency_alias( NAME ,NEW_NAME )</strong></a></strong></dt>
+
+<dt><strong><a name="add_script_alias" class="item"><strong>Locale::Script::add_script_alias    ( NAME ,NEW_NAME )</strong></a></strong></dt>
+
+<dd>
+<p>These routines are used to add a new alias to the data. They do
+not alter the return value of the code2XXX function.</p>
+<p>NAME must be an existing element name, and NEW_NAME must
+be unused or an error occurs.</p>
+<p>The return value is 1 on success, 0 on an error.</p>
+</dd>
+<dt><strong><a name="delete_country_alias" class="item"><strong>Locale::Country::delete_country_alias  ( NAME )</strong></a></strong></dt>
+
+<dt><strong><a name="delete_language_alias" class="item"><strong>Locale::Language::delete_language_alias( NAME )</strong></a></strong></dt>
+
+<dt><strong><a name="delete_currency_alias" class="item"><strong>Locale::Currency::delete_currency_alias( NAME )</strong></a></strong></dt>
+
+<dt><strong><a name="delete_script_alias" class="item"><strong>Locale::Script::delete_script_alias    ( NAME )</strong></a></strong></dt>
+
+<dd>
+<p>These routines are used to delete an alias from the data. Once
+removed, the element may not be referred to by NAME.</p>
+<p>NAME must be one of a list of at least two names that may be used to
+specify an element. If the element may only be referred to by a single
+name, you'll need to use the add_XXX_alias function to add a new alias
+first, or the remove_XXX function to remove the element entirely.</p>
+<p>If the alias is used as the name in any code set, one of the other
+names will be used instead. Predicting exactly which one will
+be used requires you to know the order in which the standards
+were read, which is not reliable, so you may want to use the
+rename_XXX function to force one of the alternate names to be
+used.</p>
+<p>The return value is 1 on success, 0 on an error.</p>
+</dd>
+<dt><strong><a name="rename_country_code" class="item"><strong>Locale::Country::rename_country_code  ( CODE ,NEW_CODE [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="rename_language_code" class="item"><strong>Locale::Language::rename_language_code( CODE ,NEW_CODE [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="rename_currency_code" class="item"><strong>Locale::Currency::rename_currency_code( CODE ,NEW_CODE [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="rename_script_code" class="item"><strong>Locale::Script::rename_script_code    ( CODE ,NEW_CODE [,CODESET] )</strong></a></strong></dt>
+
+<dd>
+<p>These routines are used to change the official code for an element. At
+that point, the code returned by the XXX2code routine would be
+NEW_CODE instead of the code specified in the standard.</p>
+<p>NEW_CODE may either be a code that is not in use, or it may be an
+alias for CODE (in which case, CODE becomes and alias and NEW_CODE
+becomes the &quot;real&quot; code).</p>
+<p>The original code is kept as an alias, so that the code2XXX routines
+will work with either the code from the standard or the new code.</p>
+<p>However, the all_XXX_codes routine will only return the codes which
+are considered &quot;real&quot; (which means that the list of codes will now
+contain NEW_CODE, but will not contain CODE).</p>
+</dd>
+<dt><strong><a name="add_country_code_alias" class="item"><strong>Locale::Country::add_country_code_alias  ( CODE ,NEW_CODE [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="add_language_code_alias" class="item"><strong>Locale::Language::add_language_code_alias( CODE ,NEW_CODE [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="add_currency_code_alias" class="item"><strong>Locale::Currency::add_currency_code_alias( CODE ,NEW_CODE [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="add_script_code_alias" class="item"><strong>Locale::Script::add_script_code_alias    ( CODE ,NEW_CODE [,CODESET] )</strong></a></strong></dt>
+
+<dd>
+<p>These routines add an alias for the code. At that point, NEW_CODE and CODE
+will both work in the code2XXX routines. However, the XXX2code routines will
+still return the original code.</p>
+</dd>
+<dt><strong><a name="delete_country_code_alias" class="item"><strong>Locale::Country::delete_country_code_alias  ( CODE [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="delete_language_code_alias" class="item"><strong>Locale::Language::delete_language_code_alias( CODE [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="delete_currency_code_alias" class="item"><strong>Locale::Currency::delete_currency_code_alias( CODE [,CODESET] )</strong></a></strong></dt>
+
+<dt><strong><a name="delete_script_code_alias" class="item"><strong>Locale::Script::delete_script_code_alias    ( CODE [,CODESET] )</strong></a></strong></dt>
+
+<dd>
+<p>These routines delete an alias for the code.</p>
+<p>These will only work if CODE is actually an alias. If it is the &quot;real&quot;
+code, it will not be deleted. You will need to use the rename_XXX_code
+function to switch the real code with one of the aliases, and then
+delete the alias.</p>
+</dd>
+</dl>
+<p>
+</p>
+<hr />
+<h1><a name="known_bugs_and_limitations">KNOWN BUGS AND LIMITATIONS</a></h1>
+<ul>
+<li>
+<p>Because each code set uses a slightly different list of elements, and
+they are not necessarily one-to-one, there may be some confusion
+about the relationship between codes from different code sets.</p>
+<p>For example, ISO 3166 assigns one code to the country &quot;United States
+Minor Outlying Islands&quot;, but the FIPS 10 codes give different codes
+to different islands (Baker Island, Howland Island, etc.).</p>
+<p>This may cause some confusion... I've done the best that I could do
+to minimize it.</p>
+</li>
+<li>
+<p>Currently all names must be all ASCII. I plan on relaxing that
+limitation in the future.</p>
+</li>
+</ul>
+<p>
+</p>
+<hr />
+<h1><a name="see_also">SEE ALSO</a></h1>
+<dl>
+<dt><strong><a name="locale_constants" class="item"><strong>Locale::Constants</strong></a></strong></dt>
+
+<dd>
+<p>Constants for Locale codes.</p>
+</dd>
+<dt><strong><a name="locale_country2" class="item"><strong>Locale::Country</strong></a></strong></dt>
+
+<dd>
+<p>Codes for identification of countries.</p>
+</dd>
+<dt><strong><a name="locale_language2" class="item"><strong>Locale::Language</strong></a></strong></dt>
+
+<dd>
+<p>Codes for identification of languages.</p>
+</dd>
+<dt><strong><a name="locale_script2" class="item"><strong>Locale::Script</strong></a></strong></dt>
+
+<dd>
+<p>Codes for identification of scripts.</p>
+</dd>
+<dt><strong><a name="locale_currency2" class="item"><strong>Locale::Currency</strong></a></strong></dt>
+
+<dd>
+<p>Codes for identification of currencies and funds.</p>
+</dd>
+</dl>
+<p>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p>Locale::Country and Locale::Language were originally written by Neil
+Bowers at the Canon Research Centre Europe (CRE). They maintained the
+distribution from 1997 to 2001.</p>
+<p>Locale::Currency was originally written by Michael Hennecke.</p>
+<p>From 2001 to 2004, maintenance was continued by Neil Bowers.  He
+modified Locale::Currency for inclusion in the distribution. He also
+added Locale::Constants and Locale::Script.</p>
+<p>From 2004-2009, the module was unmaintained.</p>
+<p>In 2010, maintenance was taken over by Sullivan Beck (<a href="mailto:sbeck@cpan.org">sbeck@cpan.org</a>)
+with Neil Bower's permission.</p>
+<p>
+</p>
+<hr />
+<h1><a name="copyright">COPYRIGHT</a></h1>
+<pre>
+   Copyright (c) 1997-2001 Canon Research Centre Europe (CRE).
+   Copyright (c) 2001      Michael Hennecke (Locale::Currency)
+   Copyright (c) 2001-2010 Neil Bowers
+   Copyright (c) 2010-2010 Sullivan Beck</pre>
+<p>This module is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.</p>
+
+</body>
+
+</html>

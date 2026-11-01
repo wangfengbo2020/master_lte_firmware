@@ -1,0 +1,213 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<link rel="stylesheet" type="text/css" href="../../../../scineplex.css">
+<title>TAP::Parser::Source::Perl - Stream Perl output</title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<script>writelinks('__top__',4);</script>
+<h1><a>TAP::Parser::Source::Perl - Stream Perl output</a></h1>
+<p><a name="__index__"></a></p>
+
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#version">VERSION</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#methods">METHODS</a></li>
+	<ul>
+
+		<li><a href="#class_methods">Class Methods</a></li>
+		<ul>
+
+			<li><a href="#new"><code>new</code></a></li>
+		</ul>
+
+		<li><a href="#instance_methods">Instance Methods</a></li>
+		<ul>
+
+			<li><a href="#source"><code>source</code></a></li>
+			<li><a href="#switches"><code>switches</code></a></li>
+			<li><a href="#get_stream"><code>get_stream</code></a></li>
+			<li><a href="#shebang"><code>shebang</code></a></li>
+			<li><a href="#get_taint"><code>get_taint</code></a></li>
+		</ul>
+
+	</ul>
+
+	<li><a href="#subclassing">SUBCLASSING</a></li>
+	<ul>
+
+		<li><a href="#example">Example</a></li>
+	</ul>
+
+	<li><a href="#see_also">SEE ALSO</a></li>
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>TAP::Parser::Source::Perl - Stream Perl output</p>
+<p>
+</p>
+<hr />
+<h1><a name="version">VERSION</a></h1>
+<p>Version 3.17</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<pre>
+  <span class="keyword">use</span> <span class="variable">TAP::Parser::Source::Perl</span><span class="operator">;</span>
+  <span class="keyword">my</span> <span class="variable">$perl</span> <span class="operator">=</span> <span class="variable">TAP::Parser::Source::Perl</span><span class="operator">-&gt;</span><span class="variable">new</span><span class="operator">;</span>
+  <span class="keyword">my</span> <span class="variable">$stream</span> <span class="operator">=</span> <span class="variable">$perl</span><span class="operator">-&gt;</span><span class="variable">source</span><span class="operator">(</span> <span class="operator">[</span> <span class="variable">$filename</span><span class="operator">,</span> <span class="variable">@args</span> <span class="operator">]</span> <span class="operator">)-&gt;</span><span class="variable">get_stream</span><span class="operator">;</span>
+</pre>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>Takes a filename and hopefully returns a stream from it.  The filename should
+be the name of a Perl program.</p>
+<p>Note that this is a subclass of <a href="../../../../lib/TAP/Parser/Source.html">the TAP::Parser::Source manpage</a>.  See that module for
+more methods.</p>
+<p>
+</p>
+<hr />
+<h1><a name="methods">METHODS</a></h1>
+<p>
+</p>
+<h2><a name="class_methods">Class Methods</a></h2>
+<p>
+</p>
+<h3><a name="new"><code>new</code></a></h3>
+<pre>
+ <span class="keyword">my</span> <span class="variable">$perl</span> <span class="operator">=</span> <span class="variable">TAP::Parser::Source::Perl</span><span class="operator">-&gt;</span><span class="variable">new</span><span class="operator">;</span>
+</pre>
+<p>Returns a new <code>TAP::Parser::Source::Perl</code> object.</p>
+<p>
+</p>
+<h2><a name="instance_methods">Instance Methods</a></h2>
+<p>
+</p>
+<h3><a name="source"><code>source</code></a></h3>
+<p>Getter/setter the name of the test program and any arguments it requires.</p>
+<pre>
+  <span class="keyword">my</span> <span class="operator">(</span><span class="variable">$filename</span><span class="operator">,</span> <span class="variable">@args</span><span class="operator">)</span> <span class="operator">=</span> <span class="variable">@</span><span class="operator">{</span> <span class="variable">$perl</span><span class="operator">-&gt;</span><span class="variable">source</span> <span class="operator">}</span><span class="operator">;</span>
+  <span class="variable">$perl</span><span class="operator">-&gt;</span><span class="variable">source</span><span class="operator">(</span> <span class="operator">[</span> <span class="variable">$filename</span><span class="operator">,</span> <span class="variable">@args</span> <span class="operator">]</span> <span class="operator">);</span>
+</pre>
+<p><code>croak</code>s if <code>$filename</code> could not be found.</p>
+<p>
+</p>
+<h3><a name="switches"><code>switches</code></a></h3>
+<pre>
+  <span class="keyword">my</span> <span class="variable">$switches</span> <span class="operator">=</span> <span class="variable">$perl</span><span class="operator">-&gt;</span><span class="variable">switches</span><span class="operator">;</span>
+  <span class="keyword">my</span> <span class="variable">@switches</span> <span class="operator">=</span> <span class="variable">$perl</span><span class="operator">-&gt;</span><span class="variable">switches</span><span class="operator">;</span>
+  <span class="variable">$perl</span><span class="operator">-&gt;</span><span class="variable">switches</span><span class="operator">(</span> <span class="operator">\</span><span class="variable">@switches</span> <span class="operator">);</span>
+</pre>
+<p>Getter/setter for the additional switches to pass to the perl executable.  One
+common switch would be to set an include directory:</p>
+<pre>
+  <span class="variable">$perl</span><span class="operator">-&gt;</span><span class="variable">switches</span><span class="operator">(</span> <span class="operator">[</span><span class="string">'-Ilib'</span><span class="operator">]</span> <span class="operator">);</span>
+</pre>
+<p>
+</p>
+<h3><a name="get_stream"><code>get_stream</code></a></h3>
+<pre>
+  <span class="keyword">my</span> <span class="variable">$stream</span> <span class="operator">=</span> <span class="variable">$source</span><span class="operator">-&gt;</span><span class="variable">get_stream</span><span class="operator">(</span><span class="variable">$parser</span><span class="operator">);</span>
+</pre>
+<p>Returns a stream of the output generated by executing <code>source</code>. Must be
+passed an object that implements a <code>make_iterator</code> method. Typically
+this is a TAP::Parser instance.</p>
+<p>
+</p>
+<h3><a name="shebang"><code>shebang</code></a></h3>
+<p>Get the shebang line for a script file.</p>
+<pre>
+  <span class="keyword">my</span> <span class="variable">$shebang</span> <span class="operator">=</span> <span class="variable">TAP::Parser::Source::Perl</span><span class="operator">-&gt;</span><span class="variable">shebang</span><span class="operator">(</span> <span class="variable">$some_script</span> <span class="operator">);</span>
+</pre>
+<p>May be called as a class method</p>
+<p>
+</p>
+<h3><a name="get_taint"><code>get_taint</code></a></h3>
+<p>Decode any taint switches from a Perl shebang line.</p>
+<pre>
+  <span class="comment"># $taint will be 't'</span>
+  <span class="keyword">my</span> <span class="variable">$taint</span> <span class="operator">=</span> <span class="variable">TAP::Parser::Source::Perl</span><span class="operator">-&gt;</span><span class="variable">get_taint</span><span class="operator">(</span> <span class="string">'#!/usr/bin/perl -t'</span> <span class="operator">);</span>
+</pre>
+<pre>
+  <span class="comment"># $untaint will be undefined</span>
+  <span class="keyword">my</span> <span class="variable">$untaint</span> <span class="operator">=</span> <span class="variable">TAP::Parser::Source::Perl</span><span class="operator">-&gt;</span><span class="variable">get_taint</span><span class="operator">(</span> <span class="string">'#!/usr/bin/perl'</span> <span class="operator">);</span>
+</pre>
+<p>
+</p>
+<hr />
+<h1><a name="subclassing">SUBCLASSING</a></h1>
+<p>Please see <a href="../../../../lib/TAP/Parser.html#subclassing">SUBCLASSING in the TAP::Parser manpage</a> for a subclassing overview.</p>
+<p>
+</p>
+<h2><a name="example">Example</a></h2>
+<pre>
+  <span class="keyword">package</span> <span class="variable">MyPerlSource</span><span class="operator">;</span>
+</pre>
+<pre>
+  <span class="keyword">use</span> <span class="variable">strict</span><span class="operator">;</span>
+  <span class="keyword">use</span> <span class="variable">vars</span> <span class="string">'@ISA'</span><span class="operator">;</span>
+</pre>
+<pre>
+  <span class="keyword">use</span> <span class="variable">Carp</span> <span class="string">qw( croak )</span><span class="operator">;</span>
+  <span class="keyword">use</span> <span class="variable">TAP::Parser::Source::Perl</span><span class="operator">;</span>
+</pre>
+<pre>
+  <span class="variable">@ISA</span> <span class="operator">=</span> <span class="string">qw( TAP::Parser::Source::Perl )</span><span class="operator">;</span>
+</pre>
+<pre>
+  <span class="keyword">sub</span><span class="variable"> source </span><span class="operator">{</span>
+      <span class="keyword">my</span> <span class="operator">(</span><span class="variable">$self</span><span class="operator">,</span> <span class="variable">$args</span><span class="operator">)</span> <span class="operator">=</span> <span class="variable">@_</span><span class="operator">;</span>
+      <span class="keyword">if</span> <span class="operator">(</span><span class="variable">$args</span><span class="operator">)</span> <span class="operator">{</span>
+          <span class="variable">$self</span><span class="operator">-&gt;</span><span class="operator">{</span><span class="string">file</span><span class="operator">}</span> <span class="operator">=</span> <span class="variable">$args</span><span class="operator">-&gt;</span><span class="operator">[</span><span class="number">0</span><span class="operator">]</span><span class="operator">;</span>
+          <span class="keyword">return</span> <span class="variable">$self</span><span class="operator">-&gt;</span><span class="variable">SUPER::source</span><span class="operator">(</span><span class="variable">$args</span><span class="operator">);</span>
+      <span class="operator">}</span>
+      <span class="keyword">return</span> <span class="variable">$self</span><span class="operator">-&gt;</span><span class="variable">SUPER::source</span><span class="operator">;</span>
+  <span class="operator">}</span>
+</pre>
+<pre>
+  <span class="comment"># use the version of perl from the shebang line in the test file</span>
+  <span class="keyword">sub</span><span class="variable"> _get_perl </span><span class="operator">{</span>
+      <span class="keyword">my</span> <span class="variable">$self</span> <span class="operator">=</span> <span class="keyword">shift</span><span class="operator">;</span>
+      <span class="keyword">if</span> <span class="operator">(</span><span class="keyword">my</span> <span class="variable">$shebang</span> <span class="operator">=</span> <span class="variable">$self</span><span class="operator">-&gt;</span><span class="variable">shebang</span><span class="operator">(</span> <span class="variable">$self</span><span class="operator">-&gt;</span><span class="operator">{</span><span class="string">file</span><span class="operator">}</span> <span class="operator">))</span> <span class="operator">{</span>
+          <span class="variable">$shebang</span> <span class="operator">=~</span> <span class="regex">/^#!(.*\bperl.*?)(?:(?:\s)|(?:$))/</span><span class="operator">;</span>
+          <span class="keyword">return</span> <span class="variable">$1</span> <span class="keyword">if</span> <span class="variable">$1</span><span class="operator">;</span>
+      <span class="operator">}</span>
+      <span class="keyword">return</span> <span class="variable">$self</span><span class="operator">-&gt;</span><span class="variable">SUPER::_get_perl</span><span class="operator">(</span><span class="variable">@_</span><span class="operator">);</span>
+  <span class="operator">}</span>
+</pre>
+<p>
+</p>
+<hr />
+<h1><a name="see_also">SEE ALSO</a></h1>
+<p><a href="../../../../lib/TAP/Object.html">the TAP::Object manpage</a>,
+<a href="../../../../lib/TAP/Parser.html">the TAP::Parser manpage</a>,
+<a href="../../../../lib/TAP/Parser/Source.html">the TAP::Parser::Source manpage</a>,</p>
+
+</body>
+
+</html>

@@ -1,0 +1,63 @@
+LOAD 0x7E040000
+{
+    INIT 0x7E040000 0x01200	;2KB
+    {
+    	version_block.o (IMG_HEADER_INFO,+First)
+        StartUp.o (Init)         ; Startup code
+        main.o (+RO)                        ; Place main() in a root region for the benefit of software breakpoints
+    }
+
+
+	
+    ITCM  0	0x10000 ;             			;64K
+    {
+        LzmaDec.o (+RO)                     ; LzmaDec code on ITCM
+        LzmaEnc.o (+RO)                     ; LzmaEnc code on ITCM
+        LzFind.o (+RO)                      ; LzFind code on ITCM
+        LzmaLib.o (+RO)                     ; LzmaLib code on ITCM
+        tinyalloc.o (+RO)                   ; tinyalloc code on ITCM
+        ;;bspatch.o (+RO)                     ; bspatch code on ITCM
+	lzop.o (+RO)                     	; lzop code on ITCM
+	lzop_buf.o (+RO)                    ; lzop_buf code on ITCM
+	lzo1x_oo.o (+RO)                    ; lzo1x_oo code on ITCM
+	lzo1x_9x.o (+RO)                    ; lzo1x_9x code on ITCM
+	lzo_swd.o (+RO)                     ; lzo_swd code on ITCM
+	lzo_mchw.o (+RO)                    ; lzo_mchw code on ITCM
+	minilzo.o (+RO)                     ; minilzo code on ITCM
+	psram.o (+RO)                      ; psram code on ITCM
+	FreqChange.o (PSRAM_FC)
+    }
+
+    CODE  0x7E060000	0x50000 ;320KB
+    {
+        * (+RO)                             ; Application code, including C library
+    }
+
+    DATA  0x7E0B0000	0x50000 ;320KB
+    {
+        * (+RW,+ZI)                         ; All RW and ZI Data
+    }
+	
+    USB_SQU  0xD1001000	0x10000 ;64KB
+    {
+        mvUsbDevCh9.o (+RW,+ZI)                         ; USB RW and ZI Data
+	mvUsbDevMain.o (+RW,+ZI)
+	mvUsbDevRecv.o (+RW,+ZI)
+	mvUsbDevSend.o (+RW,+ZI)
+	mvUsbDevUtl.o (+RW,+ZI)
+	mvUsbHsDevCncl.o (+RW,+ZI)
+	mvUsbHsDevUtl.o (+RW,+ZI)
+	mvUsbHsDevMain.o (+RW,+ZI)
+	mvUsbMemory.o (+RW,+ZI)
+	usb2_device.o (+RW,+ZI)
+	usb_descriptor.o (+RW,+ZI)
+	mvUsbModem.o (+RW,+ZI)
+    }
+    
+    DTCM  0xB0021C00	0xE400
+    {
+        psram.o (+RW,+ZI)                         ; psram RW and ZI Data
+    }
+}
+
+

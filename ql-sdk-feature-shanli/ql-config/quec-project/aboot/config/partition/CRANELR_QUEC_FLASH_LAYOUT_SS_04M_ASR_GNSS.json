@@ -1,0 +1,87 @@
+{
+  "name": "CRANELR_QUEC_FLASH_LAYOUT_SS_04M_ASR_GNSS",
+  "partitions": [
+    {
+      "name": "qspi",
+      "format": "flash",
+      "vstart": "0x80000000",
+      "partitions": [
+        {
+          "name": "bootloader",
+          "format": "ubi",
+          "size": "88KiB"
+        },
+        {
+          "name": "system",
+          "format": "part",
+          "size": "0",
+          "partitions": [
+            {
+              "name": "ptable",
+              "format": "raw",
+              "size": "4KiB"
+            },
+            {
+              "name": "rd",
+              "format": "raw",
+              "size": "16KiB"
+            },
+            {
+              "name": "cp",
+              "format": "raw",
+              "size": "0"
+            },
+            {
+              "name": "dsp",
+              "format": "raw",
+              "size": "0"
+            },
+            {
+              "name": "rfbin",
+              "format": "raw",
+              "size": "0"
+            },
+            {
+              "name": "jacana_fw",
+              "format": "raw",
+              "size": "0"
+            },
+			{
+			  "name": "jacana_pvt",
+			  "format": "raw",
+			  "size": "64KiB"
+			}
+			
+          ]
+        },
+        {
+          "name": "reserved",
+          "format": "raw",
+          "size": "-1"
+        },      	
+		{
+          "name": "nvm",
+          "format": "raw",
+          "size": "280KiB"
+        },
+		{
+          "name": "fota_param",
+          "format": "raw",
+          "size": "12KiB"
+        },
+        {
+          "name": "factory",
+          "format": "part",
+          "size": "0",
+          "partitions": [
+            {
+              "name": "factory_a",
+              "format": "raw",
+              "size": "24KiB"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

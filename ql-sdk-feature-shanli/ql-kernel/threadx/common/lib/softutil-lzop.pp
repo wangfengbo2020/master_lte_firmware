@@ -1,0 +1,105 @@
+//PPC Version : V2.1.9.30
+//PPL Source File Name : X:\tavor\Arbel\obj_PMD2NONE\prepass_results\lzop.ppp
+//PPL Source File Name : X:\\softutil\\lzop\\src\\lzop.c
+typedef unsigned int size_t ;
+typedef unsigned char BOOL ;
+typedef unsigned char UINT8 ;
+typedef unsigned short UINT16 ;
+typedef unsigned long UINT32 ;
+typedef char CHAR ;
+typedef signed char INT8 ;
+typedef signed short INT16 ;
+typedef signed long INT32 ;
+typedef unsigned char Bool ;
+typedef UINT8 BYTE ;
+typedef UINT8 UBYTE ;
+typedef UINT16 UWORD ;
+typedef UINT16 WORD ;
+typedef INT16 SWORD ;
+typedef UINT32 DWORD ;
+typedef unsigned long long UINT64 ;
+typedef void* VOID_PTR ;
+typedef volatile UINT8 *V_UINT8_PTR ;
+typedef volatile UINT16 *V_UINT16_PTR ;
+typedef volatile UINT32 *V_UINT32_PTR ;
+typedef unsigned int U32Bits ;
+typedef BOOL BOOLEAN ;
+typedef const char * SwVersion ;
+typedef unsigned int lzo_uint32 ;
+typedef unsigned long lzo_uint ;
+typedef signed int lzo_int32 ;
+typedef signed long lzo_int ;
+typedef int lzo_bool ;
+typedef signed int ptrdiff_t ;
+typedef unsigned int size_t ;
+typedef unsigned short wchar_t ;
+typedef unsigned int size_t ;
+typedef unsigned int size_t ;
+typedef unsigned short wchar_t ;
+typedef int ( *__heapprt ) ( void * , char const * , ... ) ;
+//PPC Version : V2.1.9.30
+//PPL Source File Name : X:\tavor\Arbel\obj_PMD2NONE\prepass_results\lzop_buf.ppp
+//PPL Source File Name : X:\\softutil\\lzop\\src\\lzop_buf.c
+typedef unsigned char BOOL ;
+typedef unsigned char UINT8 ;
+typedef unsigned short UINT16 ;
+typedef unsigned long UINT32 ;
+typedef char CHAR ;
+typedef signed char INT8 ;
+typedef signed short INT16 ;
+typedef signed long INT32 ;
+typedef unsigned char Bool ;
+typedef UINT8 BYTE ;
+typedef UINT8 UBYTE ;
+typedef UINT16 UWORD ;
+typedef UINT16 WORD ;
+typedef INT16 SWORD ;
+typedef UINT32 DWORD ;
+typedef unsigned long long UINT64 ;
+typedef void* VOID_PTR ;
+typedef volatile UINT8 *V_UINT8_PTR ;
+typedef volatile UINT16 *V_UINT16_PTR ;
+typedef volatile UINT32 *V_UINT32_PTR ;
+typedef unsigned int U32Bits ;
+typedef BOOL BOOLEAN ;
+typedef const char * SwVersion ;
+typedef unsigned int lzo_uint32 ;
+typedef unsigned long lzo_uint ;
+typedef signed int lzo_int32 ;
+typedef signed long lzo_int ;
+typedef int lzo_bool ;
+//PPC Version : V2.1.9.30
+//PPL Source File Name : X:\tavor\Arbel\obj_PMD2NONE\prepass_results\minilzo.ppp
+//PPL Source File Name : X:\\softutil\\lzop\\src\\minilzo.c
+typedef signed int ptrdiff_t ;
+typedef unsigned int size_t ;
+typedef unsigned short wchar_t ;
+typedef unsigned int size_t ;
+typedef unsigned char BOOL ;
+typedef unsigned char UINT8 ;
+typedef unsigned short UINT16 ;
+typedef unsigned long UINT32 ;
+typedef char CHAR ;
+typedef signed char INT8 ;
+typedef signed short INT16 ;
+typedef signed long INT32 ;
+typedef unsigned char Bool ;
+typedef UINT8 BYTE ;
+typedef UINT8 UBYTE ;
+typedef UINT16 UWORD ;
+typedef UINT16 WORD ;
+typedef INT16 SWORD ;
+typedef UINT32 DWORD ;
+typedef unsigned long long UINT64 ;
+typedef void* VOID_PTR ;
+typedef volatile UINT8 *V_UINT8_PTR ;
+typedef volatile UINT16 *V_UINT16_PTR ;
+typedef volatile UINT32 *V_UINT32_PTR ;
+typedef unsigned int U32Bits ;
+typedef BOOL BOOLEAN ;
+typedef const char * SwVersion ;
+typedef unsigned int lzo_uint32 ;
+typedef unsigned long lzo_uint ;
+typedef signed int lzo_int32 ;
+typedef signed long lzo_int ;
+typedef int lzo_bool ;

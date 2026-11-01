@@ -1,0 +1,187 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../displayToc.js"></script>
+<script language="JavaScript" src="../../tocParas.js"></script>
+<script language="JavaScript" src="../../tocTab.js"></script>
+<link rel="stylesheet" type="text/css" href="../../scineplex.css">
+<title>perlcn - 简体中文 Perl 指南</title>
+<link rel="stylesheet" href="../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<script>writelinks('__top__',2);</script>
+<h1><a>perlcn - 简体中文 Perl 指南</a></h1>
+<p><a name="__index__"></a></p>
+
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<ul>
+
+		<li><a href="#______________">额外的中文编码</a></li>
+		<li><a href="#____________">进一步的信息</a></li>
+		<li><a href="#_____perl___________">提供 Perl 资源的网址</a></li>
+		<li><a href="#_____perl_______">学习 Perl 的网址</a></li>
+		<li><a href="#perl___________">Perl 使用者集会</a></li>
+		<li><a href="#unicode_________">Unicode 相关网址</a></li>
+	</ul>
+
+	<li><a href="#see_also">SEE ALSO</a></li>
+	<li><a href="#authors">AUTHORS</a></li>
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+</p>
+<hr />
+<h1><a name="name">NAME</a></h1>
+<p>perlcn - 简体中文 Perl 指南</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>欢迎来到 Perl 的天地!</p>
+<p>从 5.8.0 版开始, Perl 具备了完善的 Unicode (统一码) 支援,
+也连带支援了许多拉丁语系以外的编码方式; CJK (中日韩) 便是其中的一部份.
+Unicode 是国际性的标准, 试图涵盖世界上所有的字符: 西方世界, 东方世界,
+以及两者间的一切 (希腊文, 叙利亚文, 亚拉伯文, 希伯来文, 印度文,
+印地安文, 等等). 它也容纳了多种作业系统与平台 (如 PC 及麦金塔).</p>
+<p>Perl 本身以 Unicode 进行操作. 这表示 Perl 内部的字符串数据可用 Unicode
+表示; Perl 的函式与算符 (例如正规表示式比对) 也能对 Unicode 进行操作.
+在输入及输出时, 为了处理以 Unicode 之前的编码方式存放的数据, Perl
+提供了 Encode 这个模块, 可以让你轻易地读取及写入旧有的编码数据.</p>
+<p>Encode 延伸模块支援下列简体中文的编码方式 ('gb2312' 表示 'euc-cn'):</p>
+<pre>
+    euc-cn      Unix 延伸字符集, 也就是俗称的国标码
+    gb2312-raw  未经处理的 (低比特) GB2312 字符表
+    gb12345     未经处理的中国用繁体中文编码
+    iso-ir-165  GB2312 + GB6345 + GB8565 + 新增字符
+    cp936       字码页 936, 也可以用 'GBK' (扩充国标码) 指明
+    hz          7 比特逸出式 GB2312 编码</pre>
+<p>举例来说, 将 EUC-CN 编码的档案转成 Unicode, 祗需键入下列指令:</p>
+<pre>
+    perl -Mencoding=euc-cn,STDOUT,utf8 -pe1 &lt; file.euc-cn &gt; file.utf8</pre>
+<p>Perl 也内附了 &quot;piconv&quot;, 一支完全以 Perl 写成的字符转换工具程序, 用法如下:</p>
+<pre>
+    piconv -f euc-cn -t utf8 &lt; file.euc-cn &gt; file.utf8
+    piconv -f utf8 -t euc-cn &lt; file.utf8 &gt; file.euc-cn</pre>
+<p>另外, 利用 encoding 模块, 你可以轻易写出以字符为单位的程序码, 如下所示:</p>
+<pre>
+    <span class="comment">#!/usr/bin/env perl</span>
+    <span class="comment"># 启动 euc-cn 字串解析; 标准输出入及标准错误都设为 euc-cn 编码</span>
+    <span class="keyword">use</span> <span class="variable">encoding</span> <span class="string">'euc-cn'</span><span class="operator">,</span> <span class="string">STDIN</span> <span class="operator">=&gt;</span> <span class="string">'euc-cn'</span><span class="operator">,</span> <span class="string">STDOUT</span> <span class="operator">=&gt;</span> <span class="string">'euc-cn'</span><span class="operator">;</span>
+    <span class="keyword">print</span> <span class="keyword">length</span><span class="operator">(</span><span class="string">"骆驼"</span><span class="operator">);</span>            <span class="comment">#  2 (双引号表示字符)</span>
+    <span class="keyword">print</span> <span class="keyword">length</span><span class="operator">(</span><span class="string">'骆驼'</span><span class="operator">);</span>            <span class="comment">#  4 (单引号表示字节)</span>
+    <span class="keyword">print</span> <span class="keyword">index</span><span class="operator">(</span><span class="string">"谆谆教诲"</span><span class="operator">,</span> <span class="string">"蛔唤"</span><span class="operator">);</span> <span class="comment"># -1 (不包含此子字符串)</span>
+    <span class="keyword">print</span> <span class="keyword">index</span><span class="operator">(</span><span class="string">'谆谆教诲'</span><span class="operator">,</span> <span class="string">'蛔唤'</span><span class="operator">);</span> <span class="comment">#  1 (从第二个字节开始)</span>
+</pre>
+<p>在最后一列例子里, &quot;谆&quot; 的第二个字节与 &quot;谆&quot; 的第一个字节结合成 EUC-CN
+码的 &quot;蛔&quot;; &quot;谆&quot; 的第二个字节则与 &quot;教&quot; 的第一个字节结合成 &quot;唤&quot;.
+这解决了以前 EUC-CN 码比对处理上常见的问题.</p>
+<p>
+</p>
+<h2><a name="______________">额外的中文编码</a></h2>
+<p>如果需要更多的中文编码, 可以从 CPAN (<a href="http://www.cpan.org/">http://www.cpan.org/</a>) 下载
+Encode::HanExtra 模块. 它目前提供下列编码方式:</p>
+<pre>
+    gb18030     扩充过的国标码, 包含繁体中文</pre>
+<p>另外, Encode::HanConvert 模块则提供了简繁转换用的两种编码:</p>
+<pre>
+    big5-simp   Big5 繁体中文与 Unicode 简体中文互转
+    gbk-trad    GBK 简体中文与 Unicode 繁体中文互转</pre>
+<p>若想在 GBK 与 Big5 之间互转, 请参考该模块内附的 b2g.pl 与 g2b.pl 两支程序,
+或在程序内使用下列写法:</p>
+<pre>
+    <span class="keyword">use</span> <span class="variable">Encode::HanConvert</span><span class="operator">;</span>
+    <span class="variable">$euc_cn</span> <span class="operator">=</span> <span class="variable">big5_to_gb</span><span class="operator">(</span><span class="variable">$big5</span><span class="operator">);</span> <span class="comment"># 从 Big5 转为 GBK</span>
+    <span class="variable">$big5</span> <span class="operator">=</span> <span class="variable">gb_to_big5</span><span class="operator">(</span><span class="variable">$euc_cn</span><span class="operator">);</span> <span class="comment"># 从 GBK 转为 Big5</span>
+</pre>
+<p>
+</p>
+<h2><a name="____________">进一步的信息</a></h2>
+<p>请参考 Perl 内附的大量说明文件 (不幸全是用英文写的), 来学习更多关于
+Perl 的知识, 以及 Unicode 的使用方式. 不过, 外部的资源相当丰富:</p>
+<p>
+</p>
+<h2><a name="_____perl___________">提供 Perl 资源的网址</a></h2>
+<dl>
+<dt><strong><a name="http_www_perl_com" class="item"><a href="http://www.perl.com/">http://www.perl.com/</a></a></strong></dt>
+
+<dd>
+<p>Perl 的首页 (由欧莱礼公司维护)</p>
+</dd>
+<dt><strong><a name="http_www_cpan_org" class="item"><a href="http://www.cpan.org/">http://www.cpan.org/</a></a></strong></dt>
+
+<dd>
+<p>Perl 综合典藏网 (Comprehensive Perl Archive Network)</p>
+</dd>
+<dt><strong><a name="http_lists_perl_org" class="item"><a href="http://lists.perl.org/">http://lists.perl.org/</a></a></strong></dt>
+
+<dd>
+<p>Perl 邮递论坛一览</p>
+</dd>
+</dl>
+<p>
+</p>
+<h2><a name="_____perl_______">学习 Perl 的网址</a></h2>
+<dl>
+<dt><strong><a name="http_www_oreilly_com_cn_html_perl_html" class="item"><a href="http://www.oreilly.com.cn/html/perl.html">http://www.oreilly.com.cn/html/perl.html</a></a></strong></dt>
+
+<dd>
+<p>简体中文版的欧莱礼 Perl 书藉</p>
+</dd>
+</dl>
+<p>
+</p>
+<h2><a name="perl___________">Perl 使用者集会</a></h2>
+<dl>
+<dt><strong><a name="http_www_pm_org_groups_asia_html" class="item"><a href="http://www.pm.org/groups/asia.html">http://www.pm.org/groups/asia.html</a></a></strong></dt>
+
+<dd>
+<p>中国 Perl 推广组一览</p>
+</dd>
+</dl>
+<p>
+</p>
+<h2><a name="unicode_________">Unicode 相关网址</a></h2>
+<dl>
+<dt><strong><a name="http_www_unicode_org" class="item"><a href="http://www.unicode.org/">http://www.unicode.org/</a></a></strong></dt>
+
+<dd>
+<p>Unicode 学术学会 (Unicode 标准的制定者)</p>
+</dd>
+<dt><strong><a name="http_www_cl_cam_ac_uk_7emgk25_unicode_html" class="item"><a href="http://www.cl.cam.ac.uk/%7Emgk25/unicode.html">http://www.cl.cam.ac.uk/%7Emgk25/unicode.html</a></a></strong></dt>
+
+<dd>
+<p>Unix/Linux 上的 UTF-8 及 Unicode 答客问</p>
+</dd>
+</dl>
+<p>
+</p>
+<hr />
+<h1><a name="see_also">SEE ALSO</a></h1>
+<p><a href="../../lib/Encode.html">the Encode manpage</a>, <a href="../../lib/Encode/CN.html">the Encode::CN manpage</a>, <a href="../../lib/encoding.html">the encoding manpage</a>, <a href="../../lib/pods/perluniintro.html">the perluniintro manpage</a>, <a href="../../lib/pods/perlunicode.html">the perlunicode manpage</a></p>
+<p>
+</p>
+<hr />
+<h1><a name="authors">AUTHORS</a></h1>
+<p>Jarkko Hietaniemi &lt;<a href="mailto:jhi@iki.fi">jhi@iki.fi</a>&gt;</p>
+<p>Audrey Tang (唐凤) &lt;<a href="mailto:audreyt@audreyt.org">audreyt@audreyt.org</a>&gt;</p>
+
+</body>
+
+</html>

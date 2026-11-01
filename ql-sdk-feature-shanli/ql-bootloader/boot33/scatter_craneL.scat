@@ -1,0 +1,39 @@
+LOAD 0x7E000000                              ;0x7E000000 - 0x7E004000, size: 4*64K=256K
+{
+    INIT 0x7E000000 0x2000                   ;8k
+    {
+        OBM_StartUp.o (Init, +First)         ; Startup code
+        main.o (+RO)                        ; Place main() in a root region for the benefit of software breakpoints
+		version_block.o (IMGVERBLOCK)
+    }
+	
+    CODE  +0	0x0A000 ;             		;96k-8k=88k
+    {
+        * (+RO)                             ; Application code, including C library
+    }
+
+    ITCM  0x1000	0x00003000 ;             			;Second Exec region is ITCM; size:8K. NOTE: do not overlap with logo; not use 0x0 memory as 0x0 is a special address.
+    {
+        LzmaDec.o (+RO)                     ; LzmaDec code on ITCM
+		FreqChange.o (PSRAM_FC)
+    }
+	
+    DATA  0x7E00C000	(0x1A000-0x400) ;			;104K
+    {
+        * (+RW,+ZI)                         ; All RW and ZI Data
+    }
+    SEC_KEY_BUF  +0	0x400                   ; NOTICE: for SECBOOT version 2 , SQU should also be reserved ,so move SEC_KEY_BUR from SQU into PSRAM to avoid overwrite.
+    {
+
+    }
+	
+	DTCM  0xB0021C00   0xE400 {
+		OBM_StartUp.o (+RW,+ZI)
+		fip.o       (+RW,+ZI)
+		secboot.o   (+RW,+ZI)
+    };
+
+	IMG_END +0 EMPTY 0x04{}
+}
+
+
