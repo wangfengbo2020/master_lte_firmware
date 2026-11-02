@@ -12,6 +12,7 @@ MAKEFILE_PATH :=$(subst $(strip \),/,$(abspath $(lastword $(MAKEFILE_LIST))))
 #-------------------------------------------------------------------------------
 SRC_FILES+= \
   example_poc.c \
+  lte_tcpudp_heartbeat.c \
   e02t_uart_mcu.c \
   e02t_config.c \
   tts_gbk.c \

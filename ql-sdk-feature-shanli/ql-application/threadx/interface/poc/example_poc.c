@@ -11,6 +11,7 @@
 #include "e02t_uart_mcu.h"
 #include "e02t_board_cfg.h"
 #include "inet6.h"
+#include "lte_tcpudp_heartbeat.h"
 #include "netdb.h"
 #include "ql_application.h"
 #include "ql_audio.h"
@@ -203,6 +204,7 @@ static void ql_nw_status_callback(int profile_idx, int nw_status)
 {
     struct ql_data_call_info info = {0};
     SL_LOG("NW", "profile(%d) status: %d", profile_idx, nw_status);
+    lte_tcpudp_heartbeat_network_changed(nw_status);
 
     if (nw_status)
     {
@@ -908,6 +910,7 @@ static void shanli_poc_main_task(void *arg)
         SL_LOG("POC", "ptt_key_event_flag create failed!");
 
     // 网络初始化 (SIM检测 → 驻网 → 拨号)
+    lte_tcpudp_heartbeat_start();
     ql_network_init();
 
     // 等待 Broad SDK 初始化完成（由 shanli kernel 的 broad_kernel_init 自动完成）
