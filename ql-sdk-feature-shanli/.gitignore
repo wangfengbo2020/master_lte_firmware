@@ -45,6 +45,9 @@ ql-cross-tool/Linux/gcc-arm-none-eabi-9-2019-q4-major/
 !ql-bootloader/**/*.bin
 !ql-cross-tool/**
 
+# ------ 解压后的编译工具链（由 build.sh 自动生成） ------
+ql-cross-tool/Linux/gcc-arm-none-eabi-9-2019-q4-major/
+
 # ------ OS / 编辑器 ------
 .DS_Store
 Thumbs.db
