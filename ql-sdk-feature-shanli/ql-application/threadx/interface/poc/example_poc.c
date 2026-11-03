@@ -927,8 +927,8 @@ static void shanli_poc_main_task(void *arg)
     SL_LOG("VER", "Firmware: %s", VERSION_STRING);
     SL_LOG("VER", "Branch: %s", GIT_BRANCH);
     SL_LOG("VER", "Build: %s", BUILD_DATE);
-    SL_LOG("TCPUDP", "test build v0.2-pdp-bind; Broad application login=%d",
-           POC_INTERCOM_LOGIN_ENABLE);
+    SL_LOG("TCPUDP", "test build %s; Broad application login=%d",
+           LTE_HEARTBEAT_TEST_VERSION, POC_INTERCOM_LOGIN_ENABLE);
 
     // 系统刚启动，等底层驱动初始化完成
     ql_rtos_task_sleep_s(5);

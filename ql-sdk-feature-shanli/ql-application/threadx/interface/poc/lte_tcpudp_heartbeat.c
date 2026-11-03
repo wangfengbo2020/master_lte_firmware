@@ -40,6 +40,46 @@ static int would_block(unsigned int error)
     return error == EAGAIN || error == EWOULDBLOCK || error == EINTR;
 }
 
+/* Ticks are deliberately not labelled milliseconds: the SDK only promises
+ * ticks since reset. FIONREAD is observational and must not change flow. */
+static void log_read_state(const char *name, int fd, unsigned int session,
+                           int selected, int readable)
+{
+#if LTE_HEARTBEAT_DIAGNOSTICS
+    unsigned long available = 0;
+    int result = ioctl(fd, FIONREAD, &available);
+    unsigned int error = result < 0 ? ql_get_soc_errno() : 0;
+    SL_LOG("TCPUDP", "%s poll tick=%lu session=%u fd=%d select=%d readable=%d pending_ret=%d pending_bytes=%lu err=%u",
+           name, (unsigned long)ql_rtos_get_systicks(), session, fd,
+           selected, readable, result, available, error);
+#else
+    (void)name; (void)fd; (void)session; (void)selected; (void)readable;
+#endif
+}
+
+static void log_raw_receive(const char *name, int fd, unsigned int session,
+                            int bytes, unsigned int error, const char *data)
+{
+#if LTE_HEARTBEAT_DIAGNOSTICS
+    static const char digits[] = "0123456789abcdef";
+    char prefix[49];
+    int i, preview = bytes > 24 ? 24 : bytes;
+    if (preview < 0)
+        preview = 0;
+    for (i = 0; i < preview; ++i)
+    {
+        unsigned char value = (unsigned char)data[i];
+        prefix[2 * i] = digits[value >> 4];
+        prefix[2 * i + 1] = digits[value & 15];
+    }
+    prefix[2 * preview] = '\0';
+    SL_LOG("TCPUDP", "%s rx_raw tick=%lu session=%u fd=%d bytes=%d err=%u first_hex=%s",
+           name, (unsigned long)ql_rtos_get_systicks(), session, fd, bytes, error, prefix);
+#else
+    (void)name; (void)fd; (void)session; (void)bytes; (void)error; (void)data;
+#endif
+}
+
 /* Match Broad's route selection: bind to the active profile's IPv4, port 0. */
 static int create_bound_socket(int type, const struct in_addr *ip)
 {
@@ -92,6 +132,9 @@ static void heartbeat_main(void *arg)
     int tcp = -1, udp = -1, connected = 0, connecting = 0;
     unsigned int seq = 0, connect_ticks = 0;
     unsigned int seen_epoch = 0, wait_ticks = 0;
+    unsigned int tcp_session = 0, udp_session = 0;
+    unsigned int tcp_tx = 0, udp_tx = 0, tcp_frames = 0, udp_replies = 0;
+    unsigned int tcp_rx_bytes = 0, udp_rx_bytes = 0;
     struct in_addr bound_ip = {0};
     char tcp_rx[512];
     size_t tcp_rx_used = 0;
@@ -101,8 +144,10 @@ static void heartbeat_main(void *arg)
     server.sin_family = AF_INET;
     server.sin_port = htons(LTE_HEARTBEAT_SERVER_PORT);
     server.sin_addr.s_addr = inet_addr(LTE_HEARTBEAT_SERVER_IP);
-    SL_LOG("TCPUDP", "v0.2-pdp-bind server=%s:%d profile=%d interval=%ds", LTE_HEARTBEAT_SERVER_IP,
+    SL_LOG("TCPUDP", "%s server=%s:%d profile=%d interval=%ds", LTE_HEARTBEAT_TEST_VERSION, LTE_HEARTBEAT_SERVER_IP,
            LTE_HEARTBEAT_SERVER_PORT, LTE_HEARTBEAT_PROFILE_IDX, LTE_HEARTBEAT_INTERVAL_S);
+    SL_LOG("TCPUDP", "diagnostics=%d; tick unit=SDK ticks; sent means socket accepted, not peer ACK",
+           LTE_HEARTBEAT_DIAGNOSTICS);
 
     while (1)
     {
@@ -172,21 +217,39 @@ static void heartbeat_main(void *arg)
                     }
                     break;
                 }
+                if (i == 0 || selected > 0)
+                    log_read_state("UDP", udp, udp_session, selected, FD_ISSET(udp, &read_set) != 0);
                 if (selected == 0)
                     break;
+                memset(&peer, 0, sizeof(peer));
                 n = recvfrom(udp, reply, sizeof(reply) - 1, 0, (struct sockaddr *)&peer, &peer_len);
-                if (n < 0)
                 {
-                    unsigned int error = ql_get_soc_errno();
-                    if (!would_block(error))
+                    unsigned int receive_error = n < 0 ? ql_get_soc_errno() : 0;
+                    log_raw_receive("UDP", udp, udp_session, n, receive_error, reply);
+                    if (n < 0)
                     {
-                        SL_LOG("TCPUDP", "UDP receive failed err=%u", error);
-                        close_socket(&udp);
+                        if (!would_block(receive_error))
+                        {
+                            SL_LOG("TCPUDP", "UDP receive failed err=%u", receive_error);
+                            close_socket(&udp);
+                        }
+                        break;
                     }
-                    break;
+                }
+                {
+                    char peer_ip[16] = "unknown";
+                    inet_ntop(AF_INET, &peer.sin_addr, peer_ip, sizeof(peer_ip));
+                    SL_LOG("TCPUDP", "UDP rx_peer session=%u peer=%s:%u bytes=%d accepted=%d",
+                           udp_session, peer_ip, (unsigned int)ntohs(peer.sin_port), n,
+                           peer.sin_addr.s_addr == server.sin_addr.s_addr && peer.sin_port == server.sin_port);
                 }
                 if (peer.sin_addr.s_addr != server.sin_addr.s_addr || peer.sin_port != server.sin_port)
+                {
+                    SL_LOG("TCPUDP", "UDP reply ignored: unexpected source");
                     continue;
+                }
+                ++udp_replies;
+                udp_rx_bytes += (unsigned int)n;
                 reply[n] = '\0';
                 SL_LOG("TCPUDP", "UDP received: %s", reply);
             }
@@ -210,10 +273,15 @@ static void heartbeat_main(void *arg)
                     tcp_rx_used = 0;
                 }
             }
-            else if (selected > 0)
+            else
+            {
+                log_read_state("TCP", tcp, tcp_session, selected, FD_ISSET(tcp, &read_set) != 0);
+            }
+            if (selected > 0)
             {
                 int n = recv(tcp, tcp_rx + tcp_rx_used, sizeof(tcp_rx) - 1 - tcp_rx_used, 0);
                 unsigned int error = n < 0 ? ql_get_soc_errno() : 0;
+                log_raw_receive("TCP", tcp, tcp_session, n, error, tcp_rx + tcp_rx_used);
                 if (n == 0 || (n < 0 && !would_block(error)))
                 {
                     SL_LOG("TCPUDP", "TCP disconnected recv=%d err=%u; reconnecting", n, error);
@@ -224,14 +292,18 @@ static void heartbeat_main(void *arg)
                 else if (n > 0)
                 {
                     char *newline;
+                    tcp_rx_bytes += (unsigned int)n;
                     tcp_rx_used += (size_t)n;
                     while ((newline = memchr(tcp_rx, '\n', tcp_rx_used)) != NULL)
                     {
                         size_t frame = (size_t)(newline - tcp_rx) + 1;
+                        ++tcp_frames;
                         SL_LOG("TCPUDP", "TCP received: %.*s", (int)frame, tcp_rx);
                         memmove(tcp_rx, tcp_rx + frame, tcp_rx_used - frame);
                         tcp_rx_used -= frame;
                     }
+                    SL_LOG("TCPUDP", "TCP rx_buffer session=%u remaining=%u completed_frames=%u",
+                           tcp_session, (unsigned int)tcp_rx_used, tcp_frames);
                     if (tcp_rx_used == sizeof(tcp_rx) - 1)
                     {
                         SL_LOG("TCPUDP", "TCP reply too long; reconnecting");
@@ -245,12 +317,24 @@ static void heartbeat_main(void *arg)
         ++seq;
         length = snprintf(packet, sizeof(packet), "LTE heartbeat seq=%u\n", seq);
         if (udp < 0)
+        {
             udp = create_bound_socket(SOCK_DGRAM, &bound_ip);
+            if (udp >= 0)
+            {
+                ++udp_session;
+                SL_LOG("TCPUDP", "UDP session=%u fd=%d start_tick=%lu", udp_session, udp,
+                       (unsigned long)ql_rtos_get_systicks());
+            }
+        }
         if (udp >= 0)
         {
             sent = sendto(udp, packet, length, 0, (struct sockaddr *)&server, sizeof(server));
             if (sent == length)
-                SL_LOG("TCPUDP", "UDP sent seq=%u bytes=%d", seq, sent);
+            {
+                ++udp_tx;
+                SL_LOG("TCPUDP", "UDP sent seq=%u bytes=%d session=%u tick=%lu", seq, sent,
+                       udp_session, (unsigned long)ql_rtos_get_systicks());
+            }
             else
             {
                 SL_LOG("TCPUDP", "UDP send failed seq=%u ret=%d err=%u", seq, sent, ql_get_soc_errno());
@@ -262,8 +346,13 @@ static void heartbeat_main(void *arg)
             tcp = create_bound_socket(SOCK_STREAM, &bound_ip);
             if (tcp >= 0)
             {
-                int result = connect(tcp, (struct sockaddr *)&server, sizeof(server));
-                unsigned int error = result < 0 ? ql_get_soc_errno() : 0;
+                int result;
+                unsigned int error;
+                ++tcp_session;
+                SL_LOG("TCPUDP", "TCP session=%u fd=%d start_tick=%lu", tcp_session, tcp,
+                       (unsigned long)ql_rtos_get_systicks());
+                result = connect(tcp, (struct sockaddr *)&server, sizeof(server));
+                error = result < 0 ? ql_get_soc_errno() : 0;
                 if (result == 0)
                 {
                     connected = 1;
@@ -345,7 +434,11 @@ static void heartbeat_main(void *arg)
         {
             sent = send(tcp, packet, length, 0);
             if (sent == length)
-                SL_LOG("TCPUDP", "TCP sent seq=%u bytes=%d", seq, sent);
+            {
+                ++tcp_tx;
+                SL_LOG("TCPUDP", "TCP sent seq=%u bytes=%d session=%u tick=%lu", seq, sent,
+                       tcp_session, (unsigned long)ql_rtos_get_systicks());
+            }
             else
             {
                 /* A partial frame must not be followed by another frame. */
@@ -355,6 +448,11 @@ static void heartbeat_main(void *arg)
                 tcp_rx_used = 0;
             }
         }
+        if (seq % 5 == 0)
+            SL_LOG("TCPUDP", "summary tick=%lu seq=%u epoch=%u tcp_fd=%d session=%u connected=%d tx=%u rx_frames=%u rx_bytes=%u buffered=%u udp_fd=%d session=%u tx=%u rx_packets=%u rx_bytes=%u (task totals)",
+                   (unsigned long)ql_rtos_get_systicks(), seq, seen_epoch, tcp, tcp_session, connected,
+                   tcp_tx, tcp_frames, tcp_rx_bytes, (unsigned int)tcp_rx_used,
+                   udp, udp_session, udp_tx, udp_replies, udp_rx_bytes);
         if (connecting)
             ++connect_ticks;
         ql_rtos_task_sleep_s(LTE_HEARTBEAT_INTERVAL_S);

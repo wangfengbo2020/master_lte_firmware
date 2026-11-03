@@ -18,6 +18,7 @@ struct scenario {
     in_addr_t ip[MAX_STEPS];
     int bind_fail_type, connect_error, complete_at, completion_error;
     int callback_after, callback_profile, receive_eagain, receive_ack;
+    int fionread_fail, udp_wrong_peer, tcp_fragmented;
 };
 struct fake_socket {
     int open, type, nonblocking, bound;
@@ -29,9 +30,11 @@ static jmp_buf task_done;
 static int step, next_fd, created, closed, bound, udp_sends, tcp_sends;
 static int connect_calls, completion_checks, write_polls, recv_calls, recvfrom_calls;
 static int last_udp_read_step, last_tcp_read_step;
+static int fionread_calls, tick_calls;
 static unsigned int socket_error;
 static char logs[32768];
 static size_t log_used;
+static size_t step_log_begin[MAX_STEPS + 1];
 static const char *case_name;
 
 static struct fake_socket *checked_fd(int fd)
@@ -73,8 +76,16 @@ void ql_rtos_task_sleep_s(unsigned int seconds)
         lte_tcpudp_heartbeat_network_changed(cfg.callback_profile, 0);
         lte_tcpudp_heartbeat_network_changed(cfg.callback_profile, 1);
     }
+    step_log_begin[step + 1] = log_used;
     if (++step >= cfg.iterations)
         longjmp(task_done, 1);
+}
+
+unsigned int ql_rtos_get_systicks(void)
+{
+    ++tick_calls;
+    /* Deliberately not milliseconds; diagnostics must report raw ticks. */
+    return 10000U + (unsigned int)step * 137U;
 }
 
 int ql_rtos_task_create(ql_task_t *task, unsigned int stack, unsigned int priority,
@@ -105,10 +116,34 @@ int mock_close(int fd)
     return 0;
 }
 
-int mock_ioctl(int fd, unsigned long request, unsigned long *enabled)
+static const char *tcp_reply_chunk(void)
 {
-    assert(request == FIONBIO && *enabled == 1);
-    checked_fd(fd)->nonblocking = 1;
+    if (cfg.tcp_fragmented)
+        return step == 1 ? "ACK LTE heartbeat seq=" : "1\n";
+    return "ACK LTE heartbeat seq=1\n";
+}
+
+int mock_ioctl(int fd, unsigned long request, unsigned long *value)
+{
+    struct fake_socket *s = checked_fd(fd);
+    if (request == FIONBIO) {
+        assert(*value == 1);
+        s->nonblocking = 1;
+        return 0;
+    }
+    assert(request == FIONREAD);
+    ++fionread_calls;
+    if (cfg.fionread_fail) {
+        socket_error = EOPNOTSUPP;
+        return -1;
+    }
+    *value = 0;
+    if (cfg.receive_ack && step > 0) {
+        if (s->type == SOCK_STREAM && last_tcp_read_step != step)
+            *value = (unsigned long)strlen(tcp_reply_chunk());
+        if (s->type == SOCK_DGRAM && last_udp_read_step != step)
+            *value = (unsigned long)strlen("ACK LTE heartbeat seq=1\n");
+    }
     return 0;
 }
 
@@ -224,7 +259,8 @@ ssize_t mock_sendto(int fd, const void *buf, size_t len, int flags,
 
 ssize_t mock_recv(int fd, void *buf, size_t len, int flags)
 {
-    const char reply[] = "ACK LTE heartbeat seq=1\n";
+    const char *reply = tcp_reply_chunk();
+    size_t reply_len = strlen(reply);
     assert(checked_fd(fd)->type == SOCK_STREAM && flags == 0);
     last_tcp_read_step = step;
     ++recv_calls;
@@ -232,9 +268,9 @@ ssize_t mock_recv(int fd, void *buf, size_t len, int flags)
         socket_error = EAGAIN;
         return -1;
     }
-    assert(len >= sizeof(reply) - 1);
-    memcpy(buf, reply, sizeof(reply) - 1);
-    return sizeof(reply) - 1;
+    assert(len >= reply_len);
+    memcpy(buf, reply, reply_len);
+    return (ssize_t)reply_len;
 }
 
 ssize_t mock_recvfrom(int fd, void *buf, size_t len, int flags,
@@ -254,6 +290,10 @@ ssize_t mock_recvfrom(int fd, void *buf, size_t len, int flags,
     peer->sin_family = AF_INET;
     peer->sin_addr.s_addr = inet_addr("123.57.79.87");
     peer->sin_port = htons(19000);
+    if (cfg.udp_wrong_peer == 1)
+        peer->sin_addr.s_addr = inet_addr("192.0.2.1");
+    else if (cfg.udp_wrong_peer == 2)
+        peer->sin_port = htons(19001);
     memcpy(buf, reply, sizeof(reply) - 1);
     return sizeof(reply) - 1;
 }
@@ -265,6 +305,7 @@ static void reset_case(const char *name, int iterations)
     memset(&cfg, 0, sizeof(cfg));
     memset(fds, 0, sizeof(fds));
     memset(logs, 0, sizeof(logs));
+    memset(step_log_begin, 0, sizeof(step_log_begin));
     cfg.iterations = iterations;
     cfg.complete_at = -1;
     cfg.callback_after = -1;
@@ -275,6 +316,7 @@ static void reset_case(const char *name, int iterations)
     }
     step = created = closed = bound = udp_sends = tcp_sends = 0;
     connect_calls = completion_checks = write_polls = recv_calls = recvfrom_calls = 0;
+    fionread_calls = tick_calls = 0;
     next_fd = 10;
     last_tcp_read_step = last_udp_read_step = -1;
     log_used = socket_error = network_epoch = 0;
@@ -285,6 +327,14 @@ static void run_case(void)
 {
     if (setjmp(task_done) == 0)
         heartbeat_main(NULL);
+}
+
+static int logged_in_step(int iteration, const char *text)
+{
+    const char *match;
+    assert(iteration >= 0 && iteration < cfg.iterations);
+    match = strstr(logs + step_log_begin[iteration], text);
+    return match != NULL && (size_t)(match - logs) < step_log_begin[iteration + 1];
 }
 
 static void passed(void) { printf("PASS %s\n", case_name); }
@@ -371,9 +421,49 @@ int main(void)
     assert(recv_calls == 2 && recvfrom_calls == 2 && created == 2 && closed == 0);
     assert(tcp_sends == 3 && udp_sends == 3 && !strstr(logs, "TCP disconnected")); passed();
 
+    reset_case("FIONREAD diagnostic failure does not prevent ACKs or close sockets", 3);
+    cfg.receive_ack = 1;
+    cfg.fionread_fail = 1;
+    run_case();
+    assert(fionread_calls > 0 && tick_calls > 0);
+    assert(recv_calls == 2 && recvfrom_calls == 2 && created == 2 && closed == 0);
+    assert(tcp_sends == 3 && udp_sends == 3);
+    assert(strstr(logs, "pending_ret=-1"));
+    assert(strstr(logs, "TCP received: ACK") && strstr(logs, "UDP received: ACK")); passed();
+
+    reset_case("UDP reply from wrong IP is observable but is not an accepted reply", 5);
+    cfg.receive_ack = 1;
+    cfg.udp_wrong_peer = 1;
+    run_case();
+    assert(recvfrom_calls == 4 && closed == 0 && udp_sends == 5 && tcp_sends == 5);
+    assert(strstr(logs, "UDP rx_raw") && strstr(logs, "peer=192.0.2.1:19000"));
+    assert(strstr(logs, "accepted=0") && strstr(logs, "UDP reply ignored: unexpected source"));
+    assert(!strstr(logs, "UDP received:") && strstr(logs, "TCP received: ACK"));
+    assert(strstr(logs, "rx_packets=0 rx_bytes=0")); passed();
+
+    reset_case("UDP reply from wrong port is rejected without disrupting TCP", 2);
+    cfg.receive_ack = 1;
+    cfg.udp_wrong_peer = 2;
+    run_case();
+    assert(recvfrom_calls == 1 && recv_calls == 1 && closed == 0);
+    assert(strstr(logs, "peer=123.57.79.87:19001") && strstr(logs, "accepted=0"));
+    assert(!strstr(logs, "UDP received:") && strstr(logs, "TCP received: ACK")); passed();
+
+    reset_case("TCP fragment is logged raw before newline and is reassembled exactly once", 3);
+    cfg.receive_ack = 1;
+    cfg.tcp_fragmented = 1;
+    run_case();
+    assert(recv_calls == 2 && closed == 0 && tcp_sends == 3 && udp_sends == 3);
+    assert(logged_in_step(1, "TCP rx_raw") && !logged_in_step(1, "TCP received:"));
+    assert(logged_in_step(1, "remaining=22 completed_frames=0"));
+    assert(logged_in_step(1, "first_hex=41434b204c544520686561727462656174207365713d"));
+    assert(logged_in_step(2, "TCP rx_raw") && logged_in_step(2, "first_hex=310a"));
+    assert(logged_in_step(2, "TCP received: ACK LTE heartbeat seq=1\n"));
+    assert(logged_in_step(2, "remaining=0 completed_frames=1")); passed();
+
     /* No real descriptors were opened; fd table is entirely simulated. */
     for (i = 0; i < next_fd; ++i)
         fds[i].open = 0;
-    puts("All 13 host mock scenarios passed (not a modem/hardware test).");
+    puts("All 17 host mock scenarios passed (not a modem/hardware test).");
     return 0;
 }
