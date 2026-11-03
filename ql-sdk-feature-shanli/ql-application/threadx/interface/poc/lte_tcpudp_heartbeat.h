@@ -7,7 +7,7 @@
 #define LTE_HEARTBEAT_INTERVAL_S 3
 #define LTE_HEARTBEAT_PROFILE_IDX 1
 #define LTE_HEARTBEAT_CONNECT_TIMEOUT_S 15
-#define LTE_HEARTBEAT_TEST_VERSION "v0.3-ack-diag"
+#define LTE_HEARTBEAT_TEST_VERSION "v0.3-no-autosleep"
 
 /* Diagnostic-only queries; keep the socket and three-second send behaviour. */
 #ifndef LTE_HEARTBEAT_DIAGNOSTICS

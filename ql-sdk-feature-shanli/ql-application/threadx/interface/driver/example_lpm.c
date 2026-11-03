@@ -1,6 +1,9 @@
+#include <stdio.h>
+#include <string.h>
 #include "ql_power.h"
 #include "ql_gpio.h"
 #include "ql_application.h"
+#include "ql_rtos.h"
 
 #define test_log(fmt, args...)	printf(fmt, ##args)
 #define LPM_GPIO	GPIO_PIN_NO_0
@@ -11,9 +14,12 @@ ql_sleep_flags_ref ql_test_sleep_ref = NULL;
 
 void ql_power_test2(void *argv)
 {
-    ql_autosleep_enable(QL_ALLOW_SLEEP);
+    /* Temporary ACK diagnostic comparison. Restore QL_ALLOW_SLEEP after the
+     * experiment; keep networking and Broad initialization unchanged. The SDK
+     * returns void, so this log records the request, not a measured state. */
+    ql_autosleep_enable(QL_NOT_ALLOW_SLEEP);
     unsigned int get_sleep_flags=0;
-    test_log("\r\n===============autosleep_enable===================\r\n");
+    test_log("\r\n[SL][POWER] ACK test: requested QL_NOT_ALLOW_SLEEP (automatic sleep disabled by request)\r\n");
 
     // while(1)
     // {
