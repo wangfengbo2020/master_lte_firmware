@@ -2,18 +2,22 @@
 #include <string.h>
 
 #include "inet.h"
+#include "ql_data_call.h"
 #include "ql_rtos.h"
 #include "sl_log.h"
 #include "sockets.h"
 #include "lte_tcpudp_heartbeat.h"
 
-/* Only the data-call callback writes this flag; the heartbeat task reads it. */
-static volatile int network_ready;
+/* The callback only records disconnects. Only this task owns the sockets.
+ * Query the PDP on every iteration: an UP callback can precede a usable IPv4.
+ * The epoch also catches a down/up cycle which reuses the same local address. */
+static volatile unsigned int network_epoch;
 static ql_task_t heartbeat_task;
 
-void lte_tcpudp_heartbeat_network_changed(int ready)
+void lte_tcpudp_heartbeat_network_changed(int profile_idx, int ready)
 {
-    network_ready = ready != 0;
+    if (profile_idx == LTE_HEARTBEAT_PROFILE_IDX && !ready)
+        ++network_epoch;
 }
 
 static void close_socket(int *fd)
@@ -31,11 +35,64 @@ static int make_nonblocking(int fd)
     return ioctl(fd, FIONBIO, &enabled);
 }
 
+static int would_block(unsigned int error)
+{
+    return error == EAGAIN || error == EWOULDBLOCK || error == EINTR;
+}
+
+/* Match Broad's route selection: bind to the active profile's IPv4, port 0. */
+static int create_bound_socket(int type, const struct in_addr *ip)
+{
+    const char *name = type == SOCK_STREAM ? "TCP" : "UDP";
+    struct sockaddr_in local;
+    socklen_t local_len = sizeof(local);
+    char ip_text[16];
+    int fd = socket(AF_INET, type, 0);
+    int ret;
+    unsigned int error;
+    if (fd < 0)
+    {
+        error = ql_get_soc_errno();
+        SL_LOG("TCPUDP", "%s socket failed err=%u", name, error);
+        return -1;
+    }
+    if (make_nonblocking(fd) != 0)
+    {
+        error = ql_get_soc_errno();
+        SL_LOG("TCPUDP", "%s nonblocking failed err=%u", name, error);
+        close_socket(&fd);
+        return -1;
+    }
+    memset(&local, 0, sizeof(local));
+    local.sin_family = AF_INET;
+    local.sin_addr = *ip;
+    local.sin_port = htons(0);
+    inet_ntop(AF_INET, ip, ip_text, sizeof(ip_text));
+    ret = bind(fd, (struct sockaddr *)&local, sizeof(local));
+    if (ret != 0)
+    {
+        error = ql_get_soc_errno();
+        SL_LOG("TCPUDP", "%s bind failed profile=%d ip=%s ret=%d err=%u",
+               name, LTE_HEARTBEAT_PROFILE_IDX, ip_text, ret, error);
+        close_socket(&fd);
+        return -1;
+    }
+    if (getsockname(fd, (struct sockaddr *)&local, &local_len) == 0)
+        SL_LOG("TCPUDP", "%s bound profile=%d local=%s:%u fd=%d", name,
+               LTE_HEARTBEAT_PROFILE_IDX, ip_text, (unsigned int)ntohs(local.sin_port), fd);
+    else
+        SL_LOG("TCPUDP", "%s bound profile=%d ip=%s fd=%d (port unavailable)",
+               name, LTE_HEARTBEAT_PROFILE_IDX, ip_text, fd);
+    return fd;
+}
+
 static void heartbeat_main(void *arg)
 {
     struct sockaddr_in server;
     int tcp = -1, udp = -1, connected = 0, connecting = 0;
     unsigned int seq = 0, connect_ticks = 0;
+    unsigned int seen_epoch = 0, wait_ticks = 0;
+    struct in_addr bound_ip = {0};
     char tcp_rx[512];
     size_t tcp_rx_used = 0;
     (void)arg;
@@ -44,15 +101,23 @@ static void heartbeat_main(void *arg)
     server.sin_family = AF_INET;
     server.sin_port = htons(LTE_HEARTBEAT_SERVER_PORT);
     server.sin_addr.s_addr = inet_addr(LTE_HEARTBEAT_SERVER_IP);
-    SL_LOG("TCPUDP", "v0.1 server=%s:%d interval=%ds", LTE_HEARTBEAT_SERVER_IP,
-           LTE_HEARTBEAT_SERVER_PORT, LTE_HEARTBEAT_INTERVAL_S);
+    SL_LOG("TCPUDP", "v0.2-pdp-bind server=%s:%d profile=%d interval=%ds", LTE_HEARTBEAT_SERVER_IP,
+           LTE_HEARTBEAT_SERVER_PORT, LTE_HEARTBEAT_PROFILE_IDX, LTE_HEARTBEAT_INTERVAL_S);
 
     while (1)
     {
         char packet[96];
+        struct ql_data_call_info info = {0};
+        unsigned int current_epoch = network_epoch;
         int length, sent;
-        if (!network_ready)
+        int pdp_ret = ql_get_data_call_info(LTE_HEARTBEAT_PROFILE_IDX, 0, &info);
+        if (pdp_ret != 0 || info.profile_idx != LTE_HEARTBEAT_PROFILE_IDX ||
+            !info.v4.state || info.v4.addr.ip.s_addr == 0 ||
+            info.v4.addr.ip.s_addr == INADDR_NONE)
         {
+            if (wait_ticks++ % 10 == 0)
+                SL_LOG("TCPUDP", "waiting PDP profile=%d query_ret=%d reported_profile=%d v4_state=%d",
+                       LTE_HEARTBEAT_PROFILE_IDX, pdp_ret, info.profile_idx, info.v4.state);
             if (tcp >= 0 || udp >= 0)
                 SL_LOG("TCPUDP", "network down; closing sockets");
             close_socket(&tcp);
@@ -60,8 +125,26 @@ static void heartbeat_main(void *arg)
             connected = connecting = 0;
             connect_ticks = 0;
             tcp_rx_used = 0;
+            bound_ip.s_addr = 0;
             ql_rtos_task_sleep_s(LTE_HEARTBEAT_INTERVAL_S);
             continue;
+        }
+        wait_ticks = 0;
+        if (bound_ip.s_addr != info.v4.addr.ip.s_addr || seen_epoch != current_epoch)
+        {
+            char ip_text[16], dns1[16], dns2[16];
+            close_socket(&tcp);
+            close_socket(&udp);
+            connected = connecting = 0;
+            connect_ticks = 0;
+            tcp_rx_used = 0;
+            bound_ip = info.v4.addr.ip;
+            seen_epoch = current_epoch;
+            inet_ntop(AF_INET, &bound_ip, ip_text, sizeof(ip_text));
+            inet_ntop(AF_INET, &info.v4.addr.pri_dns, dns1, sizeof(dns1));
+            inet_ntop(AF_INET, &info.v4.addr.sec_dns, dns2, sizeof(dns2));
+            SL_LOG("TCPUDP", "PDP ready profile=%d ip=%s dns=%s,%s epoch=%u; rebinding sockets",
+                   LTE_HEARTBEAT_PROFILE_IDX, ip_text, dns1, dns2, seen_epoch);
         }
 
         /* Poll for replies without blocking the existing three-second loop. */
@@ -75,14 +158,33 @@ static void heartbeat_main(void *arg)
                 struct sockaddr_in peer;
                 socklen_t peer_len = sizeof(peer);
                 char reply[512];
-                int n;
+                int n, selected;
                 FD_ZERO(&read_set);
                 FD_SET(udp, &read_set);
-                if (select(udp + 1, &read_set, NULL, NULL, &timeout) <= 0)
+                selected = select(udp + 1, &read_set, NULL, NULL, &timeout);
+                if (selected < 0)
+                {
+                    unsigned int error = ql_get_soc_errno();
+                    if (!would_block(error))
+                    {
+                        SL_LOG("TCPUDP", "UDP select failed err=%u", error);
+                        close_socket(&udp);
+                    }
+                    break;
+                }
+                if (selected == 0)
                     break;
                 n = recvfrom(udp, reply, sizeof(reply) - 1, 0, (struct sockaddr *)&peer, &peer_len);
-                if (n <= 0)
+                if (n < 0)
+                {
+                    unsigned int error = ql_get_soc_errno();
+                    if (!would_block(error))
+                    {
+                        SL_LOG("TCPUDP", "UDP receive failed err=%u", error);
+                        close_socket(&udp);
+                    }
                     break;
+                }
                 if (peer.sin_addr.s_addr != server.sin_addr.s_addr || peer.sin_port != server.sin_port)
                     continue;
                 reply[n] = '\0';
@@ -93,19 +195,33 @@ static void heartbeat_main(void *arg)
         {
             fd_set read_set;
             struct timeval timeout = {0, 0};
+            int selected;
             FD_ZERO(&read_set);
             FD_SET(tcp, &read_set);
-            if (select(tcp + 1, &read_set, NULL, NULL, &timeout) > 0)
+            selected = select(tcp + 1, &read_set, NULL, NULL, &timeout);
+            if (selected < 0)
             {
-                int n = recv(tcp, tcp_rx + tcp_rx_used, sizeof(tcp_rx) - 1 - tcp_rx_used, 0);
-                if (n <= 0)
+                unsigned int error = ql_get_soc_errno();
+                if (!would_block(error))
                 {
-                    SL_LOG("TCPUDP", "TCP disconnected; reconnecting");
+                    SL_LOG("TCPUDP", "TCP select failed err=%u; reconnecting", error);
                     close_socket(&tcp);
                     connected = 0;
                     tcp_rx_used = 0;
                 }
-                else
+            }
+            else if (selected > 0)
+            {
+                int n = recv(tcp, tcp_rx + tcp_rx_used, sizeof(tcp_rx) - 1 - tcp_rx_used, 0);
+                unsigned int error = n < 0 ? ql_get_soc_errno() : 0;
+                if (n == 0 || (n < 0 && !would_block(error)))
+                {
+                    SL_LOG("TCPUDP", "TCP disconnected recv=%d err=%u; reconnecting", n, error);
+                    close_socket(&tcp);
+                    connected = 0;
+                    tcp_rx_used = 0;
+                }
+                else if (n > 0)
                 {
                     char *newline;
                     tcp_rx_used += (size_t)n;
@@ -129,11 +245,7 @@ static void heartbeat_main(void *arg)
         ++seq;
         length = snprintf(packet, sizeof(packet), "LTE heartbeat seq=%u\n", seq);
         if (udp < 0)
-        {
-            udp = socket(AF_INET, SOCK_DGRAM, 0);
-            if (udp >= 0 && make_nonblocking(udp) != 0)
-                close_socket(&udp);
-        }
+            udp = create_bound_socket(SOCK_DGRAM, &bound_ip);
         if (udp >= 0)
         {
             sent = sendto(udp, packet, length, 0, (struct sockaddr *)&server, sizeof(server));
@@ -145,56 +257,88 @@ static void heartbeat_main(void *arg)
                 close_socket(&udp);
             }
         }
-        else
-            SL_LOG("TCPUDP", "UDP socket creation failed err=%u", ql_get_soc_errno());
-
         if (tcp < 0)
         {
-            tcp = socket(AF_INET, SOCK_STREAM, 0);
-            if (tcp < 0 || make_nonblocking(tcp) != 0)
-            {
-                SL_LOG("TCPUDP", "TCP socket setup failed err=%u", ql_get_soc_errno());
-                close_socket(&tcp);
-            }
-            else
+            tcp = create_bound_socket(SOCK_STREAM, &bound_ip);
+            if (tcp >= 0)
             {
                 int result = connect(tcp, (struct sockaddr *)&server, sizeof(server));
+                unsigned int error = result < 0 ? ql_get_soc_errno() : 0;
                 if (result == 0)
                 {
                     connected = 1;
                     SL_LOG("TCPUDP", "TCP connected");
                 }
-                else
+                else if (error == EINPROGRESS)
                 {
                     connecting = 1;
                     connect_ticks = 0;
-                    SL_LOG("TCPUDP", "TCP connecting ret=%d err=%u", result, ql_get_soc_errno());
+                    SL_LOG("TCPUDP", "TCP connecting ret=%d err=%u", result, error);
+                }
+                else
+                {
+                    SL_LOG("TCPUDP", "TCP connect failed immediately ret=%d err=%u", result, error);
+                    close_socket(&tcp);
+                    connected = connecting = 0;
                 }
             }
         }
         if (tcp >= 0 && connecting)
         {
-            fd_set write_set, error_set;
+            fd_set read_set, write_set, error_set;
             struct timeval timeout = {0, 0};
-            int result, error = 0;
+            int result, error = 0, failed = 0;
             socklen_t error_len = sizeof(error);
             FD_ZERO(&write_set);
+            FD_ZERO(&read_set);
             FD_ZERO(&error_set);
             FD_SET(tcp, &write_set);
+            FD_SET(tcp, &read_set);
             FD_SET(tcp, &error_set);
-            result = select(tcp + 1, NULL, &write_set, &error_set, &timeout);
-            if (result > 0 && getsockopt(tcp, SOL_SOCKET, SO_ERROR, &error, &error_len) == 0 &&
-                error == 0 && FD_ISSET(tcp, &write_set) && !FD_ISSET(tcp, &error_set))
+            result = select(tcp + 1, &read_set, &write_set, &error_set, &timeout);
+            if (result < 0)
             {
-                connecting = 0;
-                connected = 1;
-                SL_LOG("TCPUDP", "TCP connected");
+                unsigned int select_error = ql_get_soc_errno();
+                if (!would_block(select_error))
+                {
+                    SL_LOG("TCPUDP", "TCP connect select failed err=%u", select_error);
+                    failed = 1;
+                }
             }
-            else if (result != 0 || ++connect_ticks >= 5)
+            else if (result > 0)
             {
-                SL_LOG("TCPUDP", "TCP connect failed/timed out select=%d err=%d", result, error);
+                if (getsockopt(tcp, SOL_SOCKET, SO_ERROR, &error, &error_len) != 0)
+                {
+                    unsigned int option_error = ql_get_soc_errno();
+                    SL_LOG("TCPUDP", "TCP SO_ERROR query failed err=%u", option_error);
+                    failed = 1;
+                }
+                else if (error != 0 || FD_ISSET(tcp, &error_set) || !FD_ISSET(tcp, &write_set))
+                {
+                    SL_LOG("TCPUDP", "TCP connect completion failed so_error=%d read=%d write=%d except=%d",
+                           error, FD_ISSET(tcp, &read_set) != 0, FD_ISSET(tcp, &write_set) != 0,
+                           FD_ISSET(tcp, &error_set) != 0);
+                    failed = 1;
+                }
+                else
+                {
+                    connecting = 0;
+                    connected = 1;
+                    SL_LOG("TCPUDP", "TCP connected");
+                }
+            }
+            if (connecting && !failed &&
+                connect_ticks >= LTE_HEARTBEAT_CONNECT_TIMEOUT_S / LTE_HEARTBEAT_INTERVAL_S)
+            {
+                SL_LOG("TCPUDP", "TCP connect timed out after %us (no completion)",
+                       connect_ticks * LTE_HEARTBEAT_INTERVAL_S);
+                failed = 1;
+            }
+            if (failed)
+            {
                 close_socket(&tcp);
                 connecting = connected = 0;
+                tcp_rx_used = 0;
             }
         }
         if (tcp >= 0 && connected)
@@ -211,6 +355,8 @@ static void heartbeat_main(void *arg)
                 tcp_rx_used = 0;
             }
         }
+        if (connecting)
+            ++connect_ticks;
         ql_rtos_task_sleep_s(LTE_HEARTBEAT_INTERVAL_S);
     }
 }

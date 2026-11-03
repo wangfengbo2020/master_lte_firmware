@@ -31,6 +31,11 @@
 #include "interface/log/inc/ql_log.h" // 提供 ql_log_mask_set
 
 #define CUSTOMER_APP_VERSION "APP_V0.0.2"
+/* TCP/UDP diagnostic build: restore to 1 to resume Broad application login.
+ * The prebuilt Broad kernel, audio and UART remain initialized. */
+#ifndef POC_INTERCOM_LOGIN_ENABLE
+#define POC_INTERCOM_LOGIN_ENABLE 0
+#endif
 // =========================================================================
 // 【登录账号配置】
 // 定义 POC_ACCOUNT 则使用固定账号，不定义则自动读取设备 IMEI 作为账号
@@ -47,7 +52,7 @@
 #define TTS_LOGIN_OK "登录成功"
 #define TTS_LOGIN_FAIL "登录失败"
 
-#define POC_PROFILE_IDX 1
+#define POC_PROFILE_IDX LTE_HEARTBEAT_PROFILE_IDX
 
 // =========================================================================
 // 全局状态变量 (线程安全，volatile)
@@ -203,12 +208,24 @@ RETRY_CHECK:
 static void ql_nw_status_callback(int profile_idx, int nw_status)
 {
     struct ql_data_call_info info = {0};
+    int info_ret;
     SL_LOG("NW", "profile(%d) status: %d", profile_idx, nw_status);
-    lte_tcpudp_heartbeat_network_changed(nw_status);
+    if (profile_idx != POC_PROFILE_IDX)
+        return;
 
     if (nw_status)
     {
-        ql_get_data_call_info(profile_idx, 0, &info);
+        info_ret = ql_get_data_call_info(profile_idx, 0, &info);
+        if (info_ret != 0 || info.profile_idx != POC_PROFILE_IDX ||
+            !info.v4.state || info.v4.addr.ip.s_addr == 0 ||
+            info.v4.addr.ip.s_addr == INADDR_NONE)
+        {
+            data_call_success = 0;
+            SL_LOG("NW", "UP but IPv4 not ready: query_ret=%d profile=%d state=%d; polling",
+                   info_ret, info.profile_idx, info.v4.state);
+            lte_tcpudp_heartbeat_network_changed(profile_idx, 0);
+            return;
+        }
         SL_LOG("NW", "profile_idx: %d", info.profile_idx);
         SL_LOG("NW", "ip_version: %d", info.ip_version);
 
@@ -223,10 +240,12 @@ static void ql_nw_status_callback(int profile_idx, int nw_status)
             SL_LOG("NW", "v4 ip: %s", ip_addr_str);
         }
         data_call_success = 1;
+        lte_tcpudp_heartbeat_network_changed(profile_idx, 1);
     }
     else
     {
         data_call_success = 0;
+        lte_tcpudp_heartbeat_network_changed(profile_idx, 0);
         SL_LOG("NW", "Data call failed! profile_idx:%d", profile_idx);
     }
 }
@@ -244,8 +263,9 @@ static void datacall_start(void)
         SL_LOG("NW", "doing network activing ...");
         ql_wan_start(ql_nw_status_callback);
         ql_set_data_call_asyn_mode(1, ql_nw_status_callback);
-        ql_set_auto_connect(1, TRUE);
-        ql_start_data_call(1, 0, NULL, NULL, NULL, 0);
+        ql_set_auto_connect(POC_PROFILE_IDX, TRUE);
+        int dial_ret = ql_start_data_call(POC_PROFILE_IDX, 0, NULL, NULL, NULL, 0);
+        SL_LOG("NW", "start data call profile=%d ret=%d", POC_PROFILE_IDX, dial_ret);
     }
 }
 
@@ -366,10 +386,15 @@ retry:
     int wait_num = 60;
     while (wait_num--)
     {
-        if (data_call_success == 1)
+        struct ql_data_call_info info = {0};
+        int info_ret = ql_get_data_call_info(POC_PROFILE_IDX, 0, &info);
+        if (info_ret == 0 && info.profile_idx == POC_PROFILE_IDX && info.v4.state &&
+            info.v4.addr.ip.s_addr != 0 && info.v4.addr.ip.s_addr != INADDR_NONE)
         {
+            data_call_success = 1;
             return 0;
         }
+        data_call_success = 0;
         ql_rtos_task_sleep_s(1);
     }
 
@@ -386,6 +411,12 @@ retry:
  */
 static void ui_login_status(int online)
 {
+#if !POC_INTERCOM_LOGIN_ENABLE
+    g_login_ok = 0;
+    g_in_group = 0;
+    SL_LOG("POC", "Login callback ignored in TCP/UDP test mode: status=%d", online);
+    return;
+#endif
     SL_LOG("POC", "Login status: %s", online == USER_ONLINE ? "ONLINE" : "OFFLINE");
 
     if (online == USER_ONLINE)
@@ -718,7 +749,6 @@ int change_group(void)
  */
 /* 【测试开关】对讲登录：1=正常登录进组对讲；0=禁用登录（用于 MIC/自测等，
  * 平台配置与回调仍注册，仅跳过 broad_login_by_saved 及登录超时上报） */
-#define POC_INTERCOM_LOGIN_ENABLE 1
 
 static void ui_init(void)
 {
@@ -784,7 +814,7 @@ static void ui_init(void)
     SL_LOG("POC", "Login request sent, ret=%d", login_ret);
 #else
     (void)ui_login_status; /* referenced to avoid unused-function warning */
-    SL_LOG("POC", "Login skipped (intercom login disabled)");
+    SL_LOG("POC", "Login paused for TCP/UDP test; Broad kernel remains initialized");
 #endif
 }
 
@@ -897,6 +927,8 @@ static void shanli_poc_main_task(void *arg)
     SL_LOG("VER", "Firmware: %s", VERSION_STRING);
     SL_LOG("VER", "Branch: %s", GIT_BRANCH);
     SL_LOG("VER", "Build: %s", BUILD_DATE);
+    SL_LOG("TCPUDP", "test build v0.2-pdp-bind; Broad application login=%d",
+           POC_INTERCOM_LOGIN_ENABLE);
 
     // 系统刚启动，等底层驱动初始化完成
     ql_rtos_task_sleep_s(5);
@@ -910,8 +942,9 @@ static void shanli_poc_main_task(void *arg)
         SL_LOG("POC", "ptt_key_event_flag create failed!");
 
     // 网络初始化 (SIM检测 → 驻网 → 拨号)
-    lte_tcpudp_heartbeat_start();
-    ql_network_init();
+    int heartbeat_ret = lte_tcpudp_heartbeat_start();
+    int network_ret = ql_network_init();
+    SL_LOG("NW", "init ret=%d heartbeat_task_ret=%d", network_ret, heartbeat_ret);
 
     // 等待 Broad SDK 初始化完成（由 shanli kernel 的 broad_kernel_init 自动完成）
     int wait_count = 0;
@@ -975,6 +1008,14 @@ static void shanli_poc_main_task(void *arg)
         int ret = ql_rtos_flag_wait(
             ptt_key_event_flag, QL_PTTKEY_MASK_FLAG, QL_FLAG_OR_CLEAR, &event, POC_HEARTBEAT_MS);
 
+#if !POC_INTERCOM_LOGIN_ENABLE
+        if (event)
+        {
+            SL_LOG("PTT", "ignored in TCP/UDP test mode");
+            event = 0; /* Do not enable the PA for a paused intercom session. */
+        }
+#endif
+
         // 逻辑A: 物理引脚触发 (机械按键防抖)
         if (event & QL_PTTKEY_CHANGE_FLAG)
         {
@@ -1018,7 +1059,7 @@ static void shanli_poc_main_task(void *arg)
         }
 
         // 超时无事件时发送心跳
-        if (ret != 0 && g_login_ok)
+        if (POC_INTERCOM_LOGIN_ENABLE && ret != 0 && g_login_ok)
         {
             // 电量/信号每 POC_TERM_INFO_EVERY 次心跳才查一次并上报
             if (++heartbeat_cnt >= POC_TERM_INFO_EVERY)
