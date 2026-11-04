@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "inet.h"
+#include "netdb.h"
 #include "ql_data_call.h"
 #include "ql_rtos.h"
 #include "sl_log.h"
@@ -38,6 +39,72 @@ static int make_nonblocking(int fd)
 static int would_block(unsigned int error)
 {
     return error == EAGAIN || error == EWOULDBLOCK || error == EINTR;
+}
+
+static int pdp_ready(int result, const struct ql_data_call_info *info)
+{
+    return result == 0 && info->profile_idx == LTE_HEARTBEAT_PROFILE_IDX &&
+           info->v4.state && info->v4.addr.ip.s_addr != 0 &&
+           info->v4.addr.ip.s_addr != INADDR_NONE;
+}
+
+/* Resolve through the same PDP profile used by the bound sockets. The SDK's
+ * resolver is synchronous and has no per-call timeout argument. Cache one
+ * IPv4 for this PDP session; never fall back to a hard-coded destination. */
+static int resolve_server(struct sockaddr_in *server)
+{
+    struct addrinfo hints, *results = NULL, *entry;
+    struct in_addr address = {0};
+    unsigned int started = ql_rtos_get_systicks();
+    unsigned long elapsed;
+    char ip_text[16] = "unknown";
+    int result, found = 0;
+
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    SL_LOG("TCPUDP", "DNS start host=%s profile=%d", LTE_HEARTBEAT_SERVER_HOST,
+           LTE_HEARTBEAT_PROFILE_IDX);
+    result = getaddrinfo_with_pcid(LTE_HEARTBEAT_SERVER_HOST, NULL, &hints,
+                                   &results, LTE_HEARTBEAT_PROFILE_IDX);
+    elapsed = (unsigned int)(ql_rtos_get_systicks() - started);
+    if (result == 0)
+    {
+        for (entry = results; entry != NULL; entry = entry->ai_next)
+        {
+            const struct sockaddr_in *candidate;
+            if (entry->ai_family != AF_INET || entry->ai_addr == NULL ||
+                entry->ai_addrlen < sizeof(struct sockaddr_in))
+                continue;
+            candidate = (const struct sockaddr_in *)entry->ai_addr;
+            if (candidate->sin_family != AF_INET || candidate->sin_addr.s_addr == 0 ||
+                candidate->sin_addr.s_addr == INADDR_NONE)
+                continue;
+            address = candidate->sin_addr;
+            found = 1;
+            break;
+        }
+    }
+    if (results != NULL)
+        freeaddrinfo(results);
+
+    if (result != 0 || !found)
+    {
+        SL_LOG("TCPUDP", "DNS failed host=%s profile=%d ret=%d usable_ipv4=%d elapsed_ticks=%lu; retry after %ds",
+               LTE_HEARTBEAT_SERVER_HOST, LTE_HEARTBEAT_PROFILE_IDX, result, found,
+               elapsed, LTE_HEARTBEAT_INTERVAL_S);
+        return -1;
+    }
+
+    memset(server, 0, sizeof(*server));
+    server->sin_family = AF_INET;
+    server->sin_port = htons(LTE_HEARTBEAT_SERVER_PORT);
+    server->sin_addr = address;
+    inet_ntop(AF_INET, &address, ip_text, sizeof(ip_text));
+    SL_LOG("TCPUDP", "DNS resolved host=%s ip=%s port=%d profile=%d elapsed_ticks=%lu",
+           LTE_HEARTBEAT_SERVER_HOST, ip_text, LTE_HEARTBEAT_SERVER_PORT,
+           LTE_HEARTBEAT_PROFILE_IDX, elapsed);
+    return 0;
 }
 
 /* Ticks are deliberately not labelled milliseconds: the SDK only promises
@@ -130,6 +197,7 @@ static void heartbeat_main(void *arg)
 {
     struct sockaddr_in server;
     int tcp = -1, udp = -1, connected = 0, connecting = 0;
+    int server_ready = 0;
     unsigned int seq = 0, connect_ticks = 0;
     unsigned int seen_epoch = 0, wait_ticks = 0;
     unsigned int tcp_session = 0, udp_session = 0;
@@ -141,10 +209,7 @@ static void heartbeat_main(void *arg)
     (void)arg;
 
     memset(&server, 0, sizeof(server));
-    server.sin_family = AF_INET;
-    server.sin_port = htons(LTE_HEARTBEAT_SERVER_PORT);
-    server.sin_addr.s_addr = inet_addr(LTE_HEARTBEAT_SERVER_IP);
-    SL_LOG("TCPUDP", "%s server=%s:%d profile=%d interval=%ds", LTE_HEARTBEAT_TEST_VERSION, LTE_HEARTBEAT_SERVER_IP,
+    SL_LOG("TCPUDP", "%s server=%s:%d profile=%d interval=%ds", LTE_HEARTBEAT_TEST_VERSION, LTE_HEARTBEAT_SERVER_HOST,
            LTE_HEARTBEAT_SERVER_PORT, LTE_HEARTBEAT_PROFILE_IDX, LTE_HEARTBEAT_INTERVAL_S);
     SL_LOG("TCPUDP", "diagnostics=%d; tick unit=SDK ticks; sent means socket accepted, not peer ACK",
            LTE_HEARTBEAT_DIAGNOSTICS);
@@ -156,9 +221,7 @@ static void heartbeat_main(void *arg)
         unsigned int current_epoch = network_epoch;
         int length, sent;
         int pdp_ret = ql_get_data_call_info(LTE_HEARTBEAT_PROFILE_IDX, 0, &info);
-        if (pdp_ret != 0 || info.profile_idx != LTE_HEARTBEAT_PROFILE_IDX ||
-            !info.v4.state || info.v4.addr.ip.s_addr == 0 ||
-            info.v4.addr.ip.s_addr == INADDR_NONE)
+        if (!pdp_ready(pdp_ret, &info))
         {
             if (wait_ticks++ % 10 == 0)
                 SL_LOG("TCPUDP", "waiting PDP profile=%d query_ret=%d reported_profile=%d v4_state=%d",
@@ -171,6 +234,8 @@ static void heartbeat_main(void *arg)
             connect_ticks = 0;
             tcp_rx_used = 0;
             bound_ip.s_addr = 0;
+            server_ready = 0;
+            server.sin_addr.s_addr = 0;
             ql_rtos_task_sleep_s(LTE_HEARTBEAT_INTERVAL_S);
             continue;
         }
@@ -185,11 +250,37 @@ static void heartbeat_main(void *arg)
             tcp_rx_used = 0;
             bound_ip = info.v4.addr.ip;
             seen_epoch = current_epoch;
+            server_ready = 0;
+            server.sin_addr.s_addr = 0;
             inet_ntop(AF_INET, &bound_ip, ip_text, sizeof(ip_text));
             inet_ntop(AF_INET, &info.v4.addr.pri_dns, dns1, sizeof(dns1));
             inet_ntop(AF_INET, &info.v4.addr.sec_dns, dns2, sizeof(dns2));
             SL_LOG("TCPUDP", "PDP ready profile=%d ip=%s dns=%s,%s epoch=%u; rebinding sockets",
                    LTE_HEARTBEAT_PROFILE_IDX, ip_text, dns1, dns2, seen_epoch);
+        }
+
+        if (!server_ready)
+        {
+            struct ql_data_call_info after_dns = {0};
+            int after_ret;
+            if (resolve_server(&server) != 0)
+            {
+                ql_rtos_task_sleep_s(LTE_HEARTBEAT_INTERVAL_S);
+                continue;
+            }
+            /* A blocking DNS lookup may span a disconnect/reconnect. Reject
+             * that result before opening either socket on the old PDP. */
+            after_ret = ql_get_data_call_info(LTE_HEARTBEAT_PROFILE_IDX, 0, &after_dns);
+            if (network_epoch != seen_epoch || !pdp_ready(after_ret, &after_dns) ||
+                after_dns.v4.addr.ip.s_addr != bound_ip.s_addr)
+            {
+                SL_LOG("TCPUDP", "PDP changed during DNS; discard result and retry");
+                server.sin_addr.s_addr = 0;
+                bound_ip.s_addr = 0;
+                ql_rtos_task_sleep_s(LTE_HEARTBEAT_INTERVAL_S);
+                continue;
+            }
+            server_ready = 1;
         }
 
         /* Poll for replies without blocking the existing three-second loop. */

@@ -13,12 +13,21 @@
 #include "../lte_tcpudp_heartbeat.c"
 
 enum { MAX_STEPS = 12, MAX_FDS = 96 };
+enum {
+    DNS_VALID, DNS_EMPTY, DNS_IPV6_ONLY, DNS_SHORT_ADDRESS,
+    DNS_NULL_ADDRESS, DNS_ZERO_ADDRESS, DNS_BROADCAST_ADDRESS, DNS_MIXED_CHAIN
+};
+enum { DNS_RACE_NONE, DNS_RACE_EPOCH, DNS_RACE_IP, DNS_RACE_DOWN,
+       DNS_RACE_QUERY, DNS_RACE_PROFILE };
 struct scenario {
     int iterations, pdp_ret[MAX_STEPS], state[MAX_STEPS], profile[MAX_STEPS];
     in_addr_t ip[MAX_STEPS];
     int bind_fail_type, connect_error, complete_at, completion_error;
     int callback_after, callback_profile, receive_eagain, receive_ack;
     int fionread_fail, udp_wrong_peer, tcp_fragmented;
+    int dns_ret[MAX_STEPS], dns_kind[MAX_STEPS];
+    in_addr_t dns_ip[MAX_STEPS];
+    int dns_race_step, dns_race_kind;
 };
 struct fake_socket {
     int open, type, nonblocking, bound;
@@ -31,6 +40,11 @@ static int step, next_fd, created, closed, bound, udp_sends, tcp_sends;
 static int connect_calls, completion_checks, write_polls, recv_calls, recvfrom_calls;
 static int last_udp_read_step, last_tcp_read_step;
 static int fionread_calls, tick_calls;
+static int dns_calls, dns_frees, dns_active, passed_cases;
+static int created_at_step[MAX_STEPS];
+static in_addr_t resolved_ip;
+static struct addrinfo dns_nodes[2];
+static struct sockaddr_in dns_addresses[2];
 static unsigned int socket_error;
 static char logs[32768];
 static size_t log_used;
@@ -67,6 +81,83 @@ int ql_get_data_call_info(int profile, int version, struct ql_data_call_info *in
     info->v4.state = cfg.state[step];
     info->v4.addr.ip.s_addr = cfg.ip[step];
     return cfg.pdp_ret[step];
+}
+
+int getaddrinfo_with_pcid(const char *node, const char *service,
+                         const struct addrinfo *hints, struct addrinfo **result,
+                         int profile)
+{
+    int i, kind = cfg.dns_kind[step];
+    assert(strcmp(node, "sip.paitalk.com") == 0 && service == NULL);
+    assert(profile == 1 && hints != NULL);
+    assert(hints->ai_family == AF_INET && hints->ai_socktype == SOCK_STREAM);
+    assert(cfg.pdp_ret[step] == 0 && cfg.profile[step] == 1 && cfg.state[step]);
+    assert(cfg.ip[step] != 0 && cfg.ip[step] != INADDR_NONE);
+    assert(!dns_active); /* Every previous result must have been released. */
+    ++dns_calls;
+    *result = NULL;
+    if (cfg.dns_ret[step] != 0)
+        return cfg.dns_ret[step];
+    if (kind == DNS_EMPTY)
+        return 0;
+
+    memset(dns_nodes, 0, sizeof(dns_nodes));
+    memset(dns_addresses, 0, sizeof(dns_addresses));
+    for (i = 0; i < 2; ++i) {
+        dns_nodes[i].ai_family = AF_INET;
+        dns_nodes[i].ai_socktype = SOCK_STREAM;
+        dns_nodes[i].ai_addrlen = sizeof(dns_addresses[i]);
+        dns_nodes[i].ai_addr = (struct sockaddr *)&dns_addresses[i];
+        dns_addresses[i].sin_family = AF_INET;
+        dns_addresses[i].sin_addr.s_addr = cfg.dns_ip[step];
+    }
+    if (kind == DNS_IPV6_ONLY || kind == DNS_MIXED_CHAIN) {
+        dns_nodes[0].ai_family = AF_INET6;
+        dns_addresses[0].sin_family = AF_INET6;
+    } else if (kind == DNS_SHORT_ADDRESS) {
+        dns_nodes[0].ai_addrlen = sizeof(struct sockaddr_in) - 1;
+    } else if (kind == DNS_NULL_ADDRESS) {
+        dns_nodes[0].ai_addr = NULL;
+    } else if (kind == DNS_ZERO_ADDRESS) {
+        dns_addresses[0].sin_addr.s_addr = 0;
+    } else if (kind == DNS_BROADCAST_ADDRESS) {
+        dns_addresses[0].sin_addr.s_addr = INADDR_NONE;
+    }
+    if (kind == DNS_MIXED_CHAIN)
+        dns_nodes[0].ai_next = &dns_nodes[1];
+    if (kind == DNS_VALID || kind == DNS_MIXED_CHAIN)
+        resolved_ip = cfg.dns_ip[step];
+    *result = dns_nodes;
+    dns_active = 1;
+
+    /* Model a PDP transition while the synchronous resolver was blocked. */
+    if (step == cfg.dns_race_step) {
+        switch (cfg.dns_race_kind) {
+        case DNS_RACE_EPOCH:
+            lte_tcpudp_heartbeat_network_changed(1, 0);
+            lte_tcpudp_heartbeat_network_changed(1, 1);
+            break;
+        case DNS_RACE_IP:
+            for (i = step; i < MAX_STEPS; ++i)
+                cfg.ip[i] = inet_addr("10.161.24.199");
+            break;
+        case DNS_RACE_DOWN: cfg.state[step] = 0; break;
+        case DNS_RACE_QUERY: cfg.pdp_ret[step] = -1; break;
+        case DNS_RACE_PROFILE: cfg.profile[step] = 2; break;
+        default: break;
+        }
+    }
+    return 0;
+}
+
+void freeaddrinfo(struct addrinfo *result)
+{
+    /* Even when the selected address is node 1, free the original head. */
+    assert(dns_active && result == dns_nodes);
+    dns_active = 0;
+    ++dns_frees;
+    memset(dns_nodes, 0, sizeof(dns_nodes));
+    memset(dns_addresses, 0, sizeof(dns_addresses));
 }
 
 void ql_rtos_task_sleep_s(unsigned int seconds)
@@ -106,6 +197,7 @@ int mock_socket(int domain, int type, int protocol)
     fds[fd].open = 1;
     fds[fd].type = type;
     ++created;
+    ++created_at_step[step];
     return fd;
 }
 
@@ -179,7 +271,7 @@ static void check_destination(const struct sockaddr *addr, socklen_t len)
 {
     const struct sockaddr_in *server = (const struct sockaddr_in *)addr;
     assert(len == sizeof(*server) && server->sin_family == AF_INET);
-    assert(server->sin_addr.s_addr == inet_addr("123.57.79.87"));
+    assert(resolved_ip != 0 && server->sin_addr.s_addr == resolved_ip);
     assert(ntohs(server->sin_port) == 19000);
 }
 
@@ -288,7 +380,7 @@ ssize_t mock_recvfrom(int fd, void *buf, size_t len, int flags,
     assert(len >= sizeof(reply) - 1 && *addrlen == sizeof(*peer));
     memset(peer, 0, sizeof(*peer));
     peer->sin_family = AF_INET;
-    peer->sin_addr.s_addr = inet_addr("123.57.79.87");
+    peer->sin_addr.s_addr = resolved_ip;
     peer->sin_port = htons(19000);
     if (cfg.udp_wrong_peer == 1)
         peer->sin_addr.s_addr = inet_addr("192.0.2.1");
@@ -306,17 +398,22 @@ static void reset_case(const char *name, int iterations)
     memset(fds, 0, sizeof(fds));
     memset(logs, 0, sizeof(logs));
     memset(step_log_begin, 0, sizeof(step_log_begin));
+    memset(created_at_step, 0, sizeof(created_at_step));
     cfg.iterations = iterations;
     cfg.complete_at = -1;
     cfg.callback_after = -1;
+    cfg.dns_race_step = -1;
     for (i = 0; i < MAX_STEPS; ++i) {
         cfg.state[i] = 1;
         cfg.profile[i] = 1;
         cfg.ip[i] = inet_addr("10.161.24.143");
+        cfg.dns_ip[i] = inet_addr("123.57.79.87");
     }
     step = created = closed = bound = udp_sends = tcp_sends = 0;
     connect_calls = completion_checks = write_polls = recv_calls = recvfrom_calls = 0;
     fionread_calls = tick_calls = 0;
+    dns_calls = dns_frees = dns_active = 0;
+    resolved_ip = 0;
     next_fd = 10;
     last_tcp_read_step = last_udp_read_step = -1;
     log_used = socket_error = network_epoch = 0;
@@ -327,6 +424,7 @@ static void run_case(void)
 {
     if (setjmp(task_done) == 0)
         heartbeat_main(NULL);
+    assert(!dns_active);
 }
 
 static int logged_in_step(int iteration, const char *text)
@@ -337,7 +435,7 @@ static int logged_in_step(int iteration, const char *text)
     return match != NULL && (size_t)(match - logs) < step_log_begin[iteration + 1];
 }
 
-static void passed(void) { printf("PASS %s\n", case_name); }
+static void passed(void) { ++passed_cases; printf("PASS %s\n", case_name); }
 
 int main(void)
 {
@@ -349,13 +447,14 @@ int main(void)
     cfg.ip[3] = 0;
     cfg.ip[4] = INADDR_NONE;
     run_case();
-    assert(created == 0 && udp_sends == 0 && tcp_sends == 0); passed();
+    assert(created == 0 && udp_sends == 0 && tcp_sends == 0 && dns_calls == 0); passed();
 
     reset_case("recovery is polled; bind both sockets before traffic; ACKs logged", 3);
     cfg.state[0] = 0;
     cfg.receive_ack = 1;
     run_case();
     assert(created == 2 && bound == 2 && tcp_sends == 2 && udp_sends == 2);
+    assert(dns_calls == 1 && dns_frees == 1);
     assert(strstr(logs, "TCP received: ACK") && strstr(logs, "UDP received: ACK")); passed();
 
     reset_case("UDP bind failure closes UDP and prevents UDP send", 1);
@@ -370,25 +469,30 @@ int main(void)
 
     reset_case("PDP address change recreates and rebinds both sockets", 3);
     cfg.ip[1] = cfg.ip[2] = inet_addr("10.161.24.144");
+    cfg.dns_ip[1] = cfg.dns_ip[2] = inet_addr("192.0.2.25");
     run_case();
-    assert(created == 4 && closed == 2 && bound == 4 && tcp_sends == 3 && udp_sends == 3); passed();
+    assert(created == 4 && closed == 2 && bound == 4 && tcp_sends == 3 && udp_sends == 3);
+    assert(dns_calls == 2 && dns_frees == 2); passed();
 
     reset_case("profile 1 down/up with same IP recreates both sockets", 3);
     cfg.callback_after = 0;
     cfg.callback_profile = 1;
     run_case();
-    assert(created == 4 && closed == 2 && bound == 4); passed();
+    assert(created == 4 && closed == 2 && bound == 4);
+    assert(dns_calls == 2 && dns_frees == 2); passed();
 
     reset_case("other profile down/up does not disrupt sockets", 3);
     cfg.callback_after = 0;
     cfg.callback_profile = 2;
     run_case();
-    assert(created == 2 && closed == 0 && tcp_sends == 3 && udp_sends == 3); passed();
+    assert(created == 2 && closed == 0 && tcp_sends == 3 && udp_sends == 3);
+    assert(dns_calls == 1 && dns_frees == 1); passed();
 
     reset_case("PDP outage closes sockets; same-IP recovery rebinds", 3);
     cfg.state[1] = 0;
     run_case();
-    assert(created == 4 && closed == 2 && tcp_sends == 2 && udp_sends == 2); passed();
+    assert(created == 4 && closed == 2 && tcp_sends == 2 && udp_sends == 2);
+    assert(dns_calls == 2 && dns_frees == 2); passed();
 
     reset_case("EHOSTUNREACH closes immediately and never becomes connecting", 3);
     cfg.connect_error = EHOSTUNREACH;
@@ -461,9 +565,77 @@ int main(void)
     assert(logged_in_step(2, "TCP received: ACK LTE heartbeat seq=1\n"));
     assert(logged_in_step(2, "remaining=0 completed_frames=1")); passed();
 
+    reset_case("DNS failure retries without sockets or fallback to the old fixed IP", 3);
+    cfg.dns_ret[0] = cfg.dns_ret[1] = EAI_AGAIN;
+    cfg.receive_ack = 1;
+    run_case();
+    assert(dns_calls == 3 && dns_frees == 1);
+    assert(created_at_step[0] == 0 && created_at_step[1] == 0);
+    assert(created == 2 && tcp_sends == 1 && udp_sends == 1); passed();
+
+    reset_case("resolved alternate IPv4 is used by both protocols and UDP ACK validation", 3);
+    for (i = 0; i < MAX_STEPS; ++i)
+        cfg.dns_ip[i] = inet_addr("192.0.2.25");
+    cfg.receive_ack = 1;
+    run_case();
+    assert(dns_calls == 1 && dns_frees == 1 && created == 2 && closed == 0);
+    assert(tcp_sends == 3 && udp_sends == 3);
+    assert(strstr(logs, "TCP received: ACK") && strstr(logs, "UDP received: ACK"));
+    assert(strstr(logs, "peer=192.0.2.25:19000") && strstr(logs, "accepted=1")); passed();
+
+    reset_case("DNS result chain skips non-IPv4 and releases the original head", 2);
+    cfg.dns_kind[0] = DNS_MIXED_CHAIN;
+    cfg.dns_ip[0] = inet_addr("192.0.2.25");
+    run_case();
+    assert(dns_calls == 1 && dns_frees == 1 && created == 2);
+    assert(tcp_sends == 2 && udp_sends == 2); passed();
+
+    reset_case("empty, non-IPv4, short, null, zero and broadcast DNS answers never send", 7);
+    cfg.dns_kind[0] = DNS_EMPTY;
+    cfg.dns_kind[1] = DNS_IPV6_ONLY;
+    cfg.dns_kind[2] = DNS_SHORT_ADDRESS;
+    cfg.dns_kind[3] = DNS_NULL_ADDRESS;
+    cfg.dns_kind[4] = DNS_ZERO_ADDRESS;
+    cfg.dns_kind[5] = DNS_BROADCAST_ADDRESS;
+    run_case();
+    assert(dns_calls == 7 && dns_frees == 6);
+    for (i = 0; i < 6; ++i)
+        assert(created_at_step[i] == 0);
+    assert(created == 2 && tcp_sends == 1 && udp_sends == 1); passed();
+
+    reset_case("failed DNS after PDP recovery does not reuse the previous remote IP", 3);
+    cfg.callback_after = 0;
+    cfg.callback_profile = 1;
+    cfg.dns_ret[1] = EAI_AGAIN;
+    cfg.dns_ip[2] = inet_addr("192.0.2.25");
+    run_case();
+    assert(dns_calls == 3 && dns_frees == 2);
+    assert(created_at_step[1] == 0 && created == 4 && closed == 2);
+    assert(tcp_sends == 2 && udp_sends == 2); passed();
+
+    {
+        static const char *race_names[] = {
+            NULL,
+            "PDP epoch change during DNS discards the answer before socket creation",
+            "PDP address change during DNS discards the answer before socket creation",
+            "PDP down during DNS discards the answer before socket creation",
+            "PDP query failure after DNS discards the answer before socket creation",
+            "PDP wrong profile after DNS discards the answer before socket creation"
+        };
+        for (i = DNS_RACE_EPOCH; i <= DNS_RACE_PROFILE; ++i) {
+            reset_case(race_names[i], 2);
+            cfg.dns_race_step = 0;
+            cfg.dns_race_kind = i;
+            run_case();
+            assert(dns_calls == 2 && dns_frees == 2);
+            assert(created_at_step[0] == 0 && created == 2);
+            assert(tcp_sends == 1 && udp_sends == 1); passed();
+        }
+    }
+
     /* No real descriptors were opened; fd table is entirely simulated. */
     for (i = 0; i < next_fd; ++i)
         fds[i].open = 0;
-    puts("All 17 host mock scenarios passed (not a modem/hardware test).");
+    printf("All %d host mock scenarios passed (not a modem/hardware test).\n", passed_cases);
     return 0;
 }
