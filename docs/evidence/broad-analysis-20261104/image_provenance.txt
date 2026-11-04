@@ -1,0 +1,6 @@
+kernel.bin size: 5025792
+kernel.bin SHA256: b276be1dc30ea395050ec1b4ce97ddac826e98f0088c1b5545561fc152202208
+kernel.bin Broad versions: ['5.0.4-20251022-release']
+kernel.axf Broad versions: []
+ELF LOAD: 0x80022000 filesz 4740768 SHA256 966b3e71c2f3b16e074654e0adaa401d307900b0a05881f5cc2f2d6ecdb1507c
+ELF segment first-64-byte occurrence in kernel.bin: -1

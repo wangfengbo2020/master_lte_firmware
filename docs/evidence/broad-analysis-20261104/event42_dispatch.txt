@@ -1,0 +1,161 @@
+Focused evidence: event 42 dispatch in the Broad wrapper
+Source archive: /home/administrator/myproject/master/master_lte_firmware/ql-sdk-feature-shanli/ql-kernel/threadx/common/lib/broad.lib
+Source SHA-256: ad2f68d5d06e71dd577b5e2d37bea5a7e5d74a251a0fd7f13b2e70c311fa4130
+Broad embedded version: 5.0.4-20260812-release
+This evidence does not establish behavior of the older running 5.0.4-20251022-release kernel.
+Objects: broad.o, sl_ui.o, sl_at.o; original ELF .text offsets are preserved below.
+Extracted disassembly: arm-none-eabi-objdump -dr; excerpt prefixes identify original evidence file and line.
+Jump-table entries were also read directly from the ELF32 little-endian object section 1 and asserted.
+
+Conclusion scope:
+For event type 42, the analyzed Broad wrapper API dispatch path returns through its default branch.
+Its alternate UI/AT dispatch path forwards to sl_at_notify_proc, logs an unprocessed notification and returns.
+Neither of these two paths updates a timer or invokes an application-specific event-42 handler.
+This is not a claim that every possible consumer elsewhere in the system is absent.
+The event producer is separately documented in power_behavior.txt:636 (echat_imp_set_ping_timer, original offset 0x9918).
+
+1. Registered echat callback resolves to on_broad_notify (broad.o).
+Original evidence: /tmp/broad-power-disasm-20261103/broad.disasm.txt
+[broad.disasm.txt:5448]     3e98:	4622      	mov	r2, r4
+[broad.disasm.txt:5449]     3e9a:	49c8      	ldr	r1, [pc, #800]	; (41bc <broad_free+0x2b8>)
+[broad.disasm.txt:5450]     3e9c:	6820      	ldr	r0, [r4, #0]
+[broad.disasm.txt:5451]     3e9e:	f7ff fffe 	bl	0 <echat_register_notify>
+[broad.disasm.txt:5452] 			3e9e: R_ARM_THM_CALL	echat_register_notify
+
+Callback literal relocation.
+Original evidence: /tmp/broad-power-disasm-20261103/broad.disasm.txt
+[broad.disasm.txt:5688]     41bc:	00000000 	.word	0x00000000
+[broad.disasm.txt:5689] 			41bc: R_ARM_ABS32	on_broad_notify
+
+2. on_broad_notify entry: notification type is byte [notify + 0].
+Original evidence: /tmp/broad-power-disasm-20261103/broad.disasm.txt
+[broad.disasm.txt:1339] 00000df8 <on_broad_notify>:
+[broad.disasm.txt:1340]      df8:	e92d 4ff0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, lr}
+[broad.disasm.txt:1341]      dfc:	0004      	movs	r4, r0
+[broad.disasm.txt:1342]      dfe:	460d      	mov	r5, r1
+[broad.disasm.txt:1343]      e00:	f2ad 5d84 	subw	sp, sp, #1412	; 0x584
+[broad.disasm.txt:1344]      e04:	d107      	bne.n	e16 <on_broad_notify+0x1e>
+[broad.disasm.txt:1345]      e06:	f640 221a 	movw	r2, #2586	; 0xa1a
+[broad.disasm.txt:1346]      e0a:	f6af 2118 	subw	r1, pc, #2584	; 0xa18
+[broad.disasm.txt:1347]      e0e:	f2af 309c 	subw	r0, pc, #924	; 0x39c
+[broad.disasm.txt:1348]      e12:	f7ff fffe 	bl	0 <hal_exp_handler>
+[broad.disasm.txt:1349] 			e12: R_ARM_THM_CALL	hal_exp_handler
+[broad.disasm.txt:1350]      e16:	7828      	ldrb	r0, [r5, #0]
+[broad.disasm.txt:1351]      e18:	f8df 83ec 	ldr.w	r8, [pc, #1004]	; 1208 <on_broad_notify+0x410>
+[broad.disasm.txt:1352]      e1c:	4601      	mov	r1, r0
+[broad.disasm.txt:1353]      e1e:	e1f5      	b.n	120c <on_broad_notify+0x414>
+
+Only types 88/89 can set the additional dispatch flag; event 42 cannot.
+Original evidence: /tmp/broad-power-disasm-20261103/broad.disasm.txt
+[broad.disasm.txt:1606]     120c:	f8d8 2004 	ldr.w	r2, [r8, #4]
+[broad.disasm.txt:1607]     1210:	2700      	movs	r7, #0
+[broad.disasm.txt:1608]     1212:	b12a      	cbz	r2, 1220 <on_broad_notify+0x428>
+[broad.disasm.txt:1609]     1214:	2600      	movs	r6, #0
+[broad.disasm.txt:1610]     1216:	2858      	cmp	r0, #88	; 0x58
+[broad.disasm.txt:1611]     1218:	d004      	beq.n	1224 <on_broad_notify+0x42c>
+[broad.disasm.txt:1612]     121a:	2859      	cmp	r0, #89	; 0x59
+[broad.disasm.txt:1613]     121c:	d103      	bne.n	1226 <on_broad_notify+0x42e>
+[broad.disasm.txt:1614]     121e:	e001      	b.n	1224 <on_broad_notify+0x42c>
+[broad.disasm.txt:1615]     1220:	463e      	mov	r6, r7
+[broad.disasm.txt:1616]     1222:	e000      	b.n	1226 <on_broad_notify+0x42e>
+[broad.disasm.txt:1617]     1224:	2601      	movs	r6, #1
+
+API mode selection and TBH dispatch.
+Original evidence: /tmp/broad-power-disasm-20261103/broad.disasm.txt
+[broad.disasm.txt:1629]     1248:	f8d4 0434 	ldr.w	r0, [r4, #1076]	; 0x434
+[broad.disasm.txt:1630]     124c:	4330      	orrs	r0, r6
+[broad.disasm.txt:1631]     124e:	d06b      	beq.n	1328 <on_broad_notify+0x530>
+[broad.disasm.txt:1632]     1250:	7828      	ldrb	r0, [r5, #0]
+[broad.disasm.txt:1633]     1252:	f204 4b24 	addw	fp, r4, #1060	; 0x424
+[broad.disasm.txt:1634]     1256:	4ef4      	ldr	r6, [pc, #976]	; (1628 <on_broad_notify+0x830>)
+[broad.disasm.txt:1635]     1258:	f204 412c 	addw	r1, r4, #1068	; 0x42c
+[broad.disasm.txt:1636]     125c:	285d      	cmp	r0, #93	; 0x5d
+[broad.disasm.txt:1637]     125e:	f04f 0901 	mov.w	r9, #1
+[broad.disasm.txt:1638]     1262:	f04f 0a02 	mov.w	sl, #2
+[broad.disasm.txt:1639]     1266:	9101      	str	r1, [sp, #4]
+[broad.disasm.txt:1640]     1268:	d278      	bcs.n	135c <on_broad_notify+0x564>
+[broad.disasm.txt:1641]     126a:	e8df f010 	tbh	[pc, r0, lsl #1]
+[broad.disasm.txt:1642]     126e:	0064      	.short	0x0064
+
+API table calculation: PC after TBH = 0x126e; entry[42] address = 0x126e + 42*2 = 0x12c2.
+The little-endian .word at 0x12c0 has upper halfword 0x0077 at 0x12c2.
+Direct ELF check: entry[42] = 0x0077; branch target = 0x126e + 2*0x0077 = 0x135c.
+
+Necessary jump-table word containing event 42.
+Original evidence: /tmp/broad-power-disasm-20261103/broad.disasm.txt
+[broad.disasm.txt:1663]     12c0:	00770a8d 	.word	0x00770a8d
+
+API default branch: restore stack and return.
+Original evidence: /tmp/broad-power-disasm-20261103/broad.disasm.txt
+[broad.disasm.txt:1709]     135c:	f20d 5d84 	addw	sp, sp, #1412	; 0x584
+[broad.disasm.txt:1710]     1360:	e8bd 8ff0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, pc}
+
+3. Alternate dispatch mode forwards the original notification to sl_ui_ctx_on_notify.
+Original evidence: /tmp/broad-power-disasm-20261103/broad.disasm.txt
+[broad.disasm.txt:1689]     1328:	f20d 5d84 	addw	sp, sp, #1412	; 0x584
+[broad.disasm.txt:1690]     132c:	4628      	mov	r0, r5
+[broad.disasm.txt:1691]     132e:	e8bd 4ff0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, lr}
+[broad.disasm.txt:1692]     1332:	f7ff bffe 	b.w	0 <sl_ui_ctx_on_notify>
+[broad.disasm.txt:1693] 			1332: R_ARM_THM_JUMP24	sl_ui_ctx_on_notify
+
+sl_ui_ctx_on_notify forwards to sl_at_notify_proc when context exists; otherwise returns.
+Original evidence: /tmp/broad-power-disasm-20261103/sl_ui.disasm.txt
+[sl_ui.disasm.txt:70] 00000076 <sl_ui_ctx_on_notify>:
+[sl_ui.disasm.txt:71]   76:	4a53      	ldr	r2, [pc, #332]	; (1c4 <sl_ui_ctx_play_tts_full+0xc2>)
+[sl_ui.disasm.txt:72]   78:	0001      	movs	r1, r0
+[sl_ui.disasm.txt:73]   7a:	6812      	ldr	r2, [r2, #0]
+[sl_ui.disasm.txt:74]   7c:	d004      	beq.n	88 <sl_ui_ctx_on_notify+0x12>
+[sl_ui.disasm.txt:75]   7e:	2a00      	cmp	r2, #0
+[sl_ui.disasm.txt:76]   80:	d002      	beq.n	88 <sl_ui_ctx_on_notify+0x12>
+[sl_ui.disasm.txt:77]   82:	6850      	ldr	r0, [r2, #4]
+[sl_ui.disasm.txt:78]   84:	f7ff bffe 	b.w	0 <sl_at_notify_proc>
+[sl_ui.disasm.txt:79] 			84: R_ARM_THM_JUMP24	sl_at_notify_proc
+[sl_ui.disasm.txt:80]   88:	4770      	bx	lr
+
+4. sl_at_notify_proc: notification type and TBH dispatch (function original offset 0x57fa).
+Original evidence: /tmp/broad-power-disasm-20261103/sl_at.disasm.txt
+[sl_at.disasm.txt:9282]     583c:	7828      	ldrb	r0, [r5, #0]
+[sl_at.disasm.txt:9283]     583e:	f504 5680 	add.w	r6, r4, #4096	; 0x1000
+[sl_at.disasm.txt:9284]     5842:	f04f 0901 	mov.w	r9, #1
+[sl_at.disasm.txt:9285]     5846:	f04f 3aff 	mov.w	sl, #4294967295	; 0xffffffff
+[sl_at.disasm.txt:9286]     584a:	2858      	cmp	r0, #88	; 0x58
+[sl_at.disasm.txt:9287]     584c:	f04f 0800 	mov.w	r8, #0
+[sl_at.disasm.txt:9288]     5850:	f081 84f9 	bcs.w	7246 <sl_at_notify_proc+0x1a4c>
+[sl_at.disasm.txt:9289]     5854:	e8df f010 	tbh	[pc, r0, lsl #1]
+
+AT table calculation: PC after TBH = 0x5858; entry[42] address = 0x5858 + 42*2 = 0x58ac.
+Direct ELF check: entry[42] = 0x0cf7; branch target = 0x5858 + 2*0x0cf7 = 0x7246.
+
+Necessary jump-table word containing event 42.
+Original evidence: /tmp/broad-power-disasm-20261103/sl_at.disasm.txt
+[sl_at.disasm.txt:9311]     58ac:	0cf70cf7 	.word	0x0cf70cf7
+
+AT default branch prepares the unprocessed-notification log.
+Original evidence: /tmp/broad-power-disasm-20261103/sl_at.disasm.txt
+[sl_at.disasm.txt:11617]     7246:	e9cd 7000 	strd	r7, r0, [sp]
+[sl_at.disasm.txt:11618]     724a:	4abf      	ldr	r2, [pc, #764]	; (7548 <notify_upgrade_status+0x52>)
+[sl_at.disasm.txt:11619]     724c:	2106      	movs	r1, #6
+[sl_at.disasm.txt:11620]     724e:	6860      	ldr	r0, [r4, #4]
+[sl_at.disasm.txt:11621]     7250:	a3f7      	add	r3, pc, #988	; (adr r3, 7630 <notify_upgrade_status+0x13a>)
+[sl_at.disasm.txt:11622]     7252:	f7fe bbbe 	b.w	59d2 <sl_at_notify_proc+0x1d8>
+
+The selected log text only: ASCII "%s unprocessed notify:%d".
+Original evidence: /tmp/broad-power-disasm-20261103/sl_at.disasm.txt
+[sl_at.disasm.txt:12031]     7630:	75207325 	.word	0x75207325
+[sl_at.disasm.txt:12032]     7634:	6f72706e 	.word	0x6f72706e
+[sl_at.disasm.txt:12033]     7638:	73736563 	.word	0x73736563
+[sl_at.disasm.txt:12034]     763c:	6e206465 	.word	0x6e206465
+[sl_at.disasm.txt:12035]     7640:	6669746f 	.word	0x6669746f
+[sl_at.disasm.txt:12036]     7644:	64253a79 	.word	0x64253a79
+[sl_at.disasm.txt:12037]     7648:	00000000 	.word	0x00000000
+
+Log call, then branch to the common return.
+Original evidence: /tmp/broad-power-disasm-20261103/sl_at.disasm.txt
+[sl_at.disasm.txt:9421]     59d2:	f7ff fffe 	bl	0 <hal_log_output>
+[sl_at.disasm.txt:9422] 			59d2: R_ARM_THM_CALL	hal_log_output
+[sl_at.disasm.txt:9423]     59d6:	e7ed      	b.n	59b4 <sl_at_notify_proc+0x1ba>
+
+Common return: restore stack and return.
+Original evidence: /tmp/broad-power-disasm-20261103/sl_at.disasm.txt
+[sl_at.disasm.txt:9409]     59b4:	f20d 5d7c 	addw	sp, sp, #1404	; 0x57c
+[sl_at.disasm.txt:9410]     59b8:	e8bd 8ff0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, pc}

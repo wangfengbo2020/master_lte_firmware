@@ -1,0 +1,844 @@
+
+OBJECT sessionset.o FUNCTION sessionset_send_ping SECTION_INDEX 9 OFFSET 0x0 SIZE 54 SECTION_BYTES 120
+
+/tmp/broad-power-disasm-20261103/sessionset.o__sessionset_send_ping.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b51c      	push	{r2, r3, r4, lr}
+   2:	0004      	movs	r4, r0
+   4:	d105      	bne.n	0x12
+   6:	a10c      	add	r1, pc, #48	; (adr r1, 0x38)
+   8:	f240 425e 	movw	r2, #1118	; 0x45e
+   c:	a00f      	add	r0, pc, #60	; (adr r0, 0x4c)
+   e:	f7ff fffe 	bl	0xe
+  12:	6a21      	ldr	r1, [r4, #32]
+  14:	a310      	add	r3, pc, #64	; (adr r3, 0x58)
+  16:	480f      	ldr	r0, [pc, #60]	; (0x54)
+  18:	a214      	add	r2, pc, #80	; (adr r2, 0x6c)
+  1a:	e9cd 0100 	strd	r0, r1, [sp]
+  1e:	69a0      	ldr	r0, [r4, #24]
+  20:	2103      	movs	r1, #3
+  22:	f7ff fffe 	bl	0x22
+  26:	6a20      	ldr	r0, [r4, #32]
+  28:	2800      	cmp	r0, #0
+  2a:	d003      	beq.n	0x34
+  2c:	e8bd 401c 	ldmia.w	sp!, {r2, r3, r4, lr}
+  30:	f7ff bffe 	b.w	0x30
+  34:	bd1c      	pop	{r2, r3, r4, pc}
+RELOC offset=0xe type=10 symbol=hal_exp_handler target_section=0 target_value=0x0
+RELOC offset=0x22 type=10 symbol=hal_log_output target_section=0 target_value=0x0
+RELOC offset=0x30 type=30 symbol=session_send_ping_only target_section=0 target_value=0x0
+RELOC offset=0x54 type=2 symbol=.constdata target_section=12 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT sessionset.o FUNCTION sessionset_new SECTION_INDEX 1 OFFSET 0x154c SIZE 890 SECTION_BYTES 7452
+
+/tmp/broad-power-disasm-20261103/sessionset.o__sessionset_new.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b570      	push	{r4, r5, r6, lr}
+   2:	0005      	movs	r5, r0
+   4:	d105      	bne.n	0x12
+   6:	498a      	ldr	r1, [pc, #552]	; (0x230)
+   8:	2262      	movs	r2, #98	; 0x62
+   a:	a097      	add	r0, pc, #604	; (adr r0, 0x268)
+   c:	312c      	adds	r1, #44	; 0x2c
+   e:	f7ff fffe 	bl	0xe
+  12:	2050      	movs	r0, #80	; 0x50
+  14:	f7ff fffe 	bl	0x14
+  18:	0004      	movs	r4, r0
+  1a:	d07b      	beq.n	0x114
+  1c:	2250      	movs	r2, #80	; 0x50
+  1e:	2100      	movs	r1, #0
+  20:	f7ff fffe 	bl	0x20
+  24:	4628      	mov	r0, r5
+  26:	6025      	str	r5, [r4, #0]
+  28:	f7ff fffe 	bl	0x28
+  2c:	6060      	str	r0, [r4, #4]
+  2e:	b928      	cbnz	r0, 0x3c
+  30:	497f      	ldr	r1, [pc, #508]	; (0x230)
+  32:	226b      	movs	r2, #107	; 0x6b
+  34:	a08e      	add	r0, pc, #568	; (adr r0, 0x270)
+  36:	312c      	adds	r1, #44	; 0x2c
+  38:	f7ff fffe 	bl	0x38
+  3c:	4628      	mov	r0, r5
+  3e:	f7ff fffe 	bl	0x3e
+  42:	60a0      	str	r0, [r4, #8]
+  44:	b928      	cbnz	r0, 0x52
+  46:	497a      	ldr	r1, [pc, #488]	; (0x230)
+  48:	226d      	movs	r2, #109	; 0x6d
+  4a:	a08e      	add	r0, pc, #568	; (adr r0, 0x284)
+  4c:	312c      	adds	r1, #44	; 0x2c
+  4e:	f7ff fffe 	bl	0x4e
+  52:	4628      	mov	r0, r5
+  54:	f7ff fffe 	bl	0x54
+  58:	6120      	str	r0, [r4, #16]
+  5a:	b928      	cbnz	r0, 0x68
+  5c:	4974      	ldr	r1, [pc, #464]	; (0x230)
+  5e:	226f      	movs	r2, #111	; 0x6f
+  60:	a08b      	add	r0, pc, #556	; (adr r0, 0x290)
+  62:	312c      	adds	r1, #44	; 0x2c
+  64:	f7ff fffe 	bl	0x64
+  68:	6920      	ldr	r0, [r4, #16]
+  6a:	f7ff fffe 	bl	0x6a
+  6e:	60e0      	str	r0, [r4, #12]
+  70:	b928      	cbnz	r0, 0x7e
+  72:	496f      	ldr	r1, [pc, #444]	; (0x230)
+  74:	2271      	movs	r2, #113	; 0x71
+  76:	a08a      	add	r0, pc, #552	; (adr r0, 0x2a0)
+  78:	312c      	adds	r1, #44	; 0x2c
+  7a:	f7ff fffe 	bl	0x7a
+  7e:	4628      	mov	r0, r5
+  80:	f7ff fffe 	bl	0x80
+  84:	f7ff fffe 	bl	0x84
+  88:	6160      	str	r0, [r4, #20]
+  8a:	b928      	cbnz	r0, 0x98
+  8c:	4968      	ldr	r1, [pc, #416]	; (0x230)
+  8e:	2273      	movs	r2, #115	; 0x73
+  90:	a086      	add	r0, pc, #536	; (adr r0, 0x2ac)
+  92:	312c      	adds	r1, #44	; 0x2c
+  94:	f7ff fffe 	bl	0x94
+  98:	4628      	mov	r0, r5
+  9a:	f7ff fffe 	bl	0x9a
+  9e:	f7ff fffe 	bl	0x9e
+  a2:	61a0      	str	r0, [r4, #24]
+  a4:	b928      	cbnz	r0, 0xb2
+  a6:	4962      	ldr	r1, [pc, #392]	; (0x230)
+  a8:	2275      	movs	r2, #117	; 0x75
+  aa:	a084      	add	r0, pc, #528	; (adr r0, 0x2bc)
+  ac:	312c      	adds	r1, #44	; 0x2c
+  ae:	f7ff fffe 	bl	0xae
+  b2:	4628      	mov	r0, r5
+  b4:	f7ff fffe 	bl	0xb4
+  b8:	f7ff fffe 	bl	0xb8
+  bc:	61e0      	str	r0, [r4, #28]
+  be:	b928      	cbnz	r0, 0xcc
+  c0:	495b      	ldr	r1, [pc, #364]	; (0x230)
+  c2:	2277      	movs	r2, #119	; 0x77
+  c4:	a080      	add	r0, pc, #512	; (adr r0, 0x2c8)
+  c6:	312c      	adds	r1, #44	; 0x2c
+  c8:	f7ff fffe 	bl	0xc8
+  cc:	f7ff fffe 	bl	0xcc
+  d0:	6260      	str	r0, [r4, #36]	; 0x24
+  d2:	6860      	ldr	r0, [r4, #4]
+  d4:	f7ff fffe 	bl	0xd4
+  d8:	0006      	movs	r6, r0
+  da:	d105      	bne.n	0xe8
+  dc:	4954      	ldr	r1, [pc, #336]	; (0x230)
+  de:	227c      	movs	r2, #124	; 0x7c
+  e0:	a07c      	add	r0, pc, #496	; (adr r0, 0x2d4)
+  e2:	312c      	adds	r1, #44	; 0x2c
+  e4:	f7ff fffe 	bl	0xe4
+  e8:	4a7b      	ldr	r2, [pc, #492]	; (0x2d8)
+  ea:	4623      	mov	r3, r4
+  ec:	f6af 311c 	subw	r1, pc, #2844	; 0xb1c
+  f0:	4630      	mov	r0, r6
+  f2:	f7ff fffe 	bl	0xf2
+  f6:	4a79      	ldr	r2, [pc, #484]	; (0x2dc)
+  f8:	a179      	add	r1, pc, #484	; (adr r1, 0x2e0)
+  fa:	4623      	mov	r3, r4
+  fc:	4630      	mov	r0, r6
+  fe:	f7ff fffe 	bl	0xfe
+ 102:	4a7d      	ldr	r2, [pc, #500]	; (0x2f8)
+ 104:	a17d      	add	r1, pc, #500	; (adr r1, 0x2fc)
+ 106:	4623      	mov	r3, r4
+ 108:	4630      	mov	r0, r6
+ 10a:	f7ff fffe 	bl	0x10a
+ 10e:	4a7f      	ldr	r2, [pc, #508]	; (0x30c)
+ 110:	4623      	mov	r3, r4
+ 112:	e0fd      	b.n	0x310
+ 114:	e130      	b.n	0x378
+ 116:	0000      	movs	r0, r0
+ 118:	7325      	strb	r5, [r4, #12]
+ 11a:	6320      	str	r0, [r4, #48]	; 0x30
+ 11c:	6c61      	ldr	r1, [r4, #68]	; 0x44
+ 11e:	5f6c      	ldrsh	r4, [r5, r5]
+ 120:	6572      	str	r2, [r6, #84]	; 0x54
+ 122:	7573      	strb	r3, [r6, #21]
+ 124:	746c      	strb	r4, [r5, #17]
+ 126:	253d      	movs	r5, #61	; 0x3d
+ 128:	2c64      	cmp	r4, #100	; 0x64
+ 12a:	7420      	strb	r0, [r4, #16]
+ 12c:	6d65      	ldr	r5, [r4, #84]	; 0x54
+ 12e:	5f70      	ldrsh	r0, [r6, r5]
+ 130:	7267      	strb	r7, [r4, #9]
+ 132:	756f      	strb	r7, [r5, #21]
+ 134:	3a70      	subs	r2, #112	; 0x70
+ 136:	6425      	str	r5, [r4, #64]	; 0x40
+ 138:	6120      	str	r0, [r4, #16]
+ 13a:	7475      	strb	r5, [r6, #17]
+ 13c:	5f6f      	ldrsh	r7, [r5, r5]
+ 13e:	656c      	str	r4, [r5, #84]	; 0x54
+ 140:	7661      	strb	r1, [r4, #25]
+ 142:	3a65      	subs	r2, #101	; 0x65
+ 144:	6425      	str	r5, [r4, #64]	; 0x40
+ 146:	0000      	movs	r0, r0
+ 148:	7325      	strb	r5, [r4, #12]
+ 14a:	6720      	str	r0, [r4, #112]	; 0x70
+ 14c:	6f72      	ldr	r2, [r6, #116]	; 0x74
+ 14e:	7075      	strb	r5, [r6, #1]
+ 150:	745f      	strb	r7, [r3, #17]
+ 152:	7079      	strb	r1, [r7, #1]
+ 154:	3a65      	subs	r2, #101	; 0x65
+ 156:	6425      	str	r5, [r4, #64]	; 0x40
+ 158:	0000      	movs	r0, r0
+ 15a:	0000      	movs	r0, r0
+ 15c:	7563      	strb	r3, [r4, #21]
+ 15e:	7272      	strb	r2, [r6, #9]
+ 160:	6e65      	ldr	r5, [r4, #100]	; 0x64
+ 162:	2074      	movs	r0, #116	; 0x74
+ 164:	7267      	strb	r7, [r4, #9]
+ 166:	756f      	strb	r7, [r5, #21]
+ 168:	2070      	movs	r0, #112	; 0x70
+ 16a:	6f6e      	ldr	r6, [r5, #116]	; 0x74
+ 16c:	6974      	ldr	r4, [r6, #20]
+ 16e:	7966      	ldrb	r6, [r4, #5]
+ 170:	6820      	ldr	r0, [r4, #0]
+ 172:	7361      	strb	r1, [r4, #13]
+ 174:	6e20      	ldr	r0, [r4, #96]	; 0x60
+ 176:	206f      	movs	r0, #111	; 0x6f
+ 178:	6461      	str	r1, [r4, #68]	; 0x44
+ 17a:	7264      	strb	r4, [r4, #9]
+ 17c:	7365      	strb	r5, [r4, #13]
+ 17e:	2073      	movs	r0, #115	; 0x73
+ 180:	6e69      	ldr	r1, [r5, #100]	; 0x64
+ 182:	6f66      	ldr	r6, [r4, #116]	; 0x74
+ 184:	0000      	movs	r0, r0
+ 186:	0000      	movs	r0, r0
+ 188:	7325      	strb	r5, [r4, #12]
+ 18a:	6c20      	ldr	r0, [r4, #64]	; 0x40
+ 18c:	7361      	strb	r1, [r4, #13]
+ 18e:	5f74      	ldrsh	r4, [r6, r5]
+ 190:	6967      	ldr	r7, [r4, #20]
+ 192:	3a64      	subs	r2, #100	; 0x64
+ 194:	6425      	str	r5, [r4, #64]	; 0x40
+ 196:	6c20      	ldr	r0, [r4, #64]	; 0x40
+ 198:	7361      	strb	r1, [r4, #13]
+ 19a:	5f74      	ldrsh	r4, [r6, r5]
+ 19c:	6f6e      	ldr	r6, [r5, #116]	; 0x74
+ 19e:	6d72      	ldr	r2, [r6, #84]	; 0x54
+ 1a0:	6c61      	ldr	r1, [r4, #68]	; 0x44
+ 1a2:	675f      	str	r7, [r3, #116]	; 0x74
+ 1a4:	6469      	str	r1, [r5, #68]	; 0x44
+ 1a6:	253a      	movs	r5, #58	; 0x3a
+ 1a8:	2064      	movs	r0, #100	; 0x64
+ 1aa:	616c      	str	r4, [r5, #20]
+ 1ac:	7473      	strb	r3, [r6, #17]
+ 1ae:	675f      	str	r7, [r3, #116]	; 0x74
+ 1b0:	6f72      	ldr	r2, [r6, #116]	; 0x74
+ 1b2:	7075      	strb	r5, [r6, #1]
+ 1b4:	745f      	strb	r7, [r3, #17]
+ 1b6:	7079      	strb	r1, [r7, #1]
+ 1b8:	3a65      	subs	r2, #101	; 0x65
+ 1ba:	6425      	str	r5, [r4, #64]	; 0x40
+ 1bc:	0000      	movs	r0, r0
+ 1be:	0000      	movs	r0, r0
+ 1c0:	7325      	strb	r5, [r4, #12]
+ 1c2:	6e20      	ldr	r0, [r4, #96]	; 0x60
+ 1c4:	206f      	movs	r0, #111	; 0x6f
+ 1c6:	6e61      	ldr	r1, [r4, #100]	; 0x64
+ 1c8:	2079      	movs	r0, #121	; 0x79
+ 1ca:	7267      	strb	r7, [r4, #9]
+ 1cc:	756f      	strb	r7, [r5, #21]
+ 1ce:	2070      	movs	r0, #112	; 0x70
+ 1d0:	6f66      	ldr	r6, [r4, #116]	; 0x74
+ 1d2:	6e75      	ldr	r5, [r6, #100]	; 0x64
+ 1d4:	2164      	movs	r1, #100	; 0x64
+ 1d6:	0000      	movs	r0, r0
+ 1d8:	6573      	str	r3, [r6, #84]	; 0x54
+ 1da:	7373      	strb	r3, [r6, #13]
+ 1dc:	6f69      	ldr	r1, [r5, #116]	; 0x74
+ 1de:	736e      	strb	r6, [r5, #13]
+ 1e0:	7465      	strb	r5, [r4, #17]
+ 1e2:	6a5f      	ldr	r7, [r3, #36]	; 0x24
+ 1e4:	696f      	ldr	r7, [r5, #20]
+ 1e6:	5f6e      	ldrsh	r6, [r5, r5]
+ 1e8:	616c      	str	r4, [r5, #20]
+ 1ea:	7473      	strb	r3, [r6, #17]
+ 1ec:	6e5f      	ldr	r7, [r3, #100]	; 0x64
+ 1ee:	726f      	strb	r7, [r5, #9]
+ 1f0:	616d      	str	r5, [r5, #20]
+ 1f2:	5f6c      	ldrsh	r4, [r5, r5]
+ 1f4:	7267      	strb	r7, [r4, #9]
+ 1f6:	756f      	strb	r7, [r5, #21]
+ 1f8:	2170      	movs	r1, #112	; 0x70
+ 1fa:	0000      	movs	r0, r0
+ 1fc:	0000      	movs	r0, r0
+ 1fe:	0000      	movs	r0, r0
+ 200:	002e      	movs	r6, r5
+ 202:	0000      	movs	r0, r0
+ 204:	7325      	strb	r5, [r4, #12]
+ 206:	7220      	strb	r0, [r4, #8]
+ 208:	7365      	strb	r5, [r4, #13]
+ 20a:	6c75      	ldr	r5, [r6, #68]	; 0x44
+ 20c:	3a74      	subs	r2, #116	; 0x74
+ 20e:	6425      	str	r5, [r4, #64]	; 0x40
+ 210:	6920      	ldr	r0, [r4, #16]
+ 212:	5f6e      	ldrsh	r6, [r5, r5]
+ 214:	6f6a      	ldr	r2, [r5, #116]	; 0x74
+ 216:	6e69      	ldr	r1, [r5, #100]	; 0x64
+ 218:	675f      	str	r7, [r3, #116]	; 0x74
+ 21a:	6469      	str	r1, [r5, #68]	; 0x44
+ 21c:	253d      	movs	r5, #61	; 0x3d
+ 21e:	2c75      	cmp	r4, #117	; 0x75
+ 220:	616c      	str	r4, [r5, #20]
+ 222:	7473      	strb	r3, [r6, #17]
+ 224:	675f      	str	r7, [r3, #116]	; 0x74
+ 226:	6469      	str	r1, [r5, #68]	; 0x44
+ 228:	2528      	movs	r5, #40	; 0x28
+ 22a:	2964      	cmp	r1, #100	; 0x64
+ 22c:	002c      	movs	r4, r5
+ 22e:	0000      	movs	r0, r0
+ 230:	03fc      	lsls	r4, r7, #15
+ 232:	0000      	movs	r0, r0
+ 234:	0060      	lsls	r0, r4, #1
+ 236:	0000      	movs	r0, r0
+ 238:	7325      	strb	r5, [r4, #12]
+ 23a:	6220      	str	r0, [r4, #32]
+ 23c:	6461      	str	r1, [r4, #68]	; 0x44
+ 23e:	6d20      	ldr	r0, [r4, #80]	; 0x50
+ 240:	7365      	strb	r5, [r4, #13]
+ 242:	6173      	str	r3, [r6, #20]
+ 244:	6567      	str	r7, [r4, #84]	; 0x54
+ 246:	7220      	strb	r0, [r4, #8]
+ 248:	7365      	strb	r5, [r4, #13]
+ 24a:	6c75      	ldr	r5, [r6, #68]	; 0x44
+ 24c:	2074      	movs	r0, #116	; 0x74
+ 24e:	7573      	strb	r3, [r6, #21]
+ 250:	6363      	str	r3, [r4, #52]	; 0x34
+ 252:	7375      	strb	r5, [r6, #13]
+ 254:	2073      	movs	r0, #115	; 0x73
+ 256:	7562      	strb	r2, [r4, #21]
+ 258:	2074      	movs	r0, #116	; 0x74
+ 25a:	6f6e      	ldr	r6, [r5, #116]	; 0x74
+ 25c:	6720      	str	r0, [r4, #112]	; 0x70
+ 25e:	6469      	str	r1, [r5, #68]	; 0x44
+	...
+ 268:	6365      	str	r5, [r4, #52]	; 0x34
+ 26a:	6168      	str	r0, [r5, #20]
+ 26c:	0074      	lsls	r4, r6, #1
+ 26e:	0000      	movs	r0, r0
+ 270:	6573      	str	r3, [r6, #84]	; 0x54
+ 272:	666c      	str	r4, [r5, #100]	; 0x64
+ 274:	3e2d      	subs	r6, #45	; 0x2d
+ 276:	6f63      	ldr	r3, [r4, #116]	; 0x74
+ 278:	6e6e      	ldr	r6, [r5, #100]	; 0x64
+ 27a:	6365      	str	r5, [r4, #52]	; 0x34
+ 27c:	6974      	ldr	r4, [r6, #20]
+ 27e:	6e6f      	ldr	r7, [r5, #100]	; 0x64
+ 280:	0000      	movs	r0, r0
+ 282:	0000      	movs	r0, r0
+ 284:	6573      	str	r3, [r6, #84]	; 0x54
+ 286:	666c      	str	r4, [r5, #100]	; 0x64
+ 288:	3e2d      	subs	r6, #45	; 0x2d
+ 28a:	6163      	str	r3, [r4, #20]
+ 28c:	6863      	ldr	r3, [r4, #4]
+ 28e:	0065      	lsls	r5, r4, #1
+ 290:	6573      	str	r3, [r6, #84]	; 0x54
+ 292:	666c      	str	r4, [r5, #100]	; 0x64
+ 294:	3e2d      	subs	r6, #45	; 0x2d
+ 296:	6170      	str	r0, [r6, #20]
+ 298:	6b63      	ldr	r3, [r4, #52]	; 0x34
+ 29a:	7465      	strb	r5, [r4, #17]
+ 29c:	0000      	movs	r0, r0
+ 29e:	0000      	movs	r0, r0
+ 2a0:	6573      	str	r3, [r6, #84]	; 0x54
+ 2a2:	666c      	str	r4, [r5, #100]	; 0x64
+ 2a4:	3e2d      	subs	r6, #45	; 0x2d
+ 2a6:	6270      	str	r0, [r6, #36]	; 0x24
+ 2a8:	0063      	lsls	r3, r4, #1
+ 2aa:	0000      	movs	r0, r0
+ 2ac:	6573      	str	r3, [r6, #84]	; 0x54
+ 2ae:	666c      	str	r4, [r5, #100]	; 0x64
+ 2b0:	3e2d      	subs	r6, #45	; 0x2d
+ 2b2:	6f6c      	ldr	r4, [r5, #116]	; 0x74
+ 2b4:	706f      	strb	r7, [r5, #1]
+ 2b6:	7265      	strb	r5, [r4, #9]
+ 2b8:	0000      	movs	r0, r0
+ 2ba:	0000      	movs	r0, r0
+ 2bc:	6573      	str	r3, [r6, #84]	; 0x54
+ 2be:	666c      	str	r4, [r5, #100]	; 0x64
+ 2c0:	3e2d      	subs	r6, #45	; 0x2d
+ 2c2:	6f6c      	ldr	r4, [r5, #116]	; 0x74
+ 2c4:	0067      	lsls	r7, r4, #1
+ 2c6:	0000      	movs	r0, r0
+ 2c8:	6573      	str	r3, [r6, #84]	; 0x54
+ 2ca:	666c      	str	r4, [r5, #100]	; 0x64
+ 2cc:	3e2d      	subs	r6, #45	; 0x2d
+ 2ce:	6e69      	ldr	r1, [r5, #100]	; 0x64
+ 2d0:	0069      	lsls	r1, r5, #1
+ 2d2:	0000      	movs	r0, r0
+ 2d4:	0064      	lsls	r4, r4, #1
+	...
+ 2de:	0000      	movs	r0, r0
+ 2e0:	7470      	strb	r0, [r6, #17]
+ 2e2:	2e74      	cmp	r6, #116	; 0x74
+ 2e4:	7570      	strb	r0, [r6, #21]
+ 2e6:	6873      	ldr	r3, [r6, #4]
+ 2e8:	432e      	orrs	r6, r5
+ 2ea:	7275      	strb	r5, [r6, #9]
+ 2ec:	6572      	str	r2, [r6, #84]	; 0x54
+ 2ee:	746e      	strb	r6, [r5, #17]
+ 2f0:	7247      	strb	r7, [r0, #9]
+ 2f2:	756f      	strb	r7, [r5, #21]
+ 2f4:	0070      	lsls	r0, r6, #1
+ 2f6:	0000      	movs	r0, r0
+ 2f8:	0000      	movs	r0, r0
+ 2fa:	0000      	movs	r0, r0
+ 2fc:	7470      	strb	r0, [r6, #17]
+ 2fe:	2e74      	cmp	r6, #116	; 0x74
+ 300:	7272      	strb	r2, [r6, #9]
+ 302:	432e      	orrs	r6, r5
+ 304:	6c61      	ldr	r1, [r4, #68]	; 0x44
+ 306:	416c      	adcs	r4, r5
+ 308:	6b63      	ldr	r3, [r4, #52]	; 0x34
+ 30a:	0000      	movs	r0, r0
+ 30c:	0000      	movs	r0, r0
+ 30e:	0000      	movs	r0, r0
+ 310:	a1e5      	add	r1, pc, #916	; (adr r1, 0x6a8)
+ 312:	4630      	mov	r0, r6
+ 314:	f7ff fffe 	bl	0x314
+ 318:	4ae9      	ldr	r2, [pc, #932]	; (0x6c0)
+ 31a:	a1ea      	add	r1, pc, #936	; (adr r1, 0x6c4)
+ 31c:	6960      	ldr	r0, [r4, #20]
+ 31e:	4623      	mov	r3, r4
+ 320:	f7ff fffe 	bl	0x320
+ 324:	4af1      	ldr	r2, [pc, #964]	; (0x6ec)
+ 326:	a1f2      	add	r1, pc, #968	; (adr r1, 0x6f0)
+ 328:	6960      	ldr	r0, [r4, #20]
+ 32a:	4623      	mov	r3, r4
+ 32c:	f7ff fffe 	bl	0x32c
+ 330:	f06f 0001 	mvn.w	r0, #1
+ 334:	6420      	str	r0, [r4, #64]	; 0x40
+ 336:	2001      	movs	r0, #1
+ 338:	63a0      	str	r0, [r4, #56]	; 0x38
+ 33a:	6960      	ldr	r0, [r4, #20]
+ 33c:	b920      	cbnz	r0, 0x348
+ 33e:	49f6      	ldr	r1, [pc, #984]	; (0x718)
+ 340:	2287      	movs	r2, #135	; 0x87
+ 342:	a0f6      	add	r0, pc, #984	; (adr r0, 0x71c)
+ 344:	f7ff fffe 	bl	0x344
+ 348:	4628      	mov	r0, r5
+ 34a:	f7ff fffe 	bl	0x34a
+ 34e:	64a0      	str	r0, [r4, #72]	; 0x48
+ 350:	2300      	movs	r3, #0
+ 352:	69e0      	ldr	r0, [r4, #28]
+ 354:	a2f7      	add	r2, pc, #988	; (adr r2, 0x734)
+ 356:	a1f8      	add	r1, pc, #992	; (adr r1, 0x738)
+ 358:	f7ff fffe 	bl	0x358
+ 35c:	b130      	cbz	r0, 0x36c
+ 35e:	49f8      	ldr	r1, [pc, #992]	; (0x740)
+ 360:	4623      	mov	r3, r4
+ 362:	6960      	ldr	r0, [r4, #20]
+ 364:	f241 3288 	movw	r2, #5000	; 0x1388
+ 368:	f7ff fffe 	bl	0x368
+ 36c:	4628      	mov	r0, r5
+ 36e:	f7ff fffe 	bl	0x36e
+ 372:	f884 004d 	strb.w	r0, [r4, #77]	; 0x4d
+ 376:	4620      	mov	r0, r4
+ 378:	bd70      	pop	{r4, r5, r6, pc}
+RELOC offset=0x155a type=10 symbol=hal_exp_handler target_section=0 target_value=0x0
+RELOC offset=0x1560 type=10 symbol=hal_malloc target_section=0 target_value=0x0
+RELOC offset=0x156c type=10 symbol=hal_memset target_section=0 target_value=0x0
+RELOC offset=0x1574 type=10 symbol=echat_imp_get_connection target_section=0 target_value=0x0
+RELOC offset=0x1584 type=10 symbol=hal_exp_handler target_section=0 target_value=0x0
+RELOC offset=0x158a type=10 symbol=echat_imp_get_cache target_section=0 target_value=0x0
+RELOC offset=0x159a type=10 symbol=hal_exp_handler target_section=0 target_value=0x0
+RELOC offset=0x15a0 type=10 symbol=echat_imp_get_etpacket target_section=0 target_value=0x0
+RELOC offset=0x15b0 type=10 symbol=hal_exp_handler target_section=0 target_value=0x0
+RELOC offset=0x15b6 type=10 symbol=etpacket_get_pbc_context target_section=0 target_value=0x0
+RELOC offset=0x15c6 type=10 symbol=hal_exp_handler target_section=0 target_value=0x0
+RELOC offset=0x15cc type=10 symbol=echat_imp_get_hal target_section=0 target_value=0x0
+RELOC offset=0x15d0 type=10 symbol=hal_ctx_get_looper target_section=0 target_value=0x0
+RELOC offset=0x15e0 type=10 symbol=hal_exp_handler target_section=0 target_value=0x0
+RELOC offset=0x15e6 type=10 symbol=echat_imp_get_hal target_section=0 target_value=0x0
+RELOC offset=0x15ea type=10 symbol=hal_ctx_get_log target_section=0 target_value=0x0
+RELOC offset=0x15fa type=10 symbol=hal_exp_handler target_section=0 target_value=0x0
+RELOC offset=0x1600 type=10 symbol=echat_imp_get_hal target_section=0 target_value=0x0
+RELOC offset=0x1604 type=10 symbol=hal_ctx_get_ini target_section=0 target_value=0x0
+RELOC offset=0x1614 type=10 symbol=hal_exp_handler target_section=0 target_value=0x0
+RELOC offset=0x1618 type=10 symbol=scl_list_new target_section=0 target_value=0x0
+RELOC offset=0x1620 type=10 symbol=connection_get_dispatcher target_section=0 target_value=0x0
+RELOC offset=0x1630 type=10 symbol=hal_exp_handler target_section=0 target_value=0x0
+RELOC offset=0x163e type=10 symbol=dispatcher_register target_section=0 target_value=0x0
+RELOC offset=0x164a type=10 symbol=dispatcher_register target_section=0 target_value=0x0
+RELOC offset=0x1656 type=10 symbol=dispatcher_register target_section=0 target_value=0x0
+RELOC offset=0x1748 type=2 symbol=sessionset_join_last_normal_group target_section=1 target_value=0x13d1
+RELOC offset=0x174c type=2 symbol=.constdata target_section=12 target_value=0x0
+RELOC offset=0x177c type=2 symbol=.text target_section=1 target_value=0x0
+RELOC offset=0x1780 type=2 symbol=.conststring target_section=13 target_value=0x0
+RELOC offset=0x17b0 type=2 symbol=sessionset_join_default_try_next_time target_section=1 target_value=0x60f
+RELOC offset=0x1824 type=2 symbol=ss_on_join_group target_section=1 target_value=0x13f9
+RELOC offset=0x1828 type=2 symbol=ss_on_current_group target_section=1 target_value=0xfc1
+RELOC offset=0x1844 type=2 symbol=ss_on_recv_callack target_section=1 target_value=0xdc1
+RELOC offset=0x1858 type=2 symbol=ss_on_recv_leavegroup target_section=1 target_value=0xdb5
+RELOC offset=0x1860 type=10 symbol=dispatcher_register target_section=0 target_value=0x0
+RELOC offset=0x186c type=10 symbol=hal_looper_register_processer target_section=0 target_value=0x0
+RELOC offset=0x1878 type=10 symbol=hal_looper_register_processer target_section=0 target_value=0x0
+RELOC offset=0x1890 type=10 symbol=hal_exp_handler target_section=0 target_value=0x0
+RELOC offset=0x1896 type=10 symbol=slmos_new target_section=0 target_value=0x0
+RELOC offset=0x18a4 type=10 symbol=hal_ini_find_int target_section=0 target_value=0x0
+RELOC offset=0x18b4 type=10 symbol=hal_looper_set_timer target_section=0 target_value=0x0
+RELOC offset=0x18ba type=10 symbol=echat_imp_get_is_broad target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT sessionset.o FUNCTION sessionset_on_keepalive_timer SECTION_INDEX 1 OFFSET 0x1b0c SIZE 44 SECTION_BYTES 7452
+
+/tmp/broad-power-disasm-20261103/sessionset.o__sessionset_on_keepalive_timer.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b570      	push	{r4, r5, r6, lr}
+   2:	4604      	mov	r4, r0
+   4:	6a00      	ldr	r0, [r0, #32]
+   6:	460d      	mov	r5, r1
+   8:	b108      	cbz	r0, 0xe
+   a:	f7ff fffe 	bl	0xa
+   e:	6a60      	ldr	r0, [r4, #36]	; 0x24
+  10:	f7ff fffe 	bl	0x10
+  14:	e007      	b.n	0x26
+  16:	f7ff fffe 	bl	0x16
+  1a:	4629      	mov	r1, r5
+  1c:	f7ff fffe 	bl	0x1c
+  20:	4620      	mov	r0, r4
+  22:	f7ff fffe 	bl	0x22
+  26:	0004      	movs	r4, r0
+  28:	d1f5      	bne.n	0x16
+  2a:	bd70      	pop	{r4, r5, r6, pc}
+RELOC offset=0x1b16 type=10 symbol=session_on_keepalive_timer target_section=0 target_value=0x0
+RELOC offset=0x1b1c type=10 symbol=scl_list_begin target_section=0 target_value=0x0
+RELOC offset=0x1b22 type=10 symbol=scl_list_data_get target_section=0 target_value=0x0
+RELOC offset=0x1b28 type=10 symbol=session_on_keepalive_timer target_section=0 target_value=0x0
+RELOC offset=0x1b2e type=10 symbol=scl_list_next target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT echat_imp.o FUNCTION echat_imp_on_keepalive_timer SECTION_INDEX 1 OFFSET 0x116 SIZE 130 SECTION_BYTES 44540
+
+/tmp/broad-power-disasm-20261103/echat_imp.o__echat_imp_on_keepalive_timer.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b530      	push	{r4, r5, lr}
+   2:	b087      	sub	sp, #28
+   4:	4604      	mov	r4, r0
+   6:	f7ff fffe 	bl	0x6
+   a:	4605      	mov	r5, r0
+   c:	f8d4 01c4 	ldr.w	r0, [r4, #452]	; 0x1c4
+  10:	2800      	cmp	r0, #0
+  12:	d02b      	beq.n	0x6c
+  14:	f8d4 11c8 	ldr.w	r1, [r4, #456]	; 0x1c8
+  18:	1a69      	subs	r1, r5, r1
+  1a:	4281      	cmp	r1, r0
+  1c:	d326      	bcc.n	0x6c
+  1e:	f8d4 11cc 	ldr.w	r1, [r4, #460]	; 0x1cc
+  22:	f24e 2290 	movw	r2, #58000	; 0xe290
+  26:	1a69      	subs	r1, r5, r1
+  28:	1a51      	subs	r1, r2, r1
+  2a:	fbb1 f0f0 	udiv	r0, r1, r0
+  2e:	b928      	cbnz	r0, 0x3c
+  30:	6960      	ldr	r0, [r4, #20]
+  32:	4629      	mov	r1, r5
+  34:	f7ff fffe 	bl	0x34
+  38:	f8c4 51cc 	str.w	r5, [r4, #460]	; 0x1cc
+  3c:	4629      	mov	r1, r5
+  3e:	6a60      	ldr	r0, [r4, #36]	; 0x24
+  40:	f7ff fffe 	bl	0x40
+  44:	6a20      	ldr	r0, [r4, #32]
+  46:	2100      	movs	r1, #0
+  48:	f7ff fffe 	bl	0x48
+  4c:	f8c4 51c8 	str.w	r5, [r4, #456]	; 0x1c8
+  50:	f894 0031 	ldrb.w	r0, [r4, #49]	; 0x31
+  54:	2803      	cmp	r0, #3
+  56:	d00b      	beq.n	0x70
+  58:	2300      	movs	r3, #0
+  5a:	22ff      	movs	r2, #255	; 0xff
+  5c:	4668      	mov	r0, sp
+  5e:	212c      	movs	r1, #44	; 0x2c
+  60:	f7ff fffe 	bl	0x60
+  64:	e9d4 2047 	ldrd	r2, r0, [r4, #284]	; 0x11c
+  68:	4669      	mov	r1, sp
+  6a:	4790      	blx	r2
+  6c:	b007      	add	sp, #28
+  6e:	bd30      	pop	{r4, r5, pc}
+  70:	69e0      	ldr	r0, [r4, #28]
+  72:	f7ff fffe 	bl	0x72
+  76:	6a20      	ldr	r0, [r4, #32]
+  78:	f7ff fffe 	bl	0x78
+  7c:	2300      	movs	r3, #0
+  7e:	461a      	mov	r2, r3
+  80:	e7ec      	b.n	0x5c
+RELOC offset=0x11c type=10 symbol=hal_time_now target_section=0 target_value=0x0
+RELOC offset=0x14a type=10 symbol=connection_on_keepalive_timer target_section=0 target_value=0x0
+RELOC offset=0x156 type=10 symbol=sessionset_on_keepalive_timer target_section=0 target_value=0x0
+RELOC offset=0x15e type=10 symbol=collect_query_current_time target_section=0 target_value=0x0
+RELOC offset=0x176 type=10 symbol=echat_notify_set target_section=0 target_value=0x0
+RELOC offset=0x188 type=10 symbol=locator_gspinfo_send target_section=0 target_value=0x0
+RELOC offset=0x18e type=10 symbol=collect_send_info target_section=0 target_value=0x0
+RELEVANT_STRINGS: ['pingtime', 'echat_imp_send_ping_timeout', 'send_ping', 'set ping time %d seconds', 'set ping timer %d seconds']
+
+OBJECT echat_imp.o FUNCTION echat_imp_set_pingtime SECTION_INDEX 1 OFFSET 0x98c0 SIZE 88 SECTION_BYTES 44540
+
+/tmp/broad-power-disasm-20261103/echat_imp.o__echat_imp_set_pingtime.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b538      	push	{r3, r4, r5, lr}
+   2:	0004      	movs	r4, r0
+   4:	460d      	mov	r5, r1
+   6:	d106      	bne.n	0x16
+   8:	4920      	ldr	r1, [pc, #128]	; (0x8c)
+   a:	f241 3258 	movw	r2, #4952	; 0x1358
+   e:	f101 0010 	add.w	r0, r1, #16
+  12:	f7ff fffe 	bl	0x12
+  16:	4a1d      	ldr	r2, [pc, #116]	; (0x8c)
+  18:	2103      	movs	r1, #3
+  1a:	9500      	str	r5, [sp, #0]
+  1c:	a34f      	add	r3, pc, #316	; (adr r3, 0x15c)
+  1e:	68a0      	ldr	r0, [r4, #8]
+  20:	32ac      	adds	r2, #172	; 0xac
+  22:	f7ff fffe 	bl	0x22
+  26:	f240 30e8 	movw	r0, #1000	; 0x3e8
+  2a:	4345      	muls	r5, r0
+  2c:	f8c4 51c4 	str.w	r5, [r4, #452]	; 0x1c4
+  30:	f8d4 01c8 	ldr.w	r0, [r4, #456]	; 0x1c8
+  34:	f8c4 01cc 	str.w	r0, [r4, #460]	; 0x1cc
+  38:	6820      	ldr	r0, [r4, #0]
+  3a:	f7ff fffe 	bl	0x3a
+  3e:	4943      	ldr	r1, [pc, #268]	; (0x14c)
+  40:	4622      	mov	r2, r4
+  42:	f7ff fffe 	bl	0x42
+  46:	6820      	ldr	r0, [r4, #0]
+  48:	f7ff fffe 	bl	0x48
+  4c:	4622      	mov	r2, r4
+  4e:	493f      	ldr	r1, [pc, #252]	; (0x14c)
+  50:	e8bd 4038 	ldmia.w	sp!, {r3, r4, r5, lr}
+  54:	f7ff bffe 	b.w	0x54
+RELOC offset=0x98d2 type=10 symbol=hal_exp_handler target_section=0 target_value=0x0
+RELOC offset=0x98e2 type=10 symbol=hal_log_output target_section=0 target_value=0x0
+RELOC offset=0x98fa type=10 symbol=hal_ctx_get_device target_section=0 target_value=0x0
+RELOC offset=0x9902 type=10 symbol=hal_device_cancel_alarm_timer target_section=0 target_value=0x0
+RELOC offset=0x9908 type=10 symbol=hal_ctx_get_device target_section=0 target_value=0x0
+RELOC offset=0x9914 type=30 symbol=hal_device_alarm_timer target_section=0 target_value=0x0
+RELEVANT_STRINGS: ['pingtime', 'echat_imp_send_ping_timeout', 'send_ping', 'set ping time %d seconds', 'set ping timer %d seconds']
+
+OBJECT echat_imp.o FUNCTION echat_imp_set_ping_timer SECTION_INDEX 1 OFFSET 0x9918 SIZE 330 SECTION_BYTES 44540
+
+/tmp/broad-power-disasm-20261103/echat_imp.o__echat_imp_set_ping_timer.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b530      	push	{r4, r5, lr}
+   2:	0004      	movs	r4, r0
+   4:	460d      	mov	r5, r1
+   6:	b087      	sub	sp, #28
+   8:	d106      	bne.n	0x18
+   a:	490a      	ldr	r1, [pc, #40]	; (0x34)
+   c:	f241 3261 	movw	r2, #4961	; 0x1361
+  10:	f101 0010 	add.w	r0, r1, #16
+  14:	f7ff fffe 	bl	0x14
+  18:	4a06      	ldr	r2, [pc, #24]	; (0x34)
+  1a:	2103      	movs	r1, #3
+  1c:	9500      	str	r5, [sp, #0]
+  1e:	a340      	add	r3, pc, #256	; (adr r3, 0x120)
+  20:	68a0      	ldr	r0, [r4, #8]
+  22:	32ac      	adds	r2, #172	; 0xac
+  24:	f7ff fffe 	bl	0x24
+  28:	2300      	movs	r3, #0
+  2a:	462a      	mov	r2, r5
+  2c:	212a      	movs	r1, #42	; 0x2a
+  2e:	4668      	mov	r0, sp
+  30:	e084      	b.n	0x13c
+  32:	0000      	movs	r0, r0
+  34:	03f4      	lsls	r4, r6, #15
+  36:	0000      	movs	r0, r0
+  38:	6f73      	ldr	r3, [r6, #116]	; 0x74
+  3a:	6e75      	ldr	r5, [r6, #100]	; 0x64
+  3c:	0064      	lsls	r4, r4, #1
+  3e:	0000      	movs	r0, r0
+  40:	0989      	lsrs	r1, r1, #6
+  42:	0000      	movs	r0, r0
+  44:	7325      	strb	r5, [r4, #12]
+  46:	7420      	strb	r0, [r4, #16]
+  48:	7865      	ldrb	r5, [r4, #1]
+  4a:	3a74      	subs	r2, #116	; 0x74
+  4c:	7325      	strb	r5, [r4, #12]
+  4e:	0000      	movs	r0, r0
+  50:	0000      	movs	r0, r0
+  52:	0000      	movs	r0, r0
+  54:	7325      	strb	r5, [r4, #12]
+  56:	202c      	movs	r0, #44	; 0x2c
+  58:	6572      	str	r2, [r6, #84]	; 0x54
+  5a:	3a74      	subs	r2, #116	; 0x74
+  5c:	6425      	str	r5, [r4, #64]	; 0x40
+  5e:	0000      	movs	r0, r0
+  60:	6f73      	ldr	r3, [r6, #116]	; 0x74
+  62:	6e75      	ldr	r5, [r6, #100]	; 0x64
+  64:	5f64      	ldrsh	r4, [r4, r5]
+  66:	6c70      	ldr	r0, [r6, #68]	; 0x44
+  68:	7961      	ldrb	r1, [r4, #5]
+  6a:	745f      	strb	r7, [r3, #17]
+  6c:	7374      	strb	r4, [r6, #13]
+  6e:	6620      	str	r0, [r4, #96]	; 0x60
+  70:	6961      	ldr	r1, [r4, #20]
+  72:	216c      	movs	r1, #108	; 0x6c
+  74:	0000      	movs	r0, r0
+  76:	0000      	movs	r0, r0
+  78:	6574      	str	r4, [r6, #84]	; 0x54
+  7a:	7478      	strb	r0, [r7, #17]
+  7c:	0000      	movs	r0, r0
+  7e:	0000      	movs	r0, r0
+  80:	7325      	strb	r5, [r4, #12]
+  82:	6520      	str	r0, [r4, #80]	; 0x50
+  84:	7272      	strb	r2, [r6, #9]
+  86:	726f      	strb	r7, [r5, #9]
+  88:	4020      	ands	r0, r4
+  8a:	0032      	movs	r2, r6
+  8c:	7325      	strb	r5, [r4, #12]
+  8e:	6520      	str	r0, [r4, #80]	; 0x50
+  90:	7272      	strb	r2, [r6, #9]
+  92:	726f      	strb	r7, [r5, #9]
+  94:	4020      	ands	r0, r4
+  96:	0033      	movs	r3, r6
+  98:	6567      	str	r7, [r4, #84]	; 0x54
+  9a:	5f74      	ldrsh	r4, [r6, r5]
+  9c:	6f66      	ldr	r6, [r4, #116]	; 0x74
+  9e:	7563      	strb	r3, [r4, #21]
+  a0:	2073      	movs	r0, #115	; 0x73
+  a2:	6166      	str	r6, [r4, #20]
+  a4:	6c69      	ldr	r1, [r5, #68]	; 0x44
+  a6:	0021      	movs	r1, r4
+  a8:	2d74      	cmp	r5, #116	; 0x74
+  aa:	0000      	movs	r0, r0
+  ac:	7325      	strb	r5, [r4, #12]
+  ae:	6920      	ldr	r0, [r4, #16]
+  b0:	2073      	movs	r0, #115	; 0x73
+  b2:	7262      	strb	r2, [r4, #9]
+  b4:	616f      	str	r7, [r5, #20]
+  b6:	6364      	str	r4, [r4, #52]	; 0x34
+  b8:	7361      	strb	r1, [r4, #13]
+  ba:	6974      	ldr	r4, [r6, #20]
+  bc:	676e      	str	r6, [r5, #116]	; 0x74
+  be:	6920      	ldr	r0, [r4, #16]
+  c0:	6e67      	ldr	r7, [r4, #100]	; 0x64
+  c2:	726f      	strb	r7, [r5, #9]
+  c4:	2065      	movs	r0, #101	; 0x65
+  c6:	7474      	strb	r4, [r6, #17]
+  c8:	3a73      	subs	r2, #115	; 0x73
+  ca:	7325      	strb	r5, [r4, #12]
+	...
+  d8:	0000      	movs	r0, r0
+  da:	4561      	cmp	r1, ip
+  dc:	7325      	strb	r5, [r4, #12]
+  de:	7a20      	ldrb	r0, [r4, #8]
+  e0:	6e6f      	ldr	r7, [r5, #100]	; 0x64
+  e2:	2065      	movs	r0, #101	; 0x65
+  e4:	6625      	str	r5, [r4, #96]	; 0x60
+  e6:	7420      	strb	r0, [r4, #16]
+  e8:	6d69      	ldr	r1, [r5, #84]	; 0x54
+  ea:	5f65      	ldrsh	r5, [r4, r5]
+  ec:	6964      	ldr	r4, [r4, #20]
+  ee:	6666      	str	r6, [r4, #100]	; 0x64
+  f0:	2520      	movs	r5, #32
+  f2:	0064      	lsls	r4, r4, #1
+  f4:	0000      	movs	r0, r0
+  f6:	0000      	movs	r0, r0
+  f8:	6573      	str	r3, [r6, #84]	; 0x54
+  fa:	646e      	str	r6, [r5, #68]	; 0x44
+  fc:	705f      	strb	r7, [r3, #1]
+  fe:	6e69      	ldr	r1, [r5, #100]	; 0x64
+ 100:	0067      	lsls	r7, r4, #1
+ 102:	0000      	movs	r0, r0
+ 104:	6573      	str	r3, [r6, #84]	; 0x54
+ 106:	2074      	movs	r0, #116	; 0x74
+ 108:	6970      	ldr	r0, [r6, #20]
+ 10a:	676e      	str	r6, [r5, #116]	; 0x74
+ 10c:	7420      	strb	r0, [r4, #16]
+ 10e:	6d69      	ldr	r1, [r5, #84]	; 0x54
+ 110:	2065      	movs	r0, #101	; 0x65
+ 112:	6425      	str	r5, [r4, #64]	; 0x40
+ 114:	7320      	strb	r0, [r4, #12]
+ 116:	6365      	str	r5, [r4, #52]	; 0x34
+ 118:	6e6f      	ldr	r7, [r5, #100]	; 0x64
+ 11a:	7364      	strb	r4, [r4, #13]
+ 11c:	0000      	movs	r0, r0
+ 11e:	0000      	movs	r0, r0
+ 120:	6573      	str	r3, [r6, #84]	; 0x54
+ 122:	2074      	movs	r0, #116	; 0x74
+ 124:	6970      	ldr	r0, [r6, #20]
+ 126:	676e      	str	r6, [r5, #116]	; 0x74
+ 128:	7420      	strb	r0, [r4, #16]
+ 12a:	6d69      	ldr	r1, [r5, #84]	; 0x54
+ 12c:	7265      	strb	r5, [r4, #9]
+ 12e:	2520      	movs	r5, #32
+ 130:	2064      	movs	r0, #100	; 0x64
+ 132:	6573      	str	r3, [r6, #84]	; 0x54
+ 134:	6f63      	ldr	r3, [r4, #116]	; 0x74
+ 136:	646e      	str	r6, [r5, #68]	; 0x44
+ 138:	0073      	lsls	r3, r6, #1
+ 13a:	0000      	movs	r0, r0
+ 13c:	f7ff fffe 	bl	0x13c
+ 140:	e9d4 2047 	ldrd	r2, r0, [r4, #284]	; 0x11c
+ 144:	4669      	mov	r1, sp
+ 146:	4790      	blx	r2
+ 148:	e720      	b.n	0xffffff8c
+RELOC offset=0x992c type=10 symbol=hal_exp_handler target_section=0 target_value=0x0
+RELOC offset=0x993c type=10 symbol=hal_log_output target_section=0 target_value=0x0
+RELOC offset=0x994c type=2 symbol=.text target_section=1 target_value=0x0
+RELOC offset=0x9958 type=2 symbol=.constdata target_section=98 target_value=0x0
+RELOC offset=0x9968 type=2 symbol=echat_imp_on_play_focus_notify target_section=1 target_value=0x95b9
+RELOC offset=0x99c0 type=2 symbol=.text target_section=1 target_value=0x0
+RELOC offset=0x99e8 type=2 symbol=echat_imp_on_audio_prompt_finished target_section=1 target_value=0x9549
+RELOC offset=0x99ec type=2 symbol=echat_imp_on_audio_prompt_finished_full target_section=1 target_value=0x9577
+RELOC offset=0x9a0c type=2 symbol=echat_imp_on_keepalive_timer target_section=1 target_value=0x117
+RELOC offset=0x9a54 type=10 symbol=echat_notify_set target_section=0 target_value=0x0
+RELEVANT_STRINGS: ['pingtime', 'echat_imp_send_ping_timeout', 'send_ping', 'set ping time %d seconds', 'set ping timer %d seconds']
+
+OBJECT oem_device.o FUNCTION oem_device_alarm_timer SECTION_INDEX 1 OFFSET 0x756 SIZE 22 SECTION_BYTES 3404
+
+/tmp/broad-power-disasm-20261103/oem_device.o__oem_device_alarm_timer.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b430      	push	{r4, r5}
+   2:	e9c0 2303 	strd	r2, r3, [r0, #12]
+   6:	6844      	ldr	r4, [r0, #4]
+   8:	4603      	mov	r3, r0
+   a:	460a      	mov	r2, r1
+   c:	49de      	ldr	r1, [pc, #888]	; (0x388)
+   e:	4620      	mov	r0, r4
+  10:	bc30      	pop	{r4, r5}
+  12:	f7ff bffe 	b.w	0x12
+RELOC offset=0x768 type=30 symbol=hal_looper_set_timer target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT oem_device.o FUNCTION oem_device_cancel_alarm_timer SECTION_INDEX 1 OFFSET 0x76c SIZE 12 SECTION_BYTES 3404
+
+/tmp/broad-power-disasm-20261103/oem_device.o__oem_device_cancel_alarm_timer.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	6843      	ldr	r3, [r0, #4]
+   2:	4602      	mov	r2, r0
+   4:	49da      	ldr	r1, [pc, #872]	; (0x370)
+   6:	4618      	mov	r0, r3
+   8:	f7ff bffe 	b.w	0x8
+RELOC offset=0x774 type=30 symbol=hal_looper_cancel_timer target_section=0 target_value=0x0
+RELEVANT_STRINGS: []

@@ -1,0 +1,386 @@
+
+OBJECT oem_device.o FUNCTION oem_device_wakelock_lock SECTION_INDEX 5 OFFSET 0x0 SIZE 4 SECTION_BYTES 4
+
+/tmp/broad-power-disasm-20261103/oem_device.o__oem_device_wakelock_lock.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	2000      	movs	r0, #0
+   2:	4770      	bx	lr
+RELEVANT_STRINGS: []
+
+OBJECT oem_device.o FUNCTION oem_device_wakelock_unlock SECTION_INDEX 6 OFFSET 0x0 SIZE 4 SECTION_BYTES 4
+
+/tmp/broad-power-disasm-20261103/oem_device.o__oem_device_wakelock_unlock.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	2000      	movs	r0, #0
+   2:	4770      	bx	lr
+RELEVANT_STRINGS: []
+
+OBJECT device.o FUNCTION hal_device_wakelock_lock SECTION_INDEX 5 OFFSET 0x0 SIZE 46 SECTION_BYTES 72
+
+/tmp/broad-power-disasm-20261103/device.o__hal_device_wakelock_lock.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b510      	push	{r4, lr}
+   2:	0004      	movs	r4, r0
+   4:	d105      	bne.n	0x12
+   6:	a10a      	add	r1, pc, #40	; (adr r1, 0x30)
+   8:	f240 2255 	movw	r2, #597	; 0x255
+   c:	a00c      	add	r0, pc, #48	; (adr r0, 0x40)
+   e:	f7ff fffe 	bl	0xe
+  12:	2101      	movs	r1, #1
+  14:	f104 00d0 	add.w	r0, r4, #208	; 0xd0
+  18:	f7ff fffe 	bl	0x18
+  1c:	2801      	cmp	r0, #1
+  1e:	d105      	bne.n	0x2c
+  20:	f8d4 00c8 	ldr.w	r0, [r4, #200]	; 0xc8
+  24:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+  28:	f7ff bffe 	b.w	0x28
+  2c:	bd10      	pop	{r4, pc}
+RELOC offset=0xe type=10 symbol=hal_exp_handler target_section=0 target_value=0x0
+RELOC offset=0x18 type=10 symbol=hal_atom_add_and_fetch target_section=0 target_value=0x0
+RELOC offset=0x28 type=30 symbol=oem_device_wakelock_lock target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT device.o FUNCTION hal_device_wakelock_unlock SECTION_INDEX 6 OFFSET 0x0 SIZE 46 SECTION_BYTES 72
+
+/tmp/broad-power-disasm-20261103/device.o__hal_device_wakelock_unlock.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b510      	push	{r4, lr}
+   2:	0004      	movs	r4, r0
+   4:	d105      	bne.n	0x12
+   6:	a10a      	add	r1, pc, #40	; (adr r1, 0x30)
+   8:	f240 225d 	movw	r2, #605	; 0x25d
+   c:	a00c      	add	r0, pc, #48	; (adr r0, 0x40)
+   e:	f7ff fffe 	bl	0xe
+  12:	2101      	movs	r1, #1
+  14:	f104 00d0 	add.w	r0, r4, #208	; 0xd0
+  18:	f7ff fffe 	bl	0x18
+  1c:	2800      	cmp	r0, #0
+  1e:	d105      	bne.n	0x2c
+  20:	f8d4 00c8 	ldr.w	r0, [r4, #200]	; 0xc8
+  24:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+  28:	f7ff bffe 	b.w	0x28
+  2c:	bd10      	pop	{r4, pc}
+RELOC offset=0xe type=10 symbol=hal_exp_handler target_section=0 target_value=0x0
+RELOC offset=0x18 type=10 symbol=hal_atom_sub_and_fetch target_section=0 target_value=0x0
+RELOC offset=0x28 type=30 symbol=oem_device_wakelock_unlock target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT echat.o FUNCTION routine_get_power_mode SECTION_INDEX 134 OFFSET 0x0 SIZE 8 SECTION_BYTES 8
+
+/tmp/broad-power-disasm-20261103/echat.o__routine_get_power_mode.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	6808      	ldr	r0, [r1, #0]
+   2:	6800      	ldr	r0, [r0, #0]
+   4:	f7ff bffe 	b.w	0x4
+RELOC offset=0x4 type=30 symbol=echat_imp_get_power_mode target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT echat.o FUNCTION routine_set_power_mode SECTION_INDEX 132 OFFSET 0x0 SIZE 18 SECTION_BYTES 18
+
+/tmp/broad-power-disasm-20261103/echat.o__routine_set_power_mode.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b510      	push	{r4, lr}
+   2:	e9d1 0200 	ldrd	r0, r2, [r1]
+   6:	4611      	mov	r1, r2
+   8:	6800      	ldr	r0, [r0, #0]
+   a:	f7ff fffe 	bl	0xa
+   e:	2000      	movs	r0, #0
+  10:	bd10      	pop	{r4, pc}
+RELOC offset=0xa type=10 symbol=echat_imp_set_power_mode target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT echat.o FUNCTION echat_get_power_mode SECTION_INDEX 135 OFFSET 0x0 SIZE 20 SECTION_BYTES 24
+
+/tmp/broad-power-disasm-20261103/echat.o__echat_get_power_mode.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b500      	push	{lr}
+   2:	b089      	sub	sp, #36	; 0x24
+   4:	4903      	ldr	r1, [pc, #12]	; (0x14)
+   6:	466a      	mov	r2, sp
+   8:	9000      	str	r0, [sp, #0]
+   a:	6840      	ldr	r0, [r0, #4]
+   c:	f7ff fffe 	bl	0xc
+  10:	b009      	add	sp, #36	; 0x24
+  12:	bd00      	pop	{pc}
+RELOC offset=0xc type=10 symbol=hal_looper_run_in target_section=0 target_value=0x0
+RELOC offset=0x14 type=2 symbol=routine_get_power_mode target_section=134 target_value=0x1
+RELEVANT_STRINGS: []
+
+OBJECT echat.o FUNCTION echat_set_power_mode SECTION_INDEX 133 OFFSET 0x0 SIZE 22 SECTION_BYTES 28
+
+/tmp/broad-power-disasm-20261103/echat.o__echat_set_power_mode.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b500      	push	{lr}
+   2:	b089      	sub	sp, #36	; 0x24
+   4:	466a      	mov	r2, sp
+   6:	e9cd 0100 	strd	r0, r1, [sp]
+   a:	6840      	ldr	r0, [r0, #4]
+   c:	4902      	ldr	r1, [pc, #8]	; (0x18)
+   e:	f7ff fffe 	bl	0xe
+  12:	b009      	add	sp, #36	; 0x24
+  14:	bd00      	pop	{pc}
+RELOC offset=0xe type=10 symbol=hal_looper_run_in target_section=0 target_value=0x0
+RELOC offset=0x18 type=2 symbol=routine_set_power_mode target_section=132 target_value=0x1
+RELEVANT_STRINGS: []
+
+OBJECT echat_imp.o FUNCTION echat_imp_get_power_mode SECTION_INDEX 61 OFFSET 0x0 SIZE 28 SECTION_BYTES 52
+
+/tmp/broad-power-disasm-20261103/echat_imp.o__echat_imp_get_power_mode.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b510      	push	{r4, lr}
+   2:	0004      	movs	r4, r0
+   4:	d105      	bne.n	0x12
+   6:	a105      	add	r1, pc, #20	; (adr r1, 0x1c)
+   8:	f241 323e 	movw	r2, #4926	; 0x133e
+   c:	a007      	add	r0, pc, #28	; (adr r0, 0x2c)
+   e:	f7ff fffe 	bl	0xe
+  12:	6a60      	ldr	r0, [r4, #36]	; 0x24
+  14:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+  18:	f7ff bffe 	b.w	0x18
+RELOC offset=0xe type=10 symbol=hal_exp_handler target_section=0 target_value=0x0
+RELOC offset=0x18 type=30 symbol=sessionset_get_power_mode target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT echat_imp.o FUNCTION echat_imp_set_power_mode SECTION_INDEX 60 OFFSET 0x0 SIZE 84 SECTION_BYTES 148
+
+/tmp/broad-power-disasm-20261103/echat_imp.o__echat_imp_set_power_mode.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b530      	push	{r4, r5, lr}
+   2:	b089      	sub	sp, #36	; 0x24
+   4:	460d      	mov	r5, r1
+   6:	2120      	movs	r1, #32
+   8:	4604      	mov	r4, r0
+   a:	4668      	mov	r0, sp
+   c:	f7ff fffe 	bl	0xc
+  10:	b92c      	cbnz	r4, 0x1e
+  12:	a110      	add	r1, pc, #64	; (adr r1, 0x54)
+  14:	f241 3233 	movw	r2, #4915	; 0x1333
+  18:	a012      	add	r0, pc, #72	; (adr r0, 0x64)
+  1a:	f7ff fffe 	bl	0x1a
+  1e:	a113      	add	r1, pc, #76	; (adr r1, 0x6c)
+  20:	462a      	mov	r2, r5
+  22:	4668      	mov	r0, sp
+  24:	f7ff fffe 	bl	0x24
+  28:	6860      	ldr	r0, [r4, #4]
+  2a:	a211      	add	r2, pc, #68	; (adr r2, 0x70)
+  2c:	a114      	add	r1, pc, #80	; (adr r1, 0x80)
+  2e:	466b      	mov	r3, sp
+  30:	f7ff fffe 	bl	0x30
+  34:	b128      	cbz	r0, 0x42
+  36:	a107      	add	r1, pc, #28	; (adr r1, 0x54)
+  38:	f241 3237 	movw	r2, #4919	; 0x1337
+  3c:	a012      	add	r0, pc, #72	; (adr r0, 0x88)
+  3e:	f7ff fffe 	bl	0x3e
+  42:	6860      	ldr	r0, [r4, #4]
+  44:	f7ff fffe 	bl	0x44
+  48:	6a60      	ldr	r0, [r4, #36]	; 0x24
+  4a:	4629      	mov	r1, r5
+  4c:	f7ff fffe 	bl	0x4c
+  50:	b009      	add	sp, #36	; 0x24
+  52:	bd30      	pop	{r4, r5, pc}
+RELOC offset=0xc type=10 symbol=__aeabi_memclr4 target_section=0 target_value=0x0
+RELOC offset=0x1a type=10 symbol=hal_exp_handler target_section=0 target_value=0x0
+RELOC offset=0x24 type=10 symbol=hal_sprintf target_section=0 target_value=0x0
+RELOC offset=0x30 type=10 symbol=hal_ini_replace target_section=0 target_value=0x0
+RELOC offset=0x3e type=10 symbol=hal_exp_handler target_section=0 target_value=0x0
+RELOC offset=0x44 type=10 symbol=hal_ini_save target_section=0 target_value=0x0
+RELOC offset=0x4c type=10 symbol=sessionset_set_power_mode target_section=0 target_value=0x0
+RELEVANT_STRINGS: ['power_save_mode']
+
+OBJECT sessionset.o FUNCTION sessionset_get_power_mode SECTION_INDEX 8 OFFSET 0x0 SIZE 22 SECTION_BYTES 52
+
+/tmp/broad-power-disasm-20261103/sessionset.o__sessionset_get_power_mode.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b510      	push	{r4, lr}
+   2:	0004      	movs	r4, r0
+   4:	d105      	bne.n	0x12
+   6:	a104      	add	r1, pc, #16	; (adr r1, 0x18)
+   8:	f240 4259 	movw	r2, #1113	; 0x459
+   c:	a007      	add	r0, pc, #28	; (adr r0, 0x2c)
+   e:	f7ff fffe 	bl	0xe
+  12:	6ba0      	ldr	r0, [r4, #56]	; 0x38
+  14:	bd10      	pop	{r4, pc}
+RELOC offset=0xe type=10 symbol=hal_exp_handler target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT sessionset.o FUNCTION sessionset_set_power_mode SECTION_INDEX 7 OFFSET 0x0 SIZE 24 SECTION_BYTES 52
+
+/tmp/broad-power-disasm-20261103/sessionset.o__sessionset_set_power_mode.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b570      	push	{r4, r5, r6, lr}
+   2:	0004      	movs	r4, r0
+   4:	460d      	mov	r5, r1
+   6:	d105      	bne.n	0x14
+   8:	a103      	add	r1, pc, #12	; (adr r1, 0x18)
+   a:	f240 4253 	movw	r2, #1107	; 0x453
+   e:	a007      	add	r0, pc, #28	; (adr r0, 0x2c)
+  10:	f7ff fffe 	bl	0x10
+  14:	63a5      	str	r5, [r4, #56]	; 0x38
+  16:	bd70      	pop	{r4, r5, r6, pc}
+RELOC offset=0x10 type=10 symbol=hal_exp_handler target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT oem_thread.o FUNCTION oem_sleep SECTION_INDEX 5 OFFSET 0x22 SIZE 10 SECTION_BYTES 788
+
+/tmp/broad-power-disasm-20261103/oem_thread.o__oem_sleep.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	21c8      	movs	r1, #200	; 0xc8
+   2:	4348      	muls	r0, r1
+   4:	2100      	movs	r1, #0
+   6:	f7ff bffe 	b.w	0x6
+RELOC offset=0x6 type=10 symbol=OSAMutexCreate target_section=0 target_value=0x0
+RELOC offset=0x10 type=30 symbol=OsaMutexDelete target_section=0 target_value=0x0
+RELOC offset=0x18 type=30 symbol=OsaMutexLock target_section=0 target_value=0x0
+RELOC offset=0x1e type=30 symbol=OsaMutexUnlock target_section=0 target_value=0x0
+RELOC offset=0x28 type=30 symbol=OsaTaskSleep target_section=0 target_value=0x0
+RELOC offset=0x3a type=30 symbol=OsaTaskSleep target_section=0 target_value=0x0
+RELOC offset=0x40 type=30 symbol=OsaTaskSleep target_section=0 target_value=0x0
+RELOC offset=0x4a type=10 symbol=OsaTaskGetCurrentRef target_section=0 target_value=0x0
+RELOC offset=0x8c type=10 symbol=utilsAssertFail target_section=0 target_value=0x0
+RELOC offset=0xaa type=10 symbol=oem_thread_data_is_null target_section=5 target_value=0x6d
+RELOC offset=0xb2 type=10 symbol=hal_malloc target_section=0 target_value=0x0
+RELOC offset=0xc4 type=10 symbol=hal_memset target_section=0 target_value=0x0
+RELOC offset=0xe8 type=10 symbol=OSATaskCreate target_section=0 target_value=0x0
+RELOC offset=0xf6 type=10 symbol=utilsAssertFail target_section=0 target_value=0x0
+RELOC offset=0x10a type=10 symbol=oem_thread_data_get_idx target_section=5 target_value=0x53
+RELOC offset=0x114 type=10 symbol=OsaTaskDelete target_section=0 target_value=0x0
+RELOC offset=0x128 type=10 symbol=hal_free target_section=0 target_value=0x0
+RELOC offset=0x176 type=10 symbol=oem_mqueue_rhandle target_section=0 target_value=0x0
+RELOC offset=0x184 type=10 symbol=oem_prepare_rhandles target_section=5 target_value=0x26d
+RELOC offset=0x18c type=10 symbol=oem_mqueue_whandle target_section=0 target_value=0x0
+RELOC offset=0x1a0 type=10 symbol=__aeabi_memclr target_section=0 target_value=0x0
+RELOC offset=0x1ea type=10 symbol=lwip_select target_section=0 target_value=0x0
+RELOC offset=0x25e type=10 symbol=oem_mqueue_count target_section=0 target_value=0x0
+RELOC offset=0x282 type=10 symbol=__aeabi_memclr target_section=0 target_value=0x0
+RELOC offset=0x2d0 type=2 symbol=.bss target_section=8 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT oem_thread.o FUNCTION oem_usleep SECTION_INDEX 5 OFFSET 0x2c SIZE 18 SECTION_BYTES 788
+
+/tmp/broad-power-disasm-20261103/oem_thread.o__oem_usleep.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	f241 3188 	movw	r1, #5000	; 0x1388
+   4:	fb90 f0f1 	sdiv	r0, r0, r1
+   8:	b900      	cbnz	r0, 0xc
+   a:	2001      	movs	r0, #1
+   c:	2100      	movs	r1, #0
+   e:	f7ff bffe 	b.w	0xe
+RELOC offset=0x6 type=10 symbol=OSAMutexCreate target_section=0 target_value=0x0
+RELOC offset=0x10 type=30 symbol=OsaMutexDelete target_section=0 target_value=0x0
+RELOC offset=0x18 type=30 symbol=OsaMutexLock target_section=0 target_value=0x0
+RELOC offset=0x1e type=30 symbol=OsaMutexUnlock target_section=0 target_value=0x0
+RELOC offset=0x28 type=30 symbol=OsaTaskSleep target_section=0 target_value=0x0
+RELOC offset=0x3a type=30 symbol=OsaTaskSleep target_section=0 target_value=0x0
+RELOC offset=0x40 type=30 symbol=OsaTaskSleep target_section=0 target_value=0x0
+RELOC offset=0x4a type=10 symbol=OsaTaskGetCurrentRef target_section=0 target_value=0x0
+RELOC offset=0x8c type=10 symbol=utilsAssertFail target_section=0 target_value=0x0
+RELOC offset=0xaa type=10 symbol=oem_thread_data_is_null target_section=5 target_value=0x6d
+RELOC offset=0xb2 type=10 symbol=hal_malloc target_section=0 target_value=0x0
+RELOC offset=0xc4 type=10 symbol=hal_memset target_section=0 target_value=0x0
+RELOC offset=0xe8 type=10 symbol=OSATaskCreate target_section=0 target_value=0x0
+RELOC offset=0xf6 type=10 symbol=utilsAssertFail target_section=0 target_value=0x0
+RELOC offset=0x10a type=10 symbol=oem_thread_data_get_idx target_section=5 target_value=0x53
+RELOC offset=0x114 type=10 symbol=OsaTaskDelete target_section=0 target_value=0x0
+RELOC offset=0x128 type=10 symbol=hal_free target_section=0 target_value=0x0
+RELOC offset=0x176 type=10 symbol=oem_mqueue_rhandle target_section=0 target_value=0x0
+RELOC offset=0x184 type=10 symbol=oem_prepare_rhandles target_section=5 target_value=0x26d
+RELOC offset=0x18c type=10 symbol=oem_mqueue_whandle target_section=0 target_value=0x0
+RELOC offset=0x1a0 type=10 symbol=__aeabi_memclr target_section=0 target_value=0x0
+RELOC offset=0x1ea type=10 symbol=lwip_select target_section=0 target_value=0x0
+RELOC offset=0x25e type=10 symbol=oem_mqueue_count target_section=0 target_value=0x0
+RELOC offset=0x282 type=10 symbol=__aeabi_memclr target_section=0 target_value=0x0
+RELOC offset=0x2d0 type=2 symbol=.bss target_section=8 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT oem_thread.o FUNCTION oem_msleep SECTION_INDEX 5 OFFSET 0x3e SIZE 6 SECTION_BYTES 788
+
+/tmp/broad-power-disasm-20261103/oem_thread.o__oem_msleep.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	2100      	movs	r1, #0
+   2:	f7ff bffe 	b.w	0x2
+RELOC offset=0x6 type=10 symbol=OSAMutexCreate target_section=0 target_value=0x0
+RELOC offset=0x10 type=30 symbol=OsaMutexDelete target_section=0 target_value=0x0
+RELOC offset=0x18 type=30 symbol=OsaMutexLock target_section=0 target_value=0x0
+RELOC offset=0x1e type=30 symbol=OsaMutexUnlock target_section=0 target_value=0x0
+RELOC offset=0x28 type=30 symbol=OsaTaskSleep target_section=0 target_value=0x0
+RELOC offset=0x3a type=30 symbol=OsaTaskSleep target_section=0 target_value=0x0
+RELOC offset=0x40 type=30 symbol=OsaTaskSleep target_section=0 target_value=0x0
+RELOC offset=0x4a type=10 symbol=OsaTaskGetCurrentRef target_section=0 target_value=0x0
+RELOC offset=0x8c type=10 symbol=utilsAssertFail target_section=0 target_value=0x0
+RELOC offset=0xaa type=10 symbol=oem_thread_data_is_null target_section=5 target_value=0x6d
+RELOC offset=0xb2 type=10 symbol=hal_malloc target_section=0 target_value=0x0
+RELOC offset=0xc4 type=10 symbol=hal_memset target_section=0 target_value=0x0
+RELOC offset=0xe8 type=10 symbol=OSATaskCreate target_section=0 target_value=0x0
+RELOC offset=0xf6 type=10 symbol=utilsAssertFail target_section=0 target_value=0x0
+RELOC offset=0x10a type=10 symbol=oem_thread_data_get_idx target_section=5 target_value=0x53
+RELOC offset=0x114 type=10 symbol=OsaTaskDelete target_section=0 target_value=0x0
+RELOC offset=0x128 type=10 symbol=hal_free target_section=0 target_value=0x0
+RELOC offset=0x176 type=10 symbol=oem_mqueue_rhandle target_section=0 target_value=0x0
+RELOC offset=0x184 type=10 symbol=oem_prepare_rhandles target_section=5 target_value=0x26d
+RELOC offset=0x18c type=10 symbol=oem_mqueue_whandle target_section=0 target_value=0x0
+RELOC offset=0x1a0 type=10 symbol=__aeabi_memclr target_section=0 target_value=0x0
+RELOC offset=0x1ea type=10 symbol=lwip_select target_section=0 target_value=0x0
+RELOC offset=0x25e type=10 symbol=oem_mqueue_count target_section=0 target_value=0x0
+RELOC offset=0x282 type=10 symbol=__aeabi_memclr target_section=0 target_value=0x0
+RELOC offset=0x2d0 type=2 symbol=.bss target_section=8 target_value=0x0
+RELEVANT_STRINGS: []

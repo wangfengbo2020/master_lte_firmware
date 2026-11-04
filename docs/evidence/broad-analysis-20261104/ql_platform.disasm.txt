@@ -1,0 +1,159 @@
+
+ql_platform.o:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <ql_asr_property_get>:
+   0:	f7ff bffe 	b.w	0 <asr_property_get>
+			0: R_ARM_THM_JUMP24	asr_property_get
+			0: R_ARM_NONE	_printf_percent
+			0: R_ARM_NONE	_printf_s
+			0: R_ARM_NONE	_printf_str
+			0: R_ARM_NONE	_printf_str
+
+00000004 <ql_asr_property_get_buffer>:
+   4:	f7ff bffe 	b.w	0 <asr_property_get_buffer>
+			4: R_ARM_THM_JUMP24	asr_property_get_buffer
+
+00000008 <quec_current_pp>:
+   8:	4833      	ldr	r0, [pc, #204]	; (d8 <ql_set_ymodem_cfg+0x24>)
+   a:	7800      	ldrb	r0, [r0, #0]
+   c:	4770      	bx	lr
+
+0000000e <ql_cpu_fre_set>:
+   e:	b510      	push	{r4, lr}
+  10:	4c32      	ldr	r4, [pc, #200]	; (dc <ql_set_ymodem_cfg+0x28>)
+  12:	2100      	movs	r1, #0
+  14:	2805      	cmp	r0, #5
+  16:	d902      	bls.n	1e <ql_cpu_fre_set+0x10>
+  18:	28ff      	cmp	r0, #255	; 0xff
+  1a:	d007      	beq.n	2c <ql_cpu_fre_set+0x1e>
+  1c:	e007      	b.n	2e <ql_cpu_fre_set+0x20>
+  1e:	6021      	str	r1, [r4, #0]
+  20:	f7ff fffe 	bl	0 <cpcore_fc_config>
+			20: R_ARM_THM_CALL	cpcore_fc_config
+  24:	2001      	movs	r0, #1
+  26:	6020      	str	r0, [r4, #0]
+  28:	2000      	movs	r0, #0
+  2a:	bd10      	pop	{r4, pc}
+  2c:	6021      	str	r1, [r4, #0]
+  2e:	f04f 30ff 	mov.w	r0, #4294967295	; 0xffffffff
+  32:	bd10      	pop	{r4, pc}
+
+00000034 <ql_cpu_fre_get>:
+  34:	4828      	ldr	r0, [pc, #160]	; (d8 <ql_set_ymodem_cfg+0x24>)
+  36:	7800      	ldrb	r0, [r0, #0]
+  38:	4770      	bx	lr
+
+0000003a <ql_geu_random_number>:
+  3a:	f7ff bffe 	b.w	0 <geu_random_number>
+			3a: R_ARM_THM_JUMP24	geu_random_number
+
+0000003e <ql_pseudo_random_number>:
+  3e:	f7ff bffe 	b.w	0 <pseudo_random_number>
+			3e: R_ARM_THM_JUMP24	pseudo_random_number
+
+00000042 <ql_get_dump_cnt>:
+  42:	f7ff bffe 	b.w	0 <Quec_get_dump_cnt>
+			42: R_ARM_THM_JUMP24	Quec_get_dump_cnt
+
+00000046 <ql_get_dump_file>:
+  46:	b510      	push	{r4, lr}
+  48:	b128      	cbz	r0, 56 <ql_get_dump_file+0x10>
+  4a:	b121      	cbz	r1, 56 <ql_get_dump_file+0x10>
+  4c:	f7ff fffe 	bl	0 <Quec_Get_Dump_file>
+			4c: R_ARM_THM_CALL	Quec_Get_Dump_file
+  50:	4604      	mov	r4, r0
+  52:	4620      	mov	r0, r4
+  54:	bd10      	pop	{r4, pc}
+  56:	4922      	ldr	r1, [pc, #136]	; (e0 <ql_set_ymodem_cfg+0x2c>)
+  58:	f06f 0401 	mvn.w	r4, #1
+  5c:	a021      	add	r0, pc, #132	; (adr r0, 88 <__2printf+0x88>)
+  5e:	f7ff fffe 	bl	0 <__2printf>
+			5e: R_ARM_THM_CALL	__2printf
+  62:	e7f6      	b.n	52 <ql_get_dump_file+0xc>
+
+00000064 <ql_get_dsp_dump_file>:
+  64:	b510      	push	{r4, lr}
+  66:	b128      	cbz	r0, 74 <ql_get_dsp_dump_file+0x10>
+  68:	b121      	cbz	r1, 74 <ql_get_dsp_dump_file+0x10>
+  6a:	f7ff fffe 	bl	0 <Quec_Get_DSP_Dump_file>
+			6a: R_ARM_THM_CALL	Quec_Get_DSP_Dump_file
+  6e:	4604      	mov	r4, r0
+  70:	4620      	mov	r0, r4
+  72:	bd10      	pop	{r4, pc}
+  74:	491a      	ldr	r1, [pc, #104]	; (e0 <ql_set_ymodem_cfg+0x2c>)
+  76:	f06f 0401 	mvn.w	r4, #1
+  7a:	a01a      	add	r0, pc, #104	; (adr r0, e4 <ql_set_ymodem_cfg+0x30>)
+  7c:	3111      	adds	r1, #17
+  7e:	f7ff fffe 	bl	0 <__2printf>
+			7e: R_ARM_THM_CALL	__2printf
+  82:	e7f5      	b.n	ffffffee <Quec_Get_DSP_Dump_len+0xffffffee>
+
+00000084 <ql_get_dsp_dump_len>:
+  84:	f7ff bffe 	b.w	0 <Quec_Get_DSP_Dump_len>
+			84: R_ARM_THM_JUMP24	Quec_Get_DSP_Dump_len
+
+00000088 <ql_flash_save_dump_enable>:
+  88:	f7ff bffe 	b.w	0 <Quec_FlashSave_Dump_Enable>
+			88: R_ARM_THM_JUMP24	Quec_FlashSave_Dump_Enable
+
+0000008c <ql_del_dump_file>:
+  8c:	f7ff bffe 	b.w	0 <Quec_Clear_Dump_file>
+			8c: R_ARM_THM_JUMP24	Quec_Clear_Dump_file
+
+00000090 <ql_clean_dump_cnt>:
+  90:	f7ff bffe 	b.w	0 <Quec_clean_dump_cnt>
+			90: R_ARM_THM_JUMP24	Quec_clean_dump_cnt
+
+00000094 <ql_run_dump_cb>:
+  94:	4819      	ldr	r0, [pc, #100]	; (fc <ql_set_ymodem_cfg+0x48>)
+  96:	6800      	ldr	r0, [r0, #0]
+  98:	2800      	cmp	r0, #0
+  9a:	d000      	beq.n	9e <ql_run_dump_cb+0xa>
+  9c:	4700      	bx	r0
+  9e:	4770      	bx	lr
+
+000000a0 <ql_set_dump_cb>:
+  a0:	0001      	movs	r1, r0
+  a2:	f04f 0000 	mov.w	r0, #0
+  a6:	d002      	beq.n	ae <ql_set_dump_cb+0xe>
+  a8:	4a14      	ldr	r2, [pc, #80]	; (fc <ql_set_ymodem_cfg+0x48>)
+  aa:	6011      	str	r1, [r2, #0]
+  ac:	4770      	bx	lr
+  ae:	f04f 30ff 	mov.w	r0, #4294967295	; 0xffffffff
+  b2:	4770      	bx	lr
+
+000000b4 <ql_set_ymodem_cfg>:
+  b4:	2801      	cmp	r0, #1
+  b6:	b510      	push	{r4, lr}
+  b8:	d002      	beq.n	c0 <ql_set_ymodem_cfg+0xc>
+  ba:	f04f 30ff 	mov.w	r0, #4294967295	; 0xffffffff
+  be:	bd10      	pop	{r4, pc}
+  c0:	490f      	ldr	r1, [pc, #60]	; (100 <ql_set_ymodem_cfg+0x4c>)
+  c2:	2003      	movs	r0, #3
+  c4:	7188      	strb	r0, [r1, #6]
+  c6:	2000      	movs	r0, #0
+  c8:	490e      	ldr	r1, [pc, #56]	; (104 <ql_set_ymodem_cfg+0x50>)
+  ca:	6008      	str	r0, [r1, #0]
+  cc:	2001      	movs	r0, #1
+  ce:	f7ff fffe 	bl	0 <YmodemCfgSet>
+			ce: R_ARM_THM_CALL	YmodemCfgSet
+  d2:	2000      	movs	r0, #0
+  d4:	bd10      	pop	{r4, pc}
+	...
+			d8: R_ARM_ABS32	current_PP
+			dc: R_ARM_ABS32	fc_config_fix
+			e0: R_ARM_ABS32	.constdata
+  e2:	0000      	.short	0x0000
+  e4:	202c7325 	.word	0x202c7325
+  e8:	61726170 	.word	0x61726170
+  ec:	6574656d 	.word	0x6574656d
+  f0:	72652072 	.word	0x72652072
+  f4:	0d726f72 	.word	0x0d726f72
+  f8:	0000000a 	.word	0x0000000a
+	...
+			fc: R_ARM_ABS32	.data
+			100: R_ARM_ABS32	eeConfiguration
+			104: R_ARM_ABS32	is_reset_after_dump

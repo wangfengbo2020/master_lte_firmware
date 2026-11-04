@@ -1,0 +1,426 @@
+
+OBJECT oem_time.o FUNCTION oem_gm_walltime_now SECTION_INDEX 2 OFFSET 0x0 SIZE 78 SECTION_BYTES 78
+
+/tmp/broad-power-disasm-20261103/oem_time.o__oem_gm_walltime_now.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b510      	push	{r4, lr}
+   2:	0004      	movs	r4, r0
+   4:	b08e      	sub	sp, #56	; 0x38
+   6:	d01f      	beq.n	0x48
+   8:	2100      	movs	r1, #0
+   a:	a80b      	add	r0, sp, #44	; 0x2c
+   c:	f7ff fffe 	bl	0xc
+  10:	a80b      	add	r0, sp, #44	; 0x2c
+  12:	4669      	mov	r1, sp
+  14:	f7ff fffe 	bl	0x14
+  18:	9805      	ldr	r0, [sp, #20]
+  1a:	f240 31e8 	movw	r1, #1000	; 0x3e8
+  1e:	f200 706c 	addw	r0, r0, #1900	; 0x76c
+  22:	8020      	strh	r0, [r4, #0]
+  24:	9804      	ldr	r0, [sp, #16]
+  26:	1c40      	adds	r0, r0, #1
+  28:	70a0      	strb	r0, [r4, #2]
+  2a:	9803      	ldr	r0, [sp, #12]
+  2c:	70e0      	strb	r0, [r4, #3]
+  2e:	9802      	ldr	r0, [sp, #8]
+  30:	7120      	strb	r0, [r4, #4]
+  32:	9801      	ldr	r0, [sp, #4]
+  34:	7160      	strb	r0, [r4, #5]
+  36:	9800      	ldr	r0, [sp, #0]
+  38:	71a0      	strb	r0, [r4, #6]
+  3a:	980c      	ldr	r0, [sp, #48]	; 0x30
+  3c:	fb90 f0f1 	sdiv	r0, r0, r1
+  40:	8120      	strh	r0, [r4, #8]
+  42:	2000      	movs	r0, #0
+  44:	b00e      	add	sp, #56	; 0x38
+  46:	bd10      	pop	{r4, pc}
+  48:	f04f 30ff 	mov.w	r0, #4294967295	; 0xffffffff
+  4c:	e7fa      	b.n	0x44
+RELOC offset=0xc type=10 symbol=gettimeofday target_section=0 target_value=0x0
+RELOC offset=0x14 type=10 symbol=localtime_r target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT oem_time.o FUNCTION oem_time_now_us SECTION_INDEX 1 OFFSET 0x0 SIZE 26 SECTION_BYTES 118
+
+/tmp/broad-power-disasm-20261103/oem_time.o__oem_time_now_us.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b51c      	push	{r2, r3, r4, lr}
+   2:	2100      	movs	r1, #0
+   4:	4668      	mov	r0, sp
+   6:	f7ff fffe 	bl	0x6
+   a:	e9dd 0100 	ldrd	r0, r1, [sp]
+   e:	f643 5209 	movw	r2, #15625	; 0x3d09
+  12:	4350      	muls	r0, r2
+  14:	eb01 1080 	add.w	r0, r1, r0, lsl #6
+  18:	bd1c      	pop	{r2, r3, r4, pc}
+RELOC offset=0x6 type=10 symbol=gettimeofday target_section=0 target_value=0x0
+RELOC offset=0x1e type=10 symbol=OsaGetTicks target_section=0 target_value=0x0
+RELOC offset=0x34 type=10 symbol=gettimeofday target_section=0 target_value=0x0
+RELOC offset=0x3c type=10 symbol=localtime_r target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT oem_time.o FUNCTION oem_time_now SECTION_INDEX 1 OFFSET 0x1a SIZE 14 SECTION_BYTES 118
+
+/tmp/broad-power-disasm-20261103/oem_time.o__oem_time_now.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	2000      	movs	r0, #0
+   2:	b510      	push	{r4, lr}
+   4:	f7ff fffe 	bl	0x4
+   8:	eb00 0080 	add.w	r0, r0, r0, lsl #2
+   c:	bd10      	pop	{r4, pc}
+RELOC offset=0x6 type=10 symbol=gettimeofday target_section=0 target_value=0x0
+RELOC offset=0x1e type=10 symbol=OsaGetTicks target_section=0 target_value=0x0
+RELOC offset=0x34 type=10 symbol=gettimeofday target_section=0 target_value=0x0
+RELOC offset=0x3c type=10 symbol=localtime_r target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT oem_time.o FUNCTION oem_walltime_now SECTION_INDEX 1 OFFSET 0x28 SIZE 78 SECTION_BYTES 118
+
+/tmp/broad-power-disasm-20261103/oem_time.o__oem_walltime_now.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b510      	push	{r4, lr}
+   2:	0004      	movs	r4, r0
+   4:	b08e      	sub	sp, #56	; 0x38
+   6:	d01f      	beq.n	0x48
+   8:	2100      	movs	r1, #0
+   a:	a80b      	add	r0, sp, #44	; 0x2c
+   c:	f7ff fffe 	bl	0xc
+  10:	a80b      	add	r0, sp, #44	; 0x2c
+  12:	4669      	mov	r1, sp
+  14:	f7ff fffe 	bl	0x14
+  18:	9805      	ldr	r0, [sp, #20]
+  1a:	f240 31e8 	movw	r1, #1000	; 0x3e8
+  1e:	f200 706c 	addw	r0, r0, #1900	; 0x76c
+  22:	8020      	strh	r0, [r4, #0]
+  24:	9804      	ldr	r0, [sp, #16]
+  26:	1c40      	adds	r0, r0, #1
+  28:	70a0      	strb	r0, [r4, #2]
+  2a:	9803      	ldr	r0, [sp, #12]
+  2c:	70e0      	strb	r0, [r4, #3]
+  2e:	9802      	ldr	r0, [sp, #8]
+  30:	7120      	strb	r0, [r4, #4]
+  32:	9801      	ldr	r0, [sp, #4]
+  34:	7160      	strb	r0, [r4, #5]
+  36:	9800      	ldr	r0, [sp, #0]
+  38:	71a0      	strb	r0, [r4, #6]
+  3a:	980c      	ldr	r0, [sp, #48]	; 0x30
+  3c:	fb90 f0f1 	sdiv	r0, r0, r1
+  40:	8120      	strh	r0, [r4, #8]
+  42:	2000      	movs	r0, #0
+  44:	b00e      	add	sp, #56	; 0x38
+  46:	bd10      	pop	{r4, pc}
+  48:	f04f 30ff 	mov.w	r0, #4294967295	; 0xffffffff
+  4c:	e7fa      	b.n	0x44
+RELOC offset=0x6 type=10 symbol=gettimeofday target_section=0 target_value=0x0
+RELOC offset=0x1e type=10 symbol=OsaGetTicks target_section=0 target_value=0x0
+RELOC offset=0x34 type=10 symbol=gettimeofday target_section=0 target_value=0x0
+RELOC offset=0x3c type=10 symbol=localtime_r target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT timet.o FUNCTION hal_gm_walltime_now SECTION_INDEX 2 OFFSET 0x0 SIZE 66 SECTION_BYTES 66
+
+/tmp/broad-power-disasm-20261103/timet.o__hal_gm_walltime_now.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b53e      	push	{r1, r2, r3, r4, r5, lr}
+   2:	220a      	movs	r2, #10
+   4:	4604      	mov	r4, r0
+   6:	2100      	movs	r1, #0
+   8:	4668      	mov	r0, sp
+   a:	f7ff fffe 	bl	0xa
+   e:	4668      	mov	r0, sp
+  10:	f7ff fffe 	bl	0x10
+  14:	f8bd 0000 	ldrh.w	r0, [sp]
+  18:	8020      	strh	r0, [r4, #0]
+  1a:	f89d 0002 	ldrb.w	r0, [sp, #2]
+  1e:	70a0      	strb	r0, [r4, #2]
+  20:	f89d 0003 	ldrb.w	r0, [sp, #3]
+  24:	70e0      	strb	r0, [r4, #3]
+  26:	f89d 0004 	ldrb.w	r0, [sp, #4]
+  2a:	7120      	strb	r0, [r4, #4]
+  2c:	f89d 0005 	ldrb.w	r0, [sp, #5]
+  30:	7160      	strb	r0, [r4, #5]
+  32:	f89d 0006 	ldrb.w	r0, [sp, #6]
+  36:	71a0      	strb	r0, [r4, #6]
+  38:	f8bd 0008 	ldrh.w	r0, [sp, #8]
+  3c:	8120      	strh	r0, [r4, #8]
+  3e:	2000      	movs	r0, #0
+  40:	bd3e      	pop	{r1, r2, r3, r4, r5, pc}
+RELOC offset=0xa type=10 symbol=hal_memset target_section=0 target_value=0x0
+RELOC offset=0x10 type=10 symbol=oem_gm_walltime_now target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT timet.o FUNCTION hal_time_now SECTION_INDEX 1 OFFSET 0x0 SIZE 4 SECTION_BYTES 448
+
+/tmp/broad-power-disasm-20261103/timet.o__hal_time_now.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	f7ff bffe 	b.w	0x0
+RELOC offset=0x0 type=30 symbol=oem_time_now target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT timet.o FUNCTION hal_walltime_now SECTION_INDEX 1 OFFSET 0x4 SIZE 66 SECTION_BYTES 448
+
+/tmp/broad-power-disasm-20261103/timet.o__hal_walltime_now.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b53e      	push	{r1, r2, r3, r4, r5, lr}
+   2:	220a      	movs	r2, #10
+   4:	4604      	mov	r4, r0
+   6:	2100      	movs	r1, #0
+   8:	4668      	mov	r0, sp
+   a:	f7ff fffe 	bl	0xa
+   e:	4668      	mov	r0, sp
+  10:	f7ff fffe 	bl	0x10
+  14:	f8bd 0000 	ldrh.w	r0, [sp]
+  18:	8020      	strh	r0, [r4, #0]
+  1a:	f89d 0002 	ldrb.w	r0, [sp, #2]
+  1e:	70a0      	strb	r0, [r4, #2]
+  20:	f89d 0003 	ldrb.w	r0, [sp, #3]
+  24:	70e0      	strb	r0, [r4, #3]
+  26:	f89d 0004 	ldrb.w	r0, [sp, #4]
+  2a:	7120      	strb	r0, [r4, #4]
+  2c:	f89d 0005 	ldrb.w	r0, [sp, #5]
+  30:	7160      	strb	r0, [r4, #5]
+  32:	f89d 0006 	ldrb.w	r0, [sp, #6]
+  36:	71a0      	strb	r0, [r4, #6]
+  38:	f8bd 0008 	ldrh.w	r0, [sp, #8]
+  3c:	8120      	strh	r0, [r4, #8]
+  3e:	2000      	movs	r0, #0
+  40:	bd3e      	pop	{r1, r2, r3, r4, r5, pc}
+RELOC offset=0xe type=10 symbol=hal_memset target_section=0 target_value=0x0
+RELOC offset=0x14 type=10 symbol=oem_walltime_now target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT session.o FUNCTION session_on_active_timer SECTION_INDEX 1 OFFSET 0xcf2 SIZE 354 SECTION_BYTES 19960
+
+/tmp/broad-power-disasm-20261103/session.o__session_on_active_timer.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b57f      	push	{r0, r1, r2, r3, r4, r5, r6, lr}
+   2:	f8d2 0374 	ldr.w	r0, [r2, #884]	; 0x374
+   6:	460d      	mov	r5, r1
+   8:	7811      	ldrb	r1, [r2, #0]
+   a:	4614      	mov	r4, r2
+   c:	f8d2 23a8 	ldr.w	r2, [r2, #936]	; 0x3a8
+  10:	a3aa      	add	r3, pc, #680	; (adr r3, 0x2bc)
+  12:	e9cd 5002 	strd	r5, r0, [sp, #8]
+  16:	e9cd 2100 	strd	r2, r1, [sp]
+  1a:	f6af 02bc 	subw	r2, pc, #2236	; 0x8bc
+  1e:	f8d4 0344 	ldr.w	r0, [r4, #836]	; 0x344
+  22:	2106      	movs	r1, #6
+  24:	f7ff fffe 	bl	0x24
+  28:	f894 03b4 	ldrb.w	r0, [r4, #948]	; 0x3b4
+  2c:	b148      	cbz	r0, 0x42
+  2e:	f8d4 0368 	ldr.w	r0, [r4, #872]	; 0x368
+  32:	f241 3188 	movw	r1, #5000	; 0x1388
+  36:	1a28      	subs	r0, r5, r0
+  38:	4288      	cmp	r0, r1
+  3a:	d302      	bcc.n	0x42
+  3c:	4620      	mov	r0, r4
+  3e:	f7ff fffe 	bl	0x3e
+  42:	7820      	ldrb	r0, [r4, #0]
+  44:	2600      	movs	r6, #0
+  46:	2803      	cmp	r0, #3
+  48:	d001      	beq.n	0x4e
+  4a:	2802      	cmp	r0, #2
+  4c:	d129      	bne.n	0xa2
+  4e:	f8d4 0374 	ldr.w	r0, [r4, #884]	; 0x374
+  52:	f640 31b8 	movw	r1, #3000	; 0xbb8
+  56:	1a28      	subs	r0, r5, r0
+  58:	4288      	cmp	r0, r1
+  5a:	d322      	bcc.n	0xa2
+  5c:	f8d4 03a8 	ldr.w	r0, [r4, #936]	; 0x3a8
+  60:	a3a5      	add	r3, pc, #660	; (adr r3, 0x2f8)
+  62:	9000      	str	r0, [sp, #0]
+  64:	f6af 1204 	subw	r2, pc, #2308	; 0x904
+  68:	f8d4 0344 	ldr.w	r0, [r4, #836]	; 0x344
+  6c:	2106      	movs	r1, #6
+  6e:	f7ff fffe 	bl	0x6e
+  72:	f8d4 032c 	ldr.w	r0, [r4, #812]	; 0x32c
+  76:	f7ff fffe 	bl	0x76
+  7a:	2200      	movs	r2, #0
+  7c:	9600      	str	r6, [sp, #0]
+  7e:	2105      	movs	r1, #5
+  80:	4613      	mov	r3, r2
+  82:	f7ff fffe 	bl	0x82
+  86:	f8d4 032c 	ldr.w	r0, [r4, #812]	; 0x32c
+  8a:	f7ff fffe 	bl	0x8a
+  8e:	2201      	movs	r2, #1
+  90:	9600      	str	r6, [sp, #0]
+  92:	2300      	movs	r3, #0
+  94:	2106      	movs	r1, #6
+  96:	f7ff fffe 	bl	0x96
+  9a:	2103      	movs	r1, #3
+  9c:	4620      	mov	r0, r4
+  9e:	f7ff fffe 	bl	0x9e
+  a2:	f8d4 1afc 	ldr.w	r1, [r4, #2812]	; 0xafc
+  a6:	2901      	cmp	r1, #1
+  a8:	d00c      	beq.n	0xc4
+  aa:	f8d4 032c 	ldr.w	r0, [r4, #812]	; 0x32c
+  ae:	2100      	movs	r1, #0
+  b0:	f7ff fffe 	bl	0xb0
+  b4:	f884 6b00 	strb.w	r6, [r4, #2816]	; 0xb00
+  b8:	f8d4 032c 	ldr.w	r0, [r4, #812]	; 0x32c
+  bc:	f7ff fffe 	bl	0xbc
+  c0:	b330      	cbz	r0, 0x110
+  c2:	e034      	b.n	0x12e
+  c4:	f894 03b5 	ldrb.w	r0, [r4, #949]	; 0x3b5
+  c8:	2800      	cmp	r0, #0
+  ca:	d1f5      	bne.n	0xb8
+  cc:	f8d4 0374 	ldr.w	r0, [r4, #884]	; 0x374
+  d0:	f64e 2360 	movw	r3, #60000	; 0xea60
+  d4:	1a2a      	subs	r2, r5, r0
+  d6:	429a      	cmp	r2, r3
+  d8:	d9ee      	bls.n	0xb8
+  da:	4a68      	ldr	r2, [pc, #416]	; (0x27c)
+  dc:	a390      	add	r3, pc, #576	; (adr r3, 0x320)
+  de:	e9cd 0102 	strd	r0, r1, [sp, #8]
+  e2:	3a66      	subs	r2, #102	; 0x66
+  e4:	e9cd 2500 	strd	r2, r5, [sp]
+  e8:	f6af 1288 	subw	r2, pc, #2440	; 0x988
+  ec:	f8d4 0344 	ldr.w	r0, [r4, #836]	; 0x344
+  f0:	2106      	movs	r1, #6
+  f2:	f7ff fffe 	bl	0xf2
+  f6:	f894 0b00 	ldrb.w	r0, [r4, #2816]	; 0xb00
+  fa:	b928      	cbnz	r0, 0x108
+  fc:	f8d4 032c 	ldr.w	r0, [r4, #812]	; 0x32c
+ 100:	f242 7110 	movw	r1, #10000	; 0x2710
+ 104:	f7ff fffe 	bl	0x104
+ 108:	2001      	movs	r0, #1
+ 10a:	f884 0b00 	strb.w	r0, [r4, #2816]	; 0xb00
+ 10e:	e7d3      	b.n	0xb8
+ 110:	f8d4 0374 	ldr.w	r0, [r4, #884]	; 0x374
+ 114:	1a28      	subs	r0, r5, r0
+ 116:	f5b0 7f96 	cmp.w	r0, #300	; 0x12c
+ 11a:	d908      	bls.n	0x12e
+ 11c:	f8d4 0388 	ldr.w	r0, [r4, #904]	; 0x388
+ 120:	1a28      	subs	r0, r5, r0
+ 122:	f5b0 6ffa 	cmp.w	r0, #2000	; 0x7d0
+ 126:	d202      	bcs.n	0x12e
+ 128:	4620      	mov	r0, r4
+ 12a:	f7ff fffe 	bl	0x12a
+ 12e:	7820      	ldrb	r0, [r4, #0]
+ 130:	2802      	cmp	r0, #2
+ 132:	d115      	bne.n	0x160
+ 134:	f8d4 1374 	ldr.w	r1, [r4, #884]	; 0x374
+ 138:	a360      	add	r3, pc, #384	; (adr r3, 0x2bc)
+ 13a:	f8d4 23a8 	ldr.w	r2, [r4, #936]	; 0x3a8
+ 13e:	e9cd 2000 	strd	r2, r0, [sp]
+ 142:	e9cd 5102 	strd	r5, r1, [sp, #8]
+ 146:	f6af 12e8 	subw	r2, pc, #2536	; 0x9e8
+ 14a:	f8d4 0344 	ldr.w	r0, [r4, #836]	; 0x344
+ 14e:	2106      	movs	r1, #6
+ 150:	f7ff fffe 	bl	0x150
+ 154:	b004      	add	sp, #16
+ 156:	4620      	mov	r0, r4
+ 158:	e8bd 4070 	ldmia.w	sp!, {r4, r5, r6, lr}
+ 15c:	f7ff bffe 	b.w	0x15c
+ 160:	bd7f      	pop	{r0, r1, r2, r3, r4, r5, r6, pc}
+RELOC offset=0xd16 type=10 symbol=hal_log_output target_section=0 target_value=0x0
+RELOC offset=0xd30 type=10 symbol=session_send_ping_only target_section=1 target_value=0xc9d
+RELOC offset=0xd60 type=10 symbol=hal_log_output target_section=0 target_value=0x0
+RELOC offset=0xd68 type=10 symbol=echat_imp_get_collect target_section=0 target_value=0x0
+RELOC offset=0xd74 type=10 symbol=collect_set_listener_info target_section=0 target_value=0x0
+RELOC offset=0xd7c type=10 symbol=echat_imp_get_collect target_section=0 target_value=0x0
+RELOC offset=0xd88 type=10 symbol=collect_set_listener_info target_section=0 target_value=0x0
+RELOC offset=0xd90 type=10 symbol=session_signal target_section=1 target_value=0xaf1
+RELOC offset=0xda2 type=10 symbol=echat_imp_set_ping_timer target_section=0 target_value=0x0
+RELOC offset=0xdae type=10 symbol=echat_imp_get_is_broad target_section=0 target_value=0x0
+RELOC offset=0xde4 type=10 symbol=hal_log_output target_section=0 target_value=0x0
+RELOC offset=0xdf6 type=10 symbol=echat_imp_set_ping_timer target_section=0 target_value=0x0
+RELOC offset=0xe1c type=10 symbol=session_send_continuetalk target_section=1 target_value=0xb5b
+RELOC offset=0xe42 type=10 symbol=hal_log_output target_section=0 target_value=0x0
+RELOC offset=0xe4e type=30 symbol=session_stop_active target_section=1 target_value=0x4c17
+RELEVANT_STRINGS: ['%s, auto_send_ping_num:%d', '%s send udp ping', '%s now(%d),tv_recv_member_audio(%d), power_save_mode(%d)', 'pingtime']
+
+OBJECT session.o FUNCTION session_start_active SECTION_INDEX 1 OFFSET 0xe54 SIZE 86 SECTION_BYTES 19960
+
+/tmp/broad-power-disasm-20261103/session.o__session_start_active.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b51c      	push	{r2, r3, r4, lr}
+   2:	f890 1314 	ldrb.w	r1, [r0, #788]	; 0x314
+   6:	4604      	mov	r4, r0
+   8:	f8d0 03a8 	ldr.w	r0, [r0, #936]	; 0x3a8
+   c:	a37a      	add	r3, pc, #488	; (adr r3, 0x1f8)
+   e:	e9cd 0100 	strd	r0, r1, [sp]
+  12:	f6af 2214 	subw	r2, pc, #2580	; 0xa14
+  16:	f8d4 0344 	ldr.w	r0, [r4, #836]	; 0x344
+  1a:	2101      	movs	r1, #1
+  1c:	f7ff fffe 	bl	0x1c
+  20:	f894 0314 	ldrb.w	r0, [r4, #788]	; 0x314
+  24:	2800      	cmp	r0, #0
+  26:	d115      	bne.n	0x54
+  28:	a37c      	add	r3, pc, #496	; (adr r3, 0x21c)
+  2a:	f6af 222c 	subw	r2, pc, #2604	; 0xa2c
+  2e:	f8d4 0344 	ldr.w	r0, [r4, #836]	; 0x344
+  32:	2101      	movs	r1, #1
+  34:	f7ff fffe 	bl	0x34
+  38:	2001      	movs	r0, #1
+  3a:	f884 0314 	strb.w	r0, [r4, #788]	; 0x314
+  3e:	f8d4 0348 	ldr.w	r0, [r4, #840]	; 0x348
+  42:	b002      	add	sp, #8
+  44:	4623      	mov	r3, r4
+  46:	497b      	ldr	r1, [pc, #492]	; (0x234)
+  48:	f240 12f4 	movw	r2, #500	; 0x1f4
+  4c:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+  50:	f7ff bffe 	b.w	0x50
+  54:	bd1c      	pop	{r2, r3, r4, pc}
+RELOC offset=0xe70 type=10 symbol=hal_log_output target_section=0 target_value=0x0
+RELOC offset=0xe88 type=10 symbol=hal_log_output target_section=0 target_value=0x0
+RELOC offset=0xea4 type=30 symbol=hal_looper_set_timer target_section=0 target_value=0x0
+RELEVANT_STRINGS: ['%s, auto_send_ping_num:%d', '%s send udp ping', '%s now(%d),tv_recv_member_audio(%d), power_save_mode(%d)', 'pingtime']
+
+OBJECT session.o FUNCTION session_stop_active SECTION_INDEX 1 OFFSET 0x4c16 SIZE 30 SECTION_BYTES 19960
+
+/tmp/broad-power-disasm-20261103/session.o__session_stop_active.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	f890 1314 	ldrb.w	r1, [r0, #788]	; 0x314
+   4:	2900      	cmp	r1, #0
+   6:	d009      	beq.n	0x1c
+   8:	2100      	movs	r1, #0
+   a:	f880 1314 	strb.w	r1, [r0, #788]	; 0x314
+   e:	f8d0 3348 	ldr.w	r3, [r0, #840]	; 0x348
+  12:	4602      	mov	r2, r0
+  14:	4959      	ldr	r1, [pc, #356]	; (0x17c)
+  16:	4618      	mov	r0, r3
+  18:	f7ff bffe 	b.w	0x18
+  1c:	4770      	bx	lr
+RELOC offset=0x4c2e type=30 symbol=hal_looper_cancel_timer target_section=0 target_value=0x0
+RELEVANT_STRINGS: ['%s, auto_send_ping_num:%d', '%s send udp ping', '%s now(%d),tv_recv_member_audio(%d), power_save_mode(%d)', 'pingtime']

@@ -1,0 +1,844 @@
+
+ql_power.o:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+00000000 <_ql_sleep_flags_mutex_init>:
+   0:	48fe      	ldr	r0, [pc, #1016]	; (3fc <ql_power_down+0x3c>)
+   2:	f7ff bffe 	b.w	0 <ql_rtos_mutex_create>
+			2: R_ARM_THM_JUMP24	ql_rtos_mutex_create
+
+00000006 <_ql_sleep_flags_mutex_lock>:
+   6:	48fd      	ldr	r0, [pc, #1012]	; (3fc <ql_power_down+0x3c>)
+   8:	f04f 31ff 	mov.w	r1, #4294967295	; 0xffffffff
+   c:	380c      	subs	r0, #12
+   e:	68c0      	ldr	r0, [r0, #12]
+  10:	f7ff bffe 	b.w	0 <ql_rtos_mutex_lock>
+			10: R_ARM_THM_JUMP24	ql_rtos_mutex_lock
+
+00000014 <_ql_sleep_flags_mutex_unlock>:
+  14:	48f9      	ldr	r0, [pc, #996]	; (3fc <ql_power_down+0x3c>)
+  16:	380c      	subs	r0, #12
+  18:	68c0      	ldr	r0, [r0, #12]
+  1a:	f7ff bffe 	b.w	0 <ql_rtos_mutex_unlock>
+			1a: R_ARM_THM_JUMP24	ql_rtos_mutex_unlock
+
+0000001e <ql_sleep_flag_set>:
+  1e:	b538      	push	{r3, r4, r5, lr}
+  20:	4605      	mov	r5, r0
+  22:	4669      	mov	r1, sp
+  24:	2000      	movs	r0, #0
+  26:	4604      	mov	r4, r0
+  28:	f88d 0000 	strb.w	r0, [sp]
+  2c:	2003      	movs	r0, #3
+  2e:	f7ff fffe 	bl	0 <quec_get_sleep_flag_bit>
+			2e: R_ARM_THM_CALL	quec_get_sleep_flag_bit
+  32:	b938      	cbnz	r0, 44 <ql_sleep_flag_set+0x26>
+  34:	f89d 0000 	ldrb.w	r0, [sp]
+  38:	42a8      	cmp	r0, r5
+  3a:	d004      	beq.n	46 <ql_sleep_flag_set+0x28>
+  3c:	4628      	mov	r0, r5
+  3e:	f7ff fffe 	bl	0 <quec_qsclk_cmd_msg_send>
+			3e: R_ARM_THM_CALL	quec_qsclk_cmd_msg_send
+  42:	b100      	cbz	r0, 46 <ql_sleep_flag_set+0x28>
+  44:	2401      	movs	r4, #1
+  46:	4620      	mov	r0, r4
+  48:	bd38      	pop	{r3, r4, r5, pc}
+
+0000004a <_ql_system_sleep_flags_check>:
+  4a:	4bec      	ldr	r3, [pc, #944]	; (3fc <ql_power_down+0x3c>)
+  4c:	2200      	movs	r2, #0
+  4e:	b430      	push	{r4, r5}
+  50:	3b0c      	subs	r3, #12
+  52:	7818      	ldrb	r0, [r3, #0]
+  54:	b120      	cbz	r0, 60 <_ql_system_sleep_flags_check+0x16>
+  56:	6898      	ldr	r0, [r3, #8]
+  58:	b168      	cbz	r0, 76 <_ql_system_sleep_flags_check+0x2c>
+  5a:	685b      	ldr	r3, [r3, #4]
+  5c:	2100      	movs	r1, #0
+  5e:	e006      	b.n	6e <_ql_system_sleep_flags_check+0x24>
+  60:	2000      	movs	r0, #0
+  62:	e009      	b.n	78 <_ql_system_sleep_flags_check+0x2e>
+  64:	6904      	ldr	r4, [r0, #16]
+  66:	b104      	cbz	r4, 6a <_ql_system_sleep_flags_check+0x20>
+  68:	1c52      	adds	r2, r2, #1
+  6a:	6880      	ldr	r0, [r0, #8]
+  6c:	1c49      	adds	r1, r1, #1
+  6e:	4299      	cmp	r1, r3
+  70:	d3f8      	bcc.n	64 <_ql_system_sleep_flags_check+0x1a>
+  72:	2a00      	cmp	r2, #0
+  74:	d1f4      	bne.n	60 <_ql_system_sleep_flags_check+0x16>
+  76:	2001      	movs	r0, #1
+  78:	bc30      	pop	{r4, r5}
+  7a:	e7fe      	b.n	1e <ql_sleep_flag_set>
+			7a: R_ARM_THM_JUMP11	ql_sleep_flag_set
+
+0000007c <ql_autosleep_enable>:
+  7c:	49df      	ldr	r1, [pc, #892]	; (3fc <ql_power_down+0x3c>)
+  7e:	390c      	subs	r1, #12
+  80:	b100      	cbz	r0, 84 <ql_autosleep_enable+0x8>
+  82:	2001      	movs	r0, #1
+  84:	7008      	strb	r0, [r1, #0]
+  86:	e7fe      	b.n	4a <_ql_system_sleep_flags_check>
+			86: R_ARM_THM_JUMP11	_ql_system_sleep_flags_check
+
+00000088 <ql_autosleep_enable_ex>:
+  88:	b570      	push	{r4, r5, r6, lr}
+  8a:	460c      	mov	r4, r1
+  8c:	49db      	ldr	r1, [pc, #876]	; (3fc <ql_power_down+0x3c>)
+  8e:	4615      	mov	r5, r2
+  90:	390c      	subs	r1, #12
+  92:	2801      	cmp	r0, #1
+  94:	d007      	beq.n	a6 <ql_autosleep_enable_ex+0x1e>
+  96:	2000      	movs	r0, #0
+  98:	7008      	strb	r0, [r1, #0]
+  9a:	4601      	mov	r1, r0
+  9c:	f7ff fffe 	bl	0 <quec_qsclkex_param_set>
+			9c: R_ARM_THM_CALL	quec_qsclkex_param_set
+  a0:	e8bd 4070 	ldmia.w	sp!, {r4, r5, r6, lr}
+  a4:	e7fe      	b.n	4a <_ql_system_sleep_flags_check>
+			a4: R_ARM_THM_JUMP11	_ql_system_sleep_flags_check
+  a6:	2001      	movs	r0, #1
+  a8:	7008      	strb	r0, [r1, #0]
+  aa:	4601      	mov	r1, r0
+  ac:	2000      	movs	r0, #0
+  ae:	f7ff fffe 	bl	0 <quec_qsclkex_param_set>
+			ae: R_ARM_THM_CALL	quec_qsclkex_param_set
+  b2:	2001      	movs	r0, #1
+  b4:	4621      	mov	r1, r4
+  b6:	f7ff fffe 	bl	0 <quec_qsclkex_param_set>
+			b6: R_ARM_THM_CALL	quec_qsclkex_param_set
+  ba:	2002      	movs	r0, #2
+  bc:	4629      	mov	r1, r5
+  be:	e7ed      	b.n	9c <ql_autosleep_enable_ex+0x14>
+
+000000c0 <ql_sleep_flags_init>:
+  c0:	48ce      	ldr	r0, [pc, #824]	; (3fc <ql_power_down+0x3c>)
+  c2:	2100      	movs	r1, #0
+  c4:	380c      	subs	r0, #12
+  c6:	6081      	str	r1, [r0, #8]
+  c8:	6041      	str	r1, [r0, #4]
+  ca:	60c1      	str	r1, [r0, #12]
+  cc:	300c      	adds	r0, #12
+  ce:	f7ff bffe 	b.w	0 <ql_rtos_mutex_create>
+			ce: R_ARM_THM_JUMP24	ql_rtos_mutex_create
+
+000000d2 <ql_sleep_flags_create>:
+  d2:	e92d 41f0 	stmdb	sp!, {r4, r5, r6, r7, r8, lr}
+  d6:	2400      	movs	r4, #0
+  d8:	4688      	mov	r8, r1
+  da:	4605      	mov	r5, r0
+  dc:	f7ff fffe 	bl	6 <_ql_sleep_flags_mutex_lock>
+			dc: R_ARM_THM_CALL	_ql_sleep_flags_mutex_lock
+  e0:	4fc6      	ldr	r7, [pc, #792]	; (3fc <ql_power_down+0x3c>)
+  e2:	2600      	movs	r6, #0
+  e4:	3f0c      	subs	r7, #12
+  e6:	b12d      	cbz	r5, f4 <ql_sleep_flags_create+0x22>
+  e8:	2000      	movs	r0, #0
+  ea:	e9d7 2101 	ldrd	r2, r1, [r7, #4]
+  ee:	e005      	b.n	fc <ql_sleep_flags_create+0x2a>
+  f0:	428c      	cmp	r4, r1
+  f2:	d101      	bne.n	f8 <ql_sleep_flags_create+0x26>
+  f4:	2601      	movs	r6, #1
+  f6:	e003      	b.n	100 <ql_sleep_flags_create+0x2e>
+  f8:	6889      	ldr	r1, [r1, #8]
+  fa:	1c40      	adds	r0, r0, #1
+  fc:	4290      	cmp	r0, r2
+  fe:	d3f7      	bcc.n	f0 <ql_sleep_flags_create+0x1e>
+ 100:	2018      	movs	r0, #24
+ 102:	f7ff fffe 	bl	0 <malloc>
+			102: R_ARM_THM_CALL	malloc
+ 106:	4604      	mov	r4, r0
+ 108:	b10d      	cbz	r5, 10e <ql_sleep_flags_create+0x3c>
+ 10a:	b116      	cbz	r6, 112 <ql_sleep_flags_create+0x40>
+ 10c:	e01c      	b.n	148 <ql_sleep_flags_create+0x76>
+ 10e:	2601      	movs	r6, #1
+ 110:	e01a      	b.n	148 <ql_sleep_flags_create+0x76>
+ 112:	2118      	movs	r1, #24
+ 114:	4646      	mov	r6, r8
+ 116:	f7ff fffe 	bl	0 <__aeabi_memclr4>
+			116: R_ARM_THM_CALL	__aeabi_memclr4
+ 11a:	48b9      	ldr	r0, [pc, #740]	; (400 <ql_power_down+0x40>)
+ 11c:	e9c4 6000 	strd	r6, r0, [r4]
+ 120:	687a      	ldr	r2, [r7, #4]
+ 122:	b162      	cbz	r2, 13e <ql_sleep_flags_create+0x6c>
+ 124:	68b8      	ldr	r0, [r7, #8]
+ 126:	68c1      	ldr	r1, [r0, #12]
+ 128:	60c4      	str	r4, [r0, #12]
+ 12a:	608c      	str	r4, [r1, #8]
+ 12c:	e9c4 0102 	strd	r0, r1, [r4, #8]
+ 130:	1c52      	adds	r2, r2, #1
+ 132:	607a      	str	r2, [r7, #4]
+ 134:	f7ff fffe 	bl	4a <_ql_system_sleep_flags_check>
+			134: R_ARM_THM_CALL	_ql_system_sleep_flags_check
+ 138:	0006      	movs	r6, r0
+ 13a:	d004      	beq.n	146 <ql_sleep_flags_create+0x74>
+ 13c:	e004      	b.n	148 <ql_sleep_flags_create+0x76>
+ 13e:	60bc      	str	r4, [r7, #8]
+ 140:	60a4      	str	r4, [r4, #8]
+ 142:	60e4      	str	r4, [r4, #12]
+ 144:	e7f4      	b.n	130 <ql_sleep_flags_create+0x5e>
+ 146:	602c      	str	r4, [r5, #0]
+ 148:	f7ff fffe 	bl	14 <_ql_sleep_flags_mutex_unlock>
+			148: R_ARM_THM_CALL	_ql_sleep_flags_mutex_unlock
+ 14c:	4630      	mov	r0, r6
+ 14e:	e8bd 81f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, pc}
+
+00000152 <ql_sleep_flags_set>:
+ 152:	b570      	push	{r4, r5, r6, lr}
+ 154:	4615      	mov	r5, r2
+ 156:	460e      	mov	r6, r1
+ 158:	4604      	mov	r4, r0
+ 15a:	f7ff fffe 	bl	6 <_ql_sleep_flags_mutex_lock>
+			15a: R_ARM_THM_CALL	_ql_sleep_flags_mutex_lock
+ 15e:	b12c      	cbz	r4, 16c <ql_sleep_flags_set+0x1a>
+ 160:	49a7      	ldr	r1, [pc, #668]	; (400 <ql_power_down+0x40>)
+ 162:	6860      	ldr	r0, [r4, #4]
+ 164:	4288      	cmp	r0, r1
+ 166:	d003      	beq.n	170 <ql_sleep_flags_set+0x1e>
+ 168:	2402      	movs	r4, #2
+ 16a:	e012      	b.n	192 <ql_sleep_flags_set+0x40>
+ 16c:	2401      	movs	r4, #1
+ 16e:	e010      	b.n	192 <ql_sleep_flags_set+0x40>
+ 170:	2d02      	cmp	r5, #2
+ 172:	d001      	beq.n	178 <ql_sleep_flags_set+0x26>
+ 174:	2d00      	cmp	r5, #0
+ 176:	d1f9      	bne.n	16c <ql_sleep_flags_set+0x1a>
+ 178:	6960      	ldr	r0, [r4, #20]
+ 17a:	1c40      	adds	r0, r0, #1
+ 17c:	6160      	str	r0, [r4, #20]
+ 17e:	07a8      	lsls	r0, r5, #30
+ 180:	6920      	ldr	r0, [r4, #16]
+ 182:	d501      	bpl.n	188 <ql_sleep_flags_set+0x36>
+ 184:	4030      	ands	r0, r6
+ 186:	e000      	b.n	18a <ql_sleep_flags_set+0x38>
+ 188:	4330      	orrs	r0, r6
+ 18a:	6120      	str	r0, [r4, #16]
+ 18c:	f7ff fffe 	bl	4a <_ql_system_sleep_flags_check>
+			18c: R_ARM_THM_CALL	_ql_system_sleep_flags_check
+ 190:	4604      	mov	r4, r0
+ 192:	f7ff fffe 	bl	14 <_ql_sleep_flags_mutex_unlock>
+			192: R_ARM_THM_CALL	_ql_sleep_flags_mutex_unlock
+ 196:	4620      	mov	r0, r4
+ 198:	bd70      	pop	{r4, r5, r6, pc}
+
+0000019a <ql_sleep_flags_group_delete>:
+ 19a:	b570      	push	{r4, r5, r6, lr}
+ 19c:	4606      	mov	r6, r0
+ 19e:	4604      	mov	r4, r0
+ 1a0:	f7ff fffe 	bl	6 <_ql_sleep_flags_mutex_lock>
+			1a0: R_ARM_THM_CALL	_ql_sleep_flags_mutex_lock
+ 1a4:	2500      	movs	r5, #0
+ 1a6:	b1dc      	cbz	r4, 1e0 <ql_sleep_flags_group_delete+0x46>
+ 1a8:	4995      	ldr	r1, [pc, #596]	; (400 <ql_power_down+0x40>)
+ 1aa:	6860      	ldr	r0, [r4, #4]
+ 1ac:	4288      	cmp	r0, r1
+ 1ae:	d001      	beq.n	1b4 <ql_sleep_flags_group_delete+0x1a>
+ 1b0:	2502      	movs	r5, #2
+ 1b2:	e015      	b.n	1e0 <ql_sleep_flags_group_delete+0x46>
+ 1b4:	4a91      	ldr	r2, [pc, #580]	; (3fc <ql_power_down+0x3c>)
+ 1b6:	2100      	movs	r1, #0
+ 1b8:	6061      	str	r1, [r4, #4]
+ 1ba:	3a0c      	subs	r2, #12
+ 1bc:	6850      	ldr	r0, [r2, #4]
+ 1be:	1e40      	subs	r0, r0, #1
+ 1c0:	6050      	str	r0, [r2, #4]
+ 1c2:	d011      	beq.n	1e8 <ql_sleep_flags_group_delete+0x4e>
+ 1c4:	e9d4 0102 	ldrd	r0, r1, [r4, #8]
+ 1c8:	60c1      	str	r1, [r0, #12]
+ 1ca:	6088      	str	r0, [r1, #8]
+ 1cc:	6891      	ldr	r1, [r2, #8]
+ 1ce:	42a1      	cmp	r1, r4
+ 1d0:	d100      	bne.n	1d4 <ql_sleep_flags_group_delete+0x3a>
+ 1d2:	6090      	str	r0, [r2, #8]
+ 1d4:	f7ff fffe 	bl	4a <_ql_system_sleep_flags_check>
+			1d4: R_ARM_THM_CALL	_ql_system_sleep_flags_check
+ 1d8:	4605      	mov	r5, r0
+ 1da:	4630      	mov	r0, r6
+ 1dc:	f7ff fffe 	bl	0 <free>
+			1dc: R_ARM_THM_CALL	free
+ 1e0:	f7ff fffe 	bl	14 <_ql_sleep_flags_mutex_unlock>
+			1e0: R_ARM_THM_CALL	_ql_sleep_flags_mutex_unlock
+ 1e4:	4628      	mov	r0, r5
+ 1e6:	bd70      	pop	{r4, r5, r6, pc}
+ 1e8:	6091      	str	r1, [r2, #8]
+ 1ea:	e7f3      	b.n	1d4 <ql_sleep_flags_group_delete+0x3a>
+
+000001ec <ql_get_current_sleep_flags>:
+ 1ec:	b570      	push	{r4, r5, r6, lr}
+ 1ee:	460d      	mov	r5, r1
+ 1f0:	4604      	mov	r4, r0
+ 1f2:	f7ff fffe 	bl	6 <_ql_sleep_flags_mutex_lock>
+			1f2: R_ARM_THM_CALL	_ql_sleep_flags_mutex_lock
+ 1f6:	b12c      	cbz	r4, 204 <ql_get_current_sleep_flags+0x18>
+ 1f8:	4981      	ldr	r1, [pc, #516]	; (400 <ql_power_down+0x40>)
+ 1fa:	6860      	ldr	r0, [r4, #4]
+ 1fc:	4288      	cmp	r0, r1
+ 1fe:	d003      	beq.n	208 <ql_get_current_sleep_flags+0x1c>
+ 200:	2402      	movs	r4, #2
+ 202:	e006      	b.n	212 <ql_get_current_sleep_flags+0x26>
+ 204:	2401      	movs	r4, #1
+ 206:	e004      	b.n	212 <ql_get_current_sleep_flags+0x26>
+ 208:	6920      	ldr	r0, [r4, #16]
+ 20a:	6028      	str	r0, [r5, #0]
+ 20c:	f7ff fffe 	bl	4a <_ql_system_sleep_flags_check>
+			20c: R_ARM_THM_CALL	_ql_system_sleep_flags_check
+ 210:	4604      	mov	r4, r0
+ 212:	f7ff fffe 	bl	14 <_ql_sleep_flags_mutex_unlock>
+			212: R_ARM_THM_CALL	_ql_sleep_flags_mutex_unlock
+ 216:	4620      	mov	r0, r4
+ 218:	bd70      	pop	{r4, r5, r6, pc}
+
+0000021a <ql_lpm_wakelock_create>:
+ 21a:	e92d 4ff8 	stmdb	sp!, {r3, r4, r5, r6, r7, r8, r9, sl, fp, lr}
+ 21e:	f04f 35ff 	mov.w	r5, #4294967295	; 0xffffffff
+ 222:	f04f 0400 	mov.w	r4, #0
+ 226:	ea5f 0a00 	movs.w	sl, r0
+ 22a:	460e      	mov	r6, r1
+ 22c:	46a9      	mov	r9, r5
+ 22e:	46a0      	mov	r8, r4
+ 230:	9400      	str	r4, [sp, #0]
+ 232:	d001      	beq.n	238 <ql_lpm_wakelock_create+0x1e>
+ 234:	2e20      	cmp	r6, #32
+ 236:	dd05      	ble.n	244 <ql_lpm_wakelock_create+0x2a>
+ 238:	a072      	add	r0, pc, #456	; (adr r0, 404 <ql_power_down+0x44>)
+ 23a:	f7ff fffe 	bl	0 <__2printf>
+			23a: R_ARM_THM_CALL	__2printf
+ 23e:	4628      	mov	r0, r5
+ 240:	e8bd 8ff8 	ldmia.w	sp!, {r3, r4, r5, r6, r7, r8, r9, sl, fp, pc}
+ 244:	4f73      	ldr	r7, [pc, #460]	; (414 <ql_power_down+0x54>)
+ 246:	eb04 0084 	add.w	r0, r4, r4, lsl #2
+ 24a:	4632      	mov	r2, r6
+ 24c:	4651      	mov	r1, sl
+ 24e:	eb07 00c0 	add.w	r0, r7, r0, lsl #3
+ 252:	f7ff fffe 	bl	0 <memcmp>
+			252: R_ARM_THM_CALL	memcmp
+ 256:	b148      	cbz	r0, 26c <ql_lpm_wakelock_create+0x52>
+ 258:	1c64      	adds	r4, r4, #1
+ 25a:	2c20      	cmp	r4, #32
+ 25c:	dbf3      	blt.n	246 <ql_lpm_wakelock_create+0x2c>
+ 25e:	2400      	movs	r4, #0
+ 260:	2000      	movs	r0, #0
+ 262:	eb04 0184 	add.w	r1, r4, r4, lsl #2
+ 266:	eb07 05c1 	add.w	r5, r7, r1, lsl #3
+ 26a:	e004      	b.n	276 <ql_lpm_wakelock_create+0x5c>
+ 26c:	1c60      	adds	r0, r4, #1
+ 26e:	e7e7      	b.n	240 <ql_lpm_wakelock_create+0x26>
+ 270:	5c29      	ldrb	r1, [r5, r0]
+ 272:	b911      	cbnz	r1, 27a <ql_lpm_wakelock_create+0x60>
+ 274:	1c40      	adds	r0, r0, #1
+ 276:	42b0      	cmp	r0, r6
+ 278:	dbfa      	blt.n	270 <ql_lpm_wakelock_create+0x56>
+ 27a:	42b0      	cmp	r0, r6
+ 27c:	d10f      	bne.n	29e <ql_lpm_wakelock_create+0x84>
+ 27e:	4651      	mov	r1, sl
+ 280:	4668      	mov	r0, sp
+ 282:	f7ff fffe 	bl	d2 <ql_sleep_flags_create>
+			282: R_ARM_THM_CALL	ql_sleep_flags_create
+ 286:	eb04 0084 	add.w	r0, r4, r4, lsl #2
+ 28a:	4632      	mov	r2, r6
+ 28c:	4651      	mov	r1, sl
+ 28e:	eb07 00c0 	add.w	r0, r7, r0, lsl #3
+ 292:	f7ff fffe 	bl	0 <__aeabi_memcpy>
+			292: R_ARM_THM_CALL	__aeabi_memcpy
+ 296:	9800      	ldr	r0, [sp, #0]
+ 298:	e9c5 0808 	strd	r0, r8, [r5, #32]
+ 29c:	e7e6      	b.n	26c <ql_lpm_wakelock_create+0x52>
+ 29e:	1c64      	adds	r4, r4, #1
+ 2a0:	2c20      	cmp	r4, #32
+ 2a2:	dbdd      	blt.n	260 <ql_lpm_wakelock_create+0x46>
+ 2a4:	4648      	mov	r0, r9
+ 2a6:	e7cb      	b.n	240 <ql_lpm_wakelock_create+0x26>
+
+000002a8 <ql_lpm_wakelock_delete>:
+ 2a8:	1e41      	subs	r1, r0, #1
+ 2aa:	2920      	cmp	r1, #32
+ 2ac:	b510      	push	{r4, lr}
+ 2ae:	d304      	bcc.n	2ba <ql_lpm_wakelock_delete+0x12>
+ 2b0:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+ 2b4:	a058      	add	r0, pc, #352	; (adr r0, 164 <__2printf+0x164>)
+ 2b6:	f7ff bffe 	b.w	0 <__2printf>
+			2b6: R_ARM_THM_JUMP24	__2printf
+ 2ba:	eb00 0180 	add.w	r1, r0, r0, lsl #2
+ 2be:	4855      	ldr	r0, [pc, #340]	; (414 <ql_power_down+0x54>)
+ 2c0:	eb00 04c1 	add.w	r4, r0, r1, lsl #3
+ 2c4:	f854 0c08 	ldr.w	r0, [r4, #-8]
+ 2c8:	2800      	cmp	r0, #0
+ 2ca:	d008      	beq.n	2de <ql_lpm_wakelock_delete+0x36>
+ 2cc:	f7ff fffe 	bl	19a <ql_sleep_flags_group_delete>
+			2cc: R_ARM_THM_CALL	ql_sleep_flags_group_delete
+ 2d0:	f1a4 0028 	sub.w	r0, r4, #40	; 0x28
+ 2d4:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+ 2d8:	2128      	movs	r1, #40	; 0x28
+ 2da:	f7ff bffe 	b.w	0 <__aeabi_memclr4>
+			2da: R_ARM_THM_JUMP24	__aeabi_memclr4
+ 2de:	bd10      	pop	{r4, pc}
+
+000002e0 <ql_lpm_wakelock_lock>:
+ 2e0:	b538      	push	{r3, r4, r5, lr}
+ 2e2:	2100      	movs	r1, #0
+ 2e4:	f04f 35ff 	mov.w	r5, #4294967295	; 0xffffffff
+ 2e8:	9100      	str	r1, [sp, #0]
+ 2ea:	1e41      	subs	r1, r0, #1
+ 2ec:	2920      	cmp	r1, #32
+ 2ee:	d303      	bcc.n	2f8 <ql_lpm_wakelock_lock+0x18>
+ 2f0:	a049      	add	r0, pc, #292	; (adr r0, 418 <ql_power_down+0x58>)
+ 2f2:	f7ff fffe 	bl	0 <__2printf>
+			2f2: R_ARM_THM_CALL	__2printf
+ 2f6:	e01c      	b.n	332 <ql_lpm_wakelock_lock+0x52>
+ 2f8:	eb00 0180 	add.w	r1, r0, r0, lsl #2
+ 2fc:	4845      	ldr	r0, [pc, #276]	; (414 <ql_power_down+0x54>)
+ 2fe:	eb00 04c1 	add.w	r4, r0, r1, lsl #3
+ 302:	f854 0c08 	ldr.w	r0, [r4, #-8]
+ 306:	b1a0      	cbz	r0, 332 <ql_lpm_wakelock_lock+0x52>
+ 308:	4669      	mov	r1, sp
+ 30a:	f7ff fffe 	bl	1ec <ql_get_current_sleep_flags>
+			30a: R_ARM_THM_CALL	ql_get_current_sleep_flags
+ 30e:	2800      	cmp	r0, #0
+ 310:	d10e      	bne.n	330 <ql_lpm_wakelock_lock+0x50>
+ 312:	9900      	ldr	r1, [sp, #0]
+ 314:	b939      	cbnz	r1, 326 <ql_lpm_wakelock_lock+0x46>
+ 316:	f854 0c08 	ldr.w	r0, [r4, #-8]
+ 31a:	2200      	movs	r2, #0
+ 31c:	2101      	movs	r1, #1
+ 31e:	f7ff fffe 	bl	152 <ql_sleep_flags_set>
+			31e: R_ARM_THM_CALL	ql_sleep_flags_set
+ 322:	2800      	cmp	r0, #0
+ 324:	d104      	bne.n	330 <ql_lpm_wakelock_lock+0x50>
+ 326:	f854 1c04 	ldr.w	r1, [r4, #-4]
+ 32a:	1c49      	adds	r1, r1, #1
+ 32c:	f844 1c04 	str.w	r1, [r4, #-4]
+ 330:	bd38      	pop	{r3, r4, r5, pc}
+ 332:	4628      	mov	r0, r5
+ 334:	bd38      	pop	{r3, r4, r5, pc}
+
+00000336 <ql_lpm_wakelock_unlock>:
+ 336:	1e42      	subs	r2, r0, #1
+ 338:	b510      	push	{r4, lr}
+ 33a:	2a20      	cmp	r2, #32
+ 33c:	f04f 34ff 	mov.w	r4, #4294967295	; 0xffffffff
+ 340:	d303      	bcc.n	34a <ql_lpm_wakelock_unlock+0x14>
+ 342:	a035      	add	r0, pc, #212	; (adr r0, 418 <ql_power_down+0x58>)
+ 344:	f7ff fffe 	bl	0 <__2printf>
+			344: R_ARM_THM_CALL	__2printf
+ 348:	e013      	b.n	372 <ql_lpm_wakelock_unlock+0x3c>
+ 34a:	4932      	ldr	r1, [pc, #200]	; (414 <ql_power_down+0x54>)
+ 34c:	eb00 0280 	add.w	r2, r0, r0, lsl #2
+ 350:	eb01 01c2 	add.w	r1, r1, r2, lsl #3
+ 354:	f851 3c08 	ldr.w	r3, [r1, #-8]
+ 358:	b15b      	cbz	r3, 372 <ql_lpm_wakelock_unlock+0x3c>
+ 35a:	f851 2c04 	ldr.w	r2, [r1, #-4]
+ 35e:	1e52      	subs	r2, r2, #1
+ 360:	f841 2c04 	str.w	r2, [r1, #-4]
+ 364:	d106      	bne.n	374 <ql_lpm_wakelock_unlock+0x3e>
+ 366:	2202      	movs	r2, #2
+ 368:	4618      	mov	r0, r3
+ 36a:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+ 36e:	2100      	movs	r1, #0
+ 370:	e7fe      	b.n	152 <ql_sleep_flags_set>
+			370: R_ARM_THM_JUMP11	ql_sleep_flags_set
+ 372:	4620      	mov	r0, r4
+ 374:	bd10      	pop	{r4, pc}
+
+00000376 <ql_lpm_get_wakelock_num>:
+ 376:	b530      	push	{r4, r5, lr}
+ 378:	4c26      	ldr	r4, [pc, #152]	; (414 <ql_power_down+0x54>)
+ 37a:	2000      	movs	r0, #0
+ 37c:	4602      	mov	r2, r0
+ 37e:	2100      	movs	r1, #0
+ 380:	eb02 0382 	add.w	r3, r2, r2, lsl #2
+ 384:	eb04 03c3 	add.w	r3, r4, r3, lsl #3
+ 388:	5c5d      	ldrb	r5, [r3, r1]
+ 38a:	b10d      	cbz	r5, 390 <ql_lpm_get_wakelock_num+0x1a>
+ 38c:	1c40      	adds	r0, r0, #1
+ 38e:	e002      	b.n	396 <ql_lpm_get_wakelock_num+0x20>
+ 390:	1c49      	adds	r1, r1, #1
+ 392:	2920      	cmp	r1, #32
+ 394:	dbf8      	blt.n	388 <ql_lpm_get_wakelock_num+0x12>
+ 396:	1c52      	adds	r2, r2, #1
+ 398:	2a20      	cmp	r2, #32
+ 39a:	dbf0      	blt.n	37e <ql_lpm_get_wakelock_num+0x8>
+ 39c:	bd30      	pop	{r4, r5, pc}
+
+0000039e <ql_set_cam_vdd_output>:
+ 39e:	b510      	push	{r4, lr}
+ 3a0:	4604      	mov	r4, r0
+ 3a2:	f7ff fffe 	bl	0 <PMIC_IS_PM803>
+			3a2: R_ARM_THM_CALL	PMIC_IS_PM803
+ 3a6:	2800      	cmp	r0, #0
+ 3a8:	d009      	beq.n	3be <ql_set_cam_vdd_output+0x20>
+ 3aa:	b124      	cbz	r4, 3b6 <ql_set_cam_vdd_output+0x18>
+ 3ac:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+ 3b0:	200a      	movs	r0, #10
+ 3b2:	f7ff bffe 	b.w	0 <Camera_Avdd_Power_set>
+			3b2: R_ARM_THM_JUMP24	Camera_Avdd_Power_set
+ 3b6:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+ 3ba:	f7ff bffe 	b.w	0 <Camera_Avdd_Power_off>
+			3ba: R_ARM_THM_JUMP24	Camera_Avdd_Power_off
+ 3be:	bd10      	pop	{r4, pc}
+
+000003c0 <ql_power_down>:
+ 3c0:	b510      	push	{r4, lr}
+ 3c2:	2100      	movs	r1, #0
+ 3c4:	4604      	mov	r4, r0
+ 3c6:	200f      	movs	r0, #15
+ 3c8:	f7ff fffe 	bl	0 <quec_event_notify_report>
+			3c8: R_ARM_THM_CALL	quec_event_notify_report
+ 3cc:	b134      	cbz	r4, 3dc <ql_power_down+0x1c>
+ 3ce:	2030      	movs	r0, #48	; 0x30
+ 3d0:	f7ff fffe 	bl	0 <INTCDisable>
+			3d0: R_ARM_THM_CALL	INTCDisable
+ 3d4:	f7ff fffe 	bl	0 <IsMiniSystem>
+			3d4: R_ARM_THM_CALL	IsMiniSystem
+ 3d8:	b120      	cbz	r0, 3e4 <ql_power_down+0x24>
+ 3da:	e037      	b.n	44c <ql_power_down+0x8c>
+ 3dc:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+ 3e0:	f7ff bffe 	b.w	0 <PMIC_SW_POWERDOWN>
+			3e0: R_ARM_THM_JUMP24	PMIC_SW_POWERDOWN
+ 3e4:	f7ff fffe 	bl	0 <GetCfunValue>
+			3e4: R_ARM_THM_CALL	GetCfunValue
+ 3e8:	b360      	cbz	r0, 444 <ql_power_down+0x84>
+ 3ea:	a012      	add	r0, pc, #72	; (adr r0, 434 <ql_power_down+0x74>)
+ 3ec:	f7ff fffe 	bl	0 <quec_debug_print_uart>
+			3ec: R_ARM_THM_CALL	quec_debug_print_uart
+ 3f0:	2000      	movs	r0, #0
+ 3f2:	f7ff fffe 	bl	0 <SetCfunValue>
+			3f2: R_ARM_THM_CALL	SetCfunValue
+ 3f6:	f7ff fffe 	bl	0 <wait_cfun_done>
+			3f6: R_ARM_THM_CALL	wait_cfun_done
+ 3fa:	e024      	b.n	4c <_ql_system_sleep_flags_check+0x2>
+ 3fc:	0000000c 	.word	0x0000000c
+			3fc: R_ARM_ABS32	.data
+ 400:	514c504f 	.word	0x514c504f
+ 404:	61766e69 	.word	0x61766e69
+ 408:	2064696c 	.word	0x2064696c
+ 40c:	61726170 	.word	0x61726170
+ 410:	000a206d 	.word	0x000a206d
+ 414:	00000000 	.word	0x00000000
+			414: R_ARM_ABS32	.bss
+ 418:	656b6177 	.word	0x656b6177
+ 41c:	6b636f6c 	.word	0x6b636f6c
+ 420:	2064665f 	.word	0x2064665f
+ 424:	69207369 	.word	0x69207369
+ 428:	6c61766e 	.word	0x6c61766e
+ 42c:	20216469 	.word	0x20216469
+ 430:	0000000a 	.word	0x0000000a
+ 434:	20746573 	.word	0x20746573
+ 438:	4e554643 	.word	0x4e554643
+ 43c:	0a202e30 	.word	0x0a202e30
+ 440:	00000000 	.word	0x00000000
+ 444:	e002      	b.n	44c <ql_power_down+0x8c>
+ 446:	a091      	add	r0, pc, #580	; (adr r0, 68c <ql_power_stop_system+0x46>)
+ 448:	f7ff fffe 	bl	0 <quec_debug_print_uart>
+			448: R_ARM_THM_CALL	quec_debug_print_uart
+ 44c:	2001      	movs	r0, #1
+ 44e:	f7ff fffe 	bl	0 <quec_rtos_task_sleep_s>
+			44e: R_ARM_THM_CALL	quec_rtos_task_sleep_s
+ 452:	e7c3      	b.n	3dc <ql_power_down+0x1c>
+
+00000454 <ql_power_reset>:
+ 454:	2100      	movs	r1, #0
+ 456:	2010      	movs	r0, #16
+ 458:	b510      	push	{r4, lr}
+ 45a:	f7ff fffe 	bl	0 <quec_event_notify_report>
+			45a: R_ARM_THM_CALL	quec_event_notify_report
+ 45e:	2030      	movs	r0, #48	; 0x30
+ 460:	f7ff fffe 	bl	0 <INTCDisable>
+			460: R_ARM_THM_CALL	INTCDisable
+ 464:	f7ff fffe 	bl	0 <IsMiniSystem>
+			464: R_ARM_THM_CALL	IsMiniSystem
+ 468:	b970      	cbnz	r0, 20 <GetCfunValue+0x20>
+ 46a:	f7ff fffe 	bl	0 <GetCfunValue>
+			46a: R_ARM_THM_CALL	GetCfunValue
+ 46e:	b158      	cbz	r0, 488 <ql_power_reset+0x34>
+ 470:	f2af 0040 	subw	r0, pc, #64	; 0x40
+ 474:	f7ff fffe 	bl	0 <quec_debug_print_uart>
+			474: R_ARM_THM_CALL	quec_debug_print_uart
+ 478:	2000      	movs	r0, #0
+ 47a:	f7ff fffe 	bl	0 <SetCfunValue>
+			47a: R_ARM_THM_CALL	SetCfunValue
+ 47e:	f7ff fffe 	bl	0 <wait_cfun_done>
+			47e: R_ARM_THM_CALL	wait_cfun_done
+ 482:	a082      	add	r0, pc, #520	; (adr r0, 20c <quec_debug_print_uart+0x20c>)
+ 484:	f7ff fffe 	bl	0 <quec_debug_print_uart>
+			484: R_ARM_THM_CALL	quec_debug_print_uart
+ 488:	2001      	movs	r0, #1
+ 48a:	f7ff fffe 	bl	0 <quec_rtos_task_sleep_s>
+			48a: R_ARM_THM_CALL	quec_rtos_task_sleep_s
+ 48e:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+ 492:	f7ff bffe 	b.w	0 <PMIC_SW_RESET>
+			492: R_ARM_THM_JUMP24	PMIC_SW_RESET
+
+00000496 <ql_power_reset_fast>:
+ 496:	2100      	movs	r1, #0
+ 498:	2010      	movs	r0, #16
+ 49a:	b510      	push	{r4, lr}
+ 49c:	f7ff fffe 	bl	0 <quec_event_notify_report>
+			49c: R_ARM_THM_CALL	quec_event_notify_report
+ 4a0:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+ 4a4:	f7ff bffe 	b.w	0 <PMIC_SW_RESET>
+			4a4: R_ARM_THM_JUMP24	PMIC_SW_RESET
+
+000004a8 <ql_get_powerup_reason>:
+ 4a8:	b570      	push	{r4, r5, r6, lr}
+ 4aa:	4e7c      	ldr	r6, [pc, #496]	; (69c <ql_power_stop_system+0x56>)
+ 4ac:	4d7c      	ldr	r5, [pc, #496]	; (6a0 <ql_power_stop_system+0x5a>)
+ 4ae:	4c7d      	ldr	r4, [pc, #500]	; (6a4 <ql_power_stop_system+0x5e>)
+ 4b0:	7832      	ldrb	r2, [r6, #0]
+ 4b2:	7828      	ldrb	r0, [r5, #0]
+ 4b4:	7821      	ldrb	r1, [r4, #0]
+ 4b6:	0793      	lsls	r3, r2, #30
+ 4b8:	d507      	bpl.n	4ca <ql_get_powerup_reason+0x22>
+ 4ba:	4308      	orrs	r0, r1
+ 4bc:	d103      	bne.n	4c6 <ql_get_powerup_reason+0x1e>
+ 4be:	487a      	ldr	r0, [pc, #488]	; (6a8 <ql_power_stop_system+0x62>)
+ 4c0:	7800      	ldrb	r0, [r0, #0]
+ 4c2:	0600      	lsls	r0, r0, #24
+ 4c4:	d41c      	bmi.n	500 <ql_get_powerup_reason+0x58>
+ 4c6:	2001      	movs	r0, #1
+ 4c8:	bd70      	pop	{r4, r5, r6, pc}
+ 4ca:	0653      	lsls	r3, r2, #25
+ 4cc:	d506      	bpl.n	4dc <ql_get_powerup_reason+0x34>
+ 4ce:	2804      	cmp	r0, #4
+ 4d0:	d102      	bne.n	4d8 <ql_get_powerup_reason+0x30>
+ 4d2:	b909      	cbnz	r1, 4d8 <ql_get_powerup_reason+0x30>
+ 4d4:	0690      	lsls	r0, r2, #26
+ 4d6:	d413      	bmi.n	500 <ql_get_powerup_reason+0x58>
+ 4d8:	2006      	movs	r0, #6
+ 4da:	bd70      	pop	{r4, r5, r6, pc}
+ 4dc:	f7ff fffe 	bl	0 <PMIC_IS_PM803>
+			4dc: R_ARM_THM_CALL	PMIC_IS_PM803
+ 4e0:	b1a0      	cbz	r0, 50c <ql_get_powerup_reason+0x64>
+ 4e2:	7830      	ldrb	r0, [r6, #0]
+ 4e4:	06c1      	lsls	r1, r0, #27
+ 4e6:	d507      	bpl.n	4f8 <ql_get_powerup_reason+0x50>
+ 4e8:	7829      	ldrb	r1, [r5, #0]
+ 4ea:	2904      	cmp	r1, #4
+ 4ec:	d101      	bne.n	4f2 <ql_get_powerup_reason+0x4a>
+ 4ee:	7822      	ldrb	r2, [r4, #0]
+ 4f0:	b132      	cbz	r2, 500 <ql_get_powerup_reason+0x58>
+ 4f2:	7822      	ldrb	r2, [r4, #0]
+ 4f4:	4311      	orrs	r1, r2
+ 4f6:	d003      	beq.n	500 <ql_get_powerup_reason+0x58>
+ 4f8:	0741      	lsls	r1, r0, #29
+ 4fa:	d503      	bpl.n	504 <ql_get_powerup_reason+0x5c>
+ 4fc:	2004      	movs	r0, #4
+ 4fe:	bd70      	pop	{r4, r5, r6, pc}
+ 500:	2002      	movs	r0, #2
+ 502:	bd70      	pop	{r4, r5, r6, pc}
+ 504:	0700      	lsls	r0, r0, #28
+ 506:	d501      	bpl.n	50c <ql_get_powerup_reason+0x64>
+ 508:	2003      	movs	r0, #3
+ 50a:	bd70      	pop	{r4, r5, r6, pc}
+ 50c:	2000      	movs	r0, #0
+ 50e:	bd70      	pop	{r4, r5, r6, pc}
+
+00000510 <ql_get_powerdown_reason>:
+ 510:	4863      	ldr	r0, [pc, #396]	; (6a0 <ql_power_stop_system+0x5a>)
+ 512:	7800      	ldrb	r0, [r0, #0]
+ 514:	0741      	lsls	r1, r0, #29
+ 516:	d502      	bpl.n	51e <ql_get_powerdown_reason+0xe>
+ 518:	4962      	ldr	r1, [pc, #392]	; (6a4 <ql_power_stop_system+0x5e>)
+ 51a:	7809      	ldrb	r1, [r1, #0]
+ 51c:	b119      	cbz	r1, 526 <ql_get_powerdown_reason+0x16>
+ 51e:	07c1      	lsls	r1, r0, #31
+ 520:	d003      	beq.n	52a <ql_get_powerdown_reason+0x1a>
+ 522:	2004      	movs	r0, #4
+ 524:	4770      	bx	lr
+ 526:	2001      	movs	r0, #1
+ 528:	4770      	bx	lr
+ 52a:	0781      	lsls	r1, r0, #30
+ 52c:	d501      	bpl.n	532 <ql_get_powerdown_reason+0x22>
+ 52e:	2003      	movs	r0, #3
+ 530:	4770      	bx	lr
+ 532:	06c1      	lsls	r1, r0, #27
+ 534:	d501      	bpl.n	53a <ql_get_powerdown_reason+0x2a>
+ 536:	2005      	movs	r0, #5
+ 538:	4770      	bx	lr
+ 53a:	0641      	lsls	r1, r0, #25
+ 53c:	d501      	bpl.n	542 <ql_get_powerdown_reason+0x32>
+ 53e:	2002      	movs	r0, #2
+ 540:	4770      	bx	lr
+ 542:	0600      	lsls	r0, r0, #24
+ 544:	d501      	bpl.n	54a <ql_get_powerdown_reason+0x3a>
+ 546:	2006      	movs	r0, #6
+ 548:	4770      	bx	lr
+ 54a:	2000      	movs	r0, #0
+ 54c:	4770      	bx	lr
+
+0000054e <ql_get_battery_vol>:
+ 54e:	b508      	push	{r3, lr}
+ 550:	2000      	movs	r0, #0
+ 552:	f8ad 0000 	strh.w	r0, [sp]
+ 556:	4668      	mov	r0, sp
+ 558:	f7ff fffe 	bl	0 <quec_vbat_adc_read>
+			558: R_ARM_THM_CALL	quec_vbat_adc_read
+ 55c:	f8bd 0000 	ldrh.w	r0, [sp]
+ 560:	bd08      	pop	{r3, pc}
+
+00000562 <ql_get_vbus_state>:
+ 562:	f7ff bffe 	b.w	0 <PM812_VBUS_IS_AVAILABLE>
+			562: R_ARM_THM_JUMP24	PM812_VBUS_IS_AVAILABLE
+
+00000566 <ql_get_pwrkey_status>:
+ 566:	f7ff bffe 	b.w	0 <PMIC_GET_PWEKY_STATUS>
+			566: R_ARM_THM_JUMP24	PMIC_GET_PWEKY_STATUS
+
+0000056a <ql_pwrkey_register_irq>:
+ 56a:	b510      	push	{r4, lr}
+ 56c:	0004      	movs	r4, r0
+ 56e:	d007      	beq.n	580 <ql_pwrkey_register_irq+0x16>
+ 570:	2000      	movs	r0, #0
+ 572:	f7ff fffe 	bl	0 <PMIC_PWRKEY_INTC_ENABLE>
+			572: R_ARM_THM_CALL	PMIC_PWRKEY_INTC_ENABLE
+ 576:	4620      	mov	r0, r4
+ 578:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+ 57c:	f7ff bffe 	b.w	0 <PMIC_PWRKEY_BIND_INTC>
+			57c: R_ARM_THM_JUMP24	PMIC_PWRKEY_BIND_INTC
+ 580:	bd10      	pop	{r4, pc}
+
+00000582 <ql_pwrkey_intc_enable>:
+ 582:	f7ff bffe 	b.w	0 <PMIC_PWRKEY_INTC_ENABLE>
+			582: R_ARM_THM_JUMP24	PMIC_PWRKEY_INTC_ENABLE
+
+00000586 <ql_create_a_fake_wake_source>:
+ 586:	b510      	push	{r4, lr}
+ 588:	4604      	mov	r4, r0
+ 58a:	f7ff fffe 	bl	0 <PM812_CHARGER_IS_DETECTED>
+			58a: R_ARM_THM_CALL	PM812_CHARGER_IS_DETECTED
+ 58e:	2800      	cmp	r0, #0
+ 590:	4620      	mov	r0, r4
+ 592:	d007      	beq.n	5a4 <ql_create_a_fake_wake_source+0x1e>
+ 594:	f7ff fffe 	bl	0 <SysRestartReasonSet>
+			594: R_ARM_THM_CALL	SysRestartReasonSet
+ 598:	f7ff fffe 	bl	0 <PM812_FAULT_WU_EN_ENABLE>
+			598: R_ARM_THM_CALL	PM812_FAULT_WU_EN_ENABLE
+ 59c:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+ 5a0:	f7ff bffe 	b.w	0 <PM812_FAULT_WU_ENABLE>
+			5a0: R_ARM_THM_JUMP24	PM812_FAULT_WU_ENABLE
+ 5a4:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+ 5a8:	f7ff bffe 	b.w	0 <SysRestartReasonSet>
+			5a8: R_ARM_THM_JUMP24	SysRestartReasonSet
+
+000005ac <ql_get_the_fake_wake_source>:
+ 5ac:	f7ff bffe 	b.w	0 <SysRestartReasonGet>
+			5ac: R_ARM_THM_JUMP24	SysRestartReasonGet
+
+000005b0 <ql_power_watchdog_reset>:
+ 5b0:	f7ff bffe 	b.w	0 <Trigger_SilentReset>
+			5b0: R_ARM_THM_JUMP24	Trigger_SilentReset
+
+000005b4 <ql_powerdown_rtc_in_work>:
+ 5b4:	b538      	push	{r3, r4, r5, lr}
+ 5b6:	4604      	mov	r4, r0
+ 5b8:	f7ff fffe 	bl	0 <PMIC_IS_PM803>
+			5b8: R_ARM_THM_CALL	PMIC_IS_PM803
+ 5bc:	b1e0      	cbz	r0, 5f8 <ql_powerdown_rtc_in_work+0x44>
+ 5be:	466a      	mov	r2, sp
+ 5c0:	f04f 01f1 	mov.w	r1, #241	; 0xf1
+ 5c4:	f04f 0000 	mov.w	r0, #0
+ 5c8:	b134      	cbz	r4, 10 <GuilinLiteRead+0x10>
+ 5ca:	f7ff fffe 	bl	0 <GuilinLiteRead>
+			5ca: R_ARM_THM_CALL	GuilinLiteRead
+ 5ce:	f89d 0000 	ldrb.w	r0, [sp]
+ 5d2:	f040 02c0 	orr.w	r2, r0, #192	; 0xc0
+ 5d6:	e009      	b.n	16 <GuilinLiteRead+0x16>
+ 5d8:	f7ff fffe 	bl	0 <GuilinLiteRead>
+			5d8: R_ARM_THM_CALL	GuilinLiteRead
+ 5dc:	f89d 0000 	ldrb.w	r0, [sp]
+ 5e0:	f020 00c0 	bic.w	r0, r0, #192	; 0xc0
+ 5e4:	f040 0280 	orr.w	r2, r0, #128	; 0x80
+ 5e8:	f88d 2000 	strb.w	r2, [sp]
+ 5ec:	21f1      	movs	r1, #241	; 0xf1
+ 5ee:	2000      	movs	r0, #0
+ 5f0:	f7ff fffe 	bl	0 <GuilinLiteWrite>
+			5f0: R_ARM_THM_CALL	GuilinLiteWrite
+ 5f4:	2000      	movs	r0, #0
+ 5f6:	bd38      	pop	{r3, r4, r5, pc}
+ 5f8:	f04f 30ff 	mov.w	r0, #4294967295	; 0xffffffff
+ 5fc:	bd38      	pop	{r3, r4, r5, pc}
+
+000005fe <quec_ready_system_stop>:
+ 5fe:	b508      	push	{r3, lr}
+ 600:	f7ff fffe 	bl	0 <quec_soft_power_wait_flash_idle>
+			600: R_ARM_THM_CALL	quec_soft_power_wait_flash_idle
+ 604:	f7ff fffe 	bl	0 <quec_soft_power_disable_flash_write_erase>
+			604: R_ARM_THM_CALL	quec_soft_power_disable_flash_write_erase
+ 608:	f7ff fffe 	bl	0 <IsChipCraneL>
+			608: R_ARM_THM_CALL	IsChipCraneL
+ 60c:	b108      	cbz	r0, 6 <PMIC_Set_CP_UART_PowerOff_and_AIB_3_3V+0x6>
+ 60e:	f7ff fffe 	bl	0 <PMIC_Set_CP_UART_PowerOff_and_AIB_3_3V>
+			60e: R_ARM_THM_CALL	PMIC_Set_CP_UART_PowerOff_and_AIB_3_3V
+ 612:	f7ff fffe 	bl	0 <USB2MgrDeviceUnplug>
+			612: R_ARM_THM_CALL	USB2MgrDeviceUnplug
+ 616:	f7ff fffe 	bl	0 <QUEC_SET_MAINUART_TX_GPIO>
+			616: R_ARM_THM_CALL	QUEC_SET_MAINUART_TX_GPIO
+ 61a:	f7ff fffe 	bl	0 <PMIC_IS_PM803>
+			61a: R_ARM_THM_CALL	PMIC_IS_PM803
+ 61e:	2800      	cmp	r0, #0
+ 620:	d010      	beq.n	644 <quec_ready_system_stop+0x46>
+ 622:	2000      	movs	r0, #0
+ 624:	466a      	mov	r2, sp
+ 626:	21eb      	movs	r1, #235	; 0xeb
+ 628:	f88d 0000 	strb.w	r0, [sp]
+ 62c:	f7ff fffe 	bl	0 <GuilinLiteRead>
+			62c: R_ARM_THM_CALL	GuilinLiteRead
+ 630:	f89d 0000 	ldrb.w	r0, [sp]
+ 634:	21eb      	movs	r1, #235	; 0xeb
+ 636:	f020 0280 	bic.w	r2, r0, #128	; 0x80
+ 63a:	f88d 2000 	strb.w	r2, [sp]
+ 63e:	2000      	movs	r0, #0
+ 640:	f7ff fffe 	bl	0 <GuilinLiteWrite>
+			640: R_ARM_THM_CALL	GuilinLiteWrite
+ 644:	bd08      	pop	{r3, pc}
+
+00000646 <ql_power_stop_system>:
+ 646:	2100      	movs	r1, #0
+ 648:	200f      	movs	r0, #15
+ 64a:	f7ff fffe 	bl	0 <quec_event_notify_report>
+			64a: R_ARM_THM_CALL	quec_event_notify_report
+ 64e:	2030      	movs	r0, #48	; 0x30
+ 650:	f7ff fffe 	bl	0 <INTCDisable>
+			650: R_ARM_THM_CALL	INTCDisable
+ 654:	f7ff fffe 	bl	0 <IsMiniSystem>
+			654: R_ARM_THM_CALL	IsMiniSystem
+ 658:	b970      	cbnz	r0, 20 <GetCfunValue+0x20>
+ 65a:	f7ff fffe 	bl	0 <GetCfunValue>
+			65a: R_ARM_THM_CALL	GetCfunValue
+ 65e:	b158      	cbz	r0, 678 <ql_power_stop_system+0x32>
+ 660:	f2af 2030 	subw	r0, pc, #560	; 0x230
+ 664:	f7ff fffe 	bl	0 <quec_debug_print_uart>
+			664: R_ARM_THM_CALL	quec_debug_print_uart
+ 668:	2000      	movs	r0, #0
+ 66a:	f7ff fffe 	bl	0 <SetCfunValue>
+			66a: R_ARM_THM_CALL	SetCfunValue
+ 66e:	f7ff fffe 	bl	0 <wait_cfun_done>
+			66e: R_ARM_THM_CALL	wait_cfun_done
+ 672:	a006      	add	r0, pc, #24	; (adr r0, 1c <quec_debug_print_uart+0x1c>)
+ 674:	f7ff fffe 	bl	0 <quec_debug_print_uart>
+			674: R_ARM_THM_CALL	quec_debug_print_uart
+ 678:	f7ff fffe 	bl	5fe <quec_ready_system_stop>
+			678: R_ARM_THM_CALL	quec_ready_system_stop
+ 67c:	2001      	movs	r0, #1
+ 67e:	f7ff fffe 	bl	0 <quec_rtos_task_sleep_s>
+			67e: R_ARM_THM_CALL	quec_rtos_task_sleep_s
+ 682:	a00a      	add	r0, pc, #40	; (adr r0, 2c <quec_debug_print_uart+0x2c>)
+ 684:	f7ff fffe 	bl	0 <quec_debug_print_uart>
+			684: R_ARM_THM_CALL	quec_debug_print_uart
+ 688:	e7fe      	b.n	688 <ql_power_stop_system+0x42>
+ 68a:	0000      	.short	0x0000
+ 68c:	4e554643 	.word	0x4e554643
+ 690:	6f642030 	.word	0x6f642030
+ 694:	202e656e 	.word	0x202e656e
+ 698:	0000000a 	.word	0x0000000a
+	...
+			69c: R_ARM_ABS32	power_up_reason
+			6a0: R_ARM_ABS32	power_down_reason
+			6a4: R_ARM_ABS32	power_down_reason2
+			6a8: R_ARM_ABS32	hot_power_flag
+ 6ac:	74737973 	.word	0x74737973
+ 6b0:	69206d65 	.word	0x69206d65
+ 6b4:	74732073 	.word	0x74732073
+ 6b8:	2121706f 	.word	0x2121706f
+ 6bc:	000a2021 	.word	0x000a2021

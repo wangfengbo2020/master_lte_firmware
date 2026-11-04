@@ -1,0 +1,351 @@
+
+OBJECT broad.o FUNCTION broad_register_pa_cb SECTION_INDEX 1 OFFSET 0x5f1e SIZE 14 SECTION_BYTES 26436
+
+/tmp/broad-power-disasm-20261103/broad.o__broad_register_pa_cb.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	493d      	ldr	r1, [pc, #244]	; (0xf8)
+   2:	6849      	ldr	r1, [r1, #4]
+   4:	2900      	cmp	r1, #0
+   6:	d001      	beq.n	0xc
+   8:	f8c1 0470 	str.w	r0, [r1, #1136]	; 0x470
+   c:	4770      	bx	lr
+RELEVANT_STRINGS: []
+
+OBJECT broad.o FUNCTION broad_notify_pa_status SECTION_INDEX 1 OFFSET 0x5f2c SIZE 18 SECTION_BYTES 26436
+
+/tmp/broad-power-disasm-20261103/broad.o__broad_notify_pa_status.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	4939      	ldr	r1, [pc, #228]	; (0xe8)
+   2:	b510      	push	{r4, lr}
+   4:	6849      	ldr	r1, [r1, #4]
+   6:	f8d1 1470 	ldr.w	r1, [r1, #1136]	; 0x470
+   a:	b101      	cbz	r1, 0xe
+   c:	4788      	blx	r1
+   e:	2000      	movs	r0, #0
+  10:	bd10      	pop	{r4, pc}
+RELEVANT_STRINGS: []
+
+OBJECT poc.o FUNCTION speak_pa_cb SECTION_INDEX 1 OFFSET 0x25a SIZE 50 SECTION_BYTES 1384
+
+/tmp/broad-power-disasm-20261103/poc.o__speak_pa_cb.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b570      	push	{r4, r5, r6, lr}
+   2:	a59a      	add	r5, pc, #616	; (adr r5, 0x26c)
+   4:	a49e      	add	r4, pc, #632	; (adr r4, 0x280)
+   6:	b140      	cbz	r0, 0x1a
+   8:	2001      	movs	r0, #1
+   a:	f7ff fffe 	bl	0xa
+   e:	4620      	mov	r0, r4
+  10:	f7ff fffe 	bl	0x10
+  14:	4601      	mov	r1, r0
+  16:	4620      	mov	r0, r4
+  18:	e007      	b.n	0x2a
+  1a:	2000      	movs	r0, #0
+  1c:	f7ff fffe 	bl	0x1c
+  20:	4628      	mov	r0, r5
+  22:	f7ff fffe 	bl	0x22
+  26:	4601      	mov	r1, r0
+  28:	4628      	mov	r0, r5
+  2a:	e8bd 4070 	ldmia.w	sp!, {r4, r5, r6, lr}
+  2e:	f7ff bffe 	b.w	0x2e
+RELOC offset=0x264 type=10 symbol=broad_notify_pa_status target_section=0 target_value=0x0
+RELOC offset=0x26a type=10 symbol=strlen target_section=0 target_value=0x0
+RELOC offset=0x276 type=10 symbol=broad_notify_pa_status target_section=0 target_value=0x0
+RELOC offset=0x27c type=10 symbol=strlen target_section=0 target_value=0x0
+RELOC offset=0x288 type=30 symbol=poc_write_uart target_section=1 target_value=0x337
+RELEVANT_STRINGS: []
+
+OBJECT poc.o FUNCTION broad_task SECTION_INDEX 1 OFFSET 0x28c SIZE 138 SECTION_BYTES 1384
+
+/tmp/broad-power-disasm-20261103/poc.o__broad_task.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b57c      	push	{r2, r3, r4, r5, r6, lr}
+   2:	2005      	movs	r0, #5
+   4:	f04f 36ff 	mov.w	r6, #4294967295	; 0xffffffff
+   8:	a594      	add	r5, pc, #592	; (adr r5, 0x25c)
+   a:	f7ff fffe 	bl	0xa
+   e:	f7ff fffe 	bl	0xe
+  12:	0004      	movs	r4, r0
+  14:	d00e      	beq.n	0x34
+  16:	4960      	ldr	r1, [pc, #384]	; (0x198)
+  18:	22f1      	movs	r2, #241	; 0xf1
+  1a:	a094      	add	r0, pc, #592	; (adr r0, 0x26c)
+  1c:	311d      	adds	r1, #29
+  1e:	f7ff fffe 	bl	0x1e
+  22:	4830      	ldr	r0, [pc, #192]	; (0xe4)
+  24:	2280      	movs	r2, #128	; 0x80
+  26:	21f4      	movs	r1, #244	; 0xf4
+  28:	300c      	adds	r0, #12
+  2a:	f7ff fffe 	bl	0x2a
+  2e:	b140      	cbz	r0, 0x42
+  30:	4630      	mov	r0, r6
+  32:	bd7c      	pop	{r2, r3, r4, r5, r6, pc}
+  34:	4958      	ldr	r1, [pc, #352]	; (0x198)
+  36:	22ec      	movs	r2, #236	; 0xec
+  38:	a08f      	add	r0, pc, #572	; (adr r0, 0x278)
+  3a:	311d      	adds	r1, #29
+  3c:	f7ff fffe 	bl	0x3c
+  40:	e7f6      	b.n	0x30
+  42:	4895      	ldr	r0, [pc, #596]	; (0x298)
+  44:	2264      	movs	r2, #100	; 0x64
+  46:	e9cd 0400 	strd	r0, r4, [sp]
+  4a:	4826      	ldr	r0, [pc, #152]	; (0xe4)
+  4c:	a393      	add	r3, pc, #588	; (adr r3, 0x29c)
+  4e:	f244 0100 	movw	r1, #16384	; 0x4000
+  52:	3010      	adds	r0, #16
+  54:	f7ff fffe 	bl	0x54
+  58:	494f      	ldr	r1, [pc, #316]	; (0x198)
+  5a:	22f9      	movs	r2, #249	; 0xf9
+  5c:	a083      	add	r0, pc, #524	; (adr r0, 0x26c)
+  5e:	311d      	adds	r1, #29
+  60:	f7ff fffe 	bl	0x60
+  64:	4628      	mov	r0, r5
+  66:	f7ff fffe 	bl	0x66
+  6a:	4601      	mov	r1, r0
+  6c:	4628      	mov	r0, r5
+  6e:	f7ff fffe 	bl	0x6e
+  72:	4949      	ldr	r1, [pc, #292]	; (0x198)
+  74:	a091      	add	r0, pc, #580	; (adr r0, 0x2bc)
+  76:	311d      	adds	r1, #29
+  78:	f7ff fffe 	bl	0x78
+  7c:	4893      	ldr	r0, [pc, #588]	; (0x2cc)
+  7e:	f7ff fffe 	bl	0x7e
+  82:	200a      	movs	r0, #10
+  84:	f7ff fffe 	bl	0x84
+  88:	e7fb      	b.n	0x82
+RELOC offset=0x296 type=10 symbol=ql_rtos_task_sleep_s target_section=0 target_value=0x0
+RELOC offset=0x29a type=10 symbol=sl_ui_ctx_new target_section=0 target_value=0x0
+RELOC offset=0x2aa type=10 symbol=__2printf target_section=0 target_value=0x0
+RELOC offset=0x2b6 type=10 symbol=ql_rtos_queue_create target_section=0 target_value=0x0
+RELOC offset=0x2c8 type=10 symbol=__2printf target_section=0 target_value=0x0
+RELOC offset=0x2e0 type=10 symbol=ql_rtos_task_create target_section=0 target_value=0x0
+RELOC offset=0x2ec type=10 symbol=__2printf target_section=0 target_value=0x0
+RELOC offset=0x2f2 type=10 symbol=strlen target_section=0 target_value=0x0
+RELOC offset=0x2fa type=10 symbol=poc_write_uart target_section=1 target_value=0x337
+RELOC offset=0x304 type=10 symbol=__2printf target_section=0 target_value=0x0
+RELOC offset=0x30a type=10 symbol=ql_bind_speakerpa_cb target_section=0 target_value=0x0
+RELOC offset=0x310 type=10 symbol=ql_rtos_task_sleep_s target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT poc.o FUNCTION broad_kernel_init SECTION_INDEX 1 OFFSET 0x316 SIZE 32 SECTION_BYTES 1384
+
+/tmp/broad-power-disasm-20261103/poc.o__broad_kernel_init.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b51c      	push	{r2, r3, r4, lr}
+   2:	2100      	movs	r1, #0
+   4:	f2af 008f 	subw	r0, pc, #143	; 0x8f
+   8:	e9cd 0100 	strd	r0, r1, [sp]
+   c:	4813      	ldr	r0, [pc, #76]	; (0x5c)
+   e:	2264      	movs	r2, #100	; 0x64
+  10:	a38d      	add	r3, pc, #564	; (adr r3, 0x248)
+  12:	f244 0100 	movw	r1, #16384	; 0x4000
+  16:	3008      	adds	r0, #8
+  18:	f7ff fffe 	bl	0x18
+  1c:	2000      	movs	r0, #0
+  1e:	bd1c      	pop	{r2, r3, r4, pc}
+RELOC offset=0x32e type=10 symbol=ql_rtos_task_create target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT at_keyEvt.o FUNCTION key_end_ptt SECTION_INDEX 10 OFFSET 0x0 SIZE 30 SECTION_BYTES 56
+
+/tmp/broad-power-disasm-20261103/at_keyEvt.o__key_end_ptt.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b510      	push	{r4, lr}
+   2:	0004      	movs	r4, r0
+   4:	d00a      	beq.n	0x1c
+   6:	6860      	ldr	r0, [r4, #4]
+   8:	2101      	movs	r1, #1
+   a:	a305      	add	r3, pc, #20	; (adr r3, 0x20)
+   c:	a207      	add	r2, pc, #28	; (adr r2, 0x2c)
+   e:	f7ff fffe 	bl	0xe
+  12:	6820      	ldr	r0, [r4, #0]
+  14:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+  18:	f7ff bffe 	b.w	0x18
+  1c:	bd10      	pop	{r4, pc}
+RELOC offset=0xe type=10 symbol=hal_log_output target_section=0 target_value=0x0
+RELOC offset=0x18 type=30 symbol=echat_stop_speak target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
+
+OBJECT at_keyEvt.o FUNCTION key_start_ptt SECTION_INDEX 9 OFFSET 0x0 SIZE 206 SECTION_BYTES 308
+
+/tmp/broad-power-disasm-20261103/at_keyEvt.o__key_start_ptt.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	b510      	push	{r4, lr}
+   2:	0004      	movs	r4, r0
+   4:	b08c      	sub	sp, #48	; 0x30
+   6:	d041      	beq.n	0x8c
+   8:	f7ff fffe 	bl	0x8
+   c:	b1e0      	cbz	r0, 0x48
+   e:	f894 00a2 	ldrb.w	r0, [r4, #162]	; 0xa2
+  12:	2800      	cmp	r0, #0
+  14:	d03c      	beq.n	0x90
+  16:	9000      	str	r0, [sp, #0]
+  18:	2101      	movs	r1, #1
+  1a:	6860      	ldr	r0, [r4, #4]
+  1c:	a32c      	add	r3, pc, #176	; (adr r3, 0xd0)
+  1e:	a235      	add	r2, pc, #212	; (adr r2, 0xf4)
+  20:	f7ff fffe 	bl	0x20
+  24:	4936      	ldr	r1, [pc, #216]	; (0x100)
+  26:	4622      	mov	r2, r4
+  28:	68a0      	ldr	r0, [r4, #8]
+  2a:	f7ff fffe 	bl	0x2a
+  2e:	2000      	movs	r0, #0
+  30:	f884 00a2 	strb.w	r0, [r4, #162]	; 0xa2
+  34:	e9d4 0104 	ldrd	r0, r1, [r4, #16]
+  38:	4288      	cmp	r0, r1
+  3a:	d00d      	beq.n	0x58
+  3c:	6820      	ldr	r0, [r4, #0]
+  3e:	b00c      	add	sp, #48	; 0x30
+  40:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+  44:	f7ff bffe 	b.w	0x44
+  48:	e9d4 032b 	ldrd	r0, r3, [r4, #172]	; 0xac
+  4c:	b00c      	add	sp, #48	; 0x30
+  4e:	22ff      	movs	r2, #255	; 0xff
+  50:	2184      	movs	r1, #132	; 0x84
+  52:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+  56:	4718      	bx	r3
+  58:	222c      	movs	r2, #44	; 0x2c
+  5a:	4668      	mov	r0, sp
+  5c:	2100      	movs	r1, #0
+  5e:	f7ff fffe 	bl	0x5e
+  62:	6820      	ldr	r0, [r4, #0]
+  64:	4669      	mov	r1, sp
+  66:	f7ff fffe 	bl	0x66
+  6a:	9801      	ldr	r0, [sp, #4]
+  6c:	2800      	cmp	r0, #0
+  6e:	d00d      	beq.n	0x8c
+  70:	200c      	movs	r0, #12
+  72:	f7ff fffe 	bl	0x72
+  76:	9a02      	ldr	r2, [sp, #8]
+  78:	23c8      	movs	r3, #200	; 0xc8
+  7a:	4601      	mov	r1, r0
+  7c:	68e0      	ldr	r0, [r4, #12]
+  7e:	f7ff fffe 	bl	0x7e
+  82:	9802      	ldr	r0, [sp, #8]
+  84:	2800      	cmp	r0, #0
+  86:	d001      	beq.n	0x8c
+  88:	f7ff fffe 	bl	0x88
+  8c:	b00c      	add	sp, #48	; 0x30
+  8e:	bd10      	pop	{r4, pc}
+  90:	f894 10b4 	ldrb.w	r1, [r4, #180]	; 0xb4
+  94:	a31b      	add	r3, pc, #108	; (adr r3, 0x104)
+  96:	f894 00a3 	ldrb.w	r0, [r4, #163]	; 0xa3
+  9a:	a216      	add	r2, pc, #88	; (adr r2, 0xf4)
+  9c:	e9cd 0100 	strd	r0, r1, [sp]
+  a0:	6860      	ldr	r0, [r4, #4]
+  a2:	2101      	movs	r1, #1
+  a4:	f7ff fffe 	bl	0xa4
+  a8:	f894 00a3 	ldrb.w	r0, [r4, #163]	; 0xa3
+  ac:	2801      	cmp	r0, #1
+  ae:	d102      	bne.n	0xb6
+  b0:	f894 00b4 	ldrb.w	r0, [r4, #180]	; 0xb4
+  b4:	b128      	cbz	r0, 0xc2
+  b6:	6820      	ldr	r0, [r4, #0]
+  b8:	b00c      	add	sp, #48	; 0x30
+  ba:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+  be:	f7ff bffe 	b.w	0xbe
+  c2:	b00c      	add	sp, #48	; 0x30
+  c4:	4620      	mov	r0, r4
+  c6:	e8bd 4010 	ldmia.w	sp!, {r4, lr}
+  ca:	f7ff bffe 	b.w	0xca
+RELOC offset=0x8 type=10 symbol=key_get_audio_enabled target_section=7 target_value=0x1
+RELOC offset=0x20 type=10 symbol=hal_log_output target_section=0 target_value=0x0
+RELOC offset=0x2a type=10 symbol=hal_looper_cancel_timer target_section=0 target_value=0x0
+RELOC offset=0x44 type=30 symbol=echat_join_group target_section=0 target_value=0x0
+RELOC offset=0x5e type=10 symbol=hal_memset target_section=0 target_value=0x0
+RELOC offset=0x66 type=10 symbol=echat_get_current_group target_section=0 target_value=0x0
+RELOC offset=0x72 type=10 symbol=sl_tts_get_by_id target_section=0 target_value=0x0
+RELOC offset=0x7e type=10 symbol=sl_ui_ctx_play_tts target_section=0 target_value=0x0
+RELOC offset=0x88 type=10 symbol=hal_free target_section=0 target_value=0x0
+RELOC offset=0xa4 type=10 symbol=hal_log_output target_section=0 target_value=0x0
+RELOC offset=0xbe type=30 symbol=echat_start_speak target_section=0 target_value=0x0
+RELOC offset=0xca type=30 symbol=key_request_invite target_section=1 target_value=0x15b
+RELOC offset=0x100 type=2 symbol=auto_entergroup_on_timer target_section=2 target_value=0x1
+RELEVANT_STRINGS: []
+
+OBJECT at_keyEvt.o FUNCTION keyevt_init SECTION_INDEX 1 OFFSET 0x0 SIZE 118 SECTION_BYTES 728
+
+/tmp/broad-power-disasm-20261103/at_keyEvt.o__keyevt_init.bin:     file format binary
+
+
+Disassembly of section .data:
+
+00000000 <.data>:
+   0:	e92d 47f0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, lr}
+   4:	b0a2      	sub	sp, #136	; 0x88
+   6:	4699      	mov	r9, r3
+   8:	4617      	mov	r7, r2
+   a:	468a      	mov	sl, r1
+   c:	4680      	mov	r8, r0
+   e:	20c4      	movs	r0, #196	; 0xc4
+  10:	f7ff fffe 	bl	0x10
+  14:	0004      	movs	r4, r0
+  16:	d02b      	beq.n	0x70
+  18:	4981      	ldr	r1, [pc, #516]	; (0x220)
+  1a:	2284      	movs	r2, #132	; 0x84
+  1c:	4668      	mov	r0, sp
+  1e:	f7ff fffe 	bl	0x1e
+  22:	22c4      	movs	r2, #196	; 0xc4
+  24:	4620      	mov	r0, r4
+  26:	2100      	movs	r1, #0
+  28:	f7ff fffe 	bl	0x28
+  2c:	2500      	movs	r5, #0
+  2e:	466e      	mov	r6, sp
+  30:	eb05 0045 	add.w	r0, r5, r5, lsl #1
+  34:	eb04 0280 	add.w	r2, r4, r0, lsl #2
+  38:	f856 1020 	ldr.w	r1, [r6, r0, lsl #2]
+  3c:	61d1      	str	r1, [r2, #28]
+  3e:	eb06 0180 	add.w	r1, r6, r0, lsl #2
+  42:	1d09      	adds	r1, r1, #4
+  44:	f102 0020 	add.w	r0, r2, #32
+  48:	f7ff fffe 	bl	0x48
+  4c:	1c6d      	adds	r5, r5, #1
+  4e:	2d0b      	cmp	r5, #11
+  50:	dbee      	blt.n	0x30
+  52:	f844 8b04 	str.w	r8, [r4], #4
+  56:	2001      	movs	r0, #1
+  58:	2101      	movs	r1, #1
+  5a:	e884 0680 	stmia.w	r4, {r7, r9, sl}
+  5e:	f884 009d 	strb.w	r0, [r4, #157]	; 0x9d
+  62:	1f24      	subs	r4, r4, #4
+  64:	a36f      	add	r3, pc, #444	; (adr r3, 0x224)
+  66:	4638      	mov	r0, r7
+  68:	a271      	add	r2, pc, #452	; (adr r2, 0x230)
+  6a:	f7ff fffe 	bl	0x6a
+  6e:	4620      	mov	r0, r4
+  70:	b022      	add	sp, #136	; 0x88
+  72:	e8bd 87f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, r9, sl, pc}
+RELOC offset=0x10 type=10 symbol=hal_malloc target_section=0 target_value=0x0
+RELOC offset=0x1e type=10 symbol=__aeabi_memcpy4 target_section=0 target_value=0x0
+RELOC offset=0x28 type=10 symbol=hal_memset target_section=0 target_value=0x0
+RELOC offset=0x48 type=10 symbol=hal_strcpy target_section=0 target_value=0x0
+RELOC offset=0x6a type=10 symbol=hal_log_output target_section=0 target_value=0x0
+RELEVANT_STRINGS: []
