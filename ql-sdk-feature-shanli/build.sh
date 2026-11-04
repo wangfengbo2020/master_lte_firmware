@@ -76,6 +76,7 @@ do_clean() {
 # 编译 App 层
 #-------------------------------------------------------------------------------
 do_compile_app() {
+    bash "${SCRIPT_DIR}/extract_toolchain.sh"
     print_step "编译 App 层 (GCC arm-none-eabi)..."
 
     cd "${APP_DIR}"

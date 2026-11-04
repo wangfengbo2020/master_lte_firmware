@@ -47,6 +47,8 @@ ql-cross-tool/Linux/gcc-arm-none-eabi-9-2019-q4-major/
 
 # ------ 解压后的编译工具链（由 build.sh 自动生成） ------
 ql-cross-tool/Linux/gcc-arm-none-eabi-9-2019-q4-major/
+# 解压脚本的临时目录和旧工具链备份
+ql-cross-tool/Linux/.toolchain-*/
 
 # ------ OS / 编辑器 ------
 .DS_Store
